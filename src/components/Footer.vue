@@ -13,4 +13,18 @@ import { Component, Vue } from "vue-property-decorator";
 export default class Footer extends Vue {}
 </script>
 
-<style></style>
+<style scoped>
+footer img {
+  width: 125px;
+}
+
+footer p {
+  color: #b3aeb5;
+  font-size: 12px;
+}
+
+footer {
+  padding-top: 30px;
+  padding-bottom: 20px;
+}
+</style>
