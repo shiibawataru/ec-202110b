@@ -1,14 +1,41 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
-import Home from "../views/Home.vue";
 
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
-  // {
-  //   path: '/about',
-  //   component: () => import('../views/About.vue')
-  // }
+  {
+    path: "/registerAdmin",
+    component: () => import("../views/registerAdmin.vue"),
+  },
+  {
+    path: "/login",
+    component: () => import("../views/login.vue"),
+  },
+  {
+    path: "/itemDetail",
+    component: () => import("../views/itemDetail.vue"),
+  },
+  {
+    path: "/itemList",
+    component: () => import("../views/itemList.vue"),
+  },
+  {
+    path: "/cartList",
+    component: () => import("../views/cartList.vue"),
+  },
+  {
+    path: "/orderConfirm",
+    component: () => import("../views/orderConfirm.vue"),
+  },
+  {
+    path: "/orderFinished",
+    component: () => import("../views/orderFinished.vue"),
+  },
+  {
+    path: "/logout",
+    component: () => import("../views/logout.vue"),
+  },
 ];
 
 const router = new VueRouter({
