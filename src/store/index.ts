@@ -2,15 +2,15 @@ import Vue from "vue";
 import Vuex from "vuex";
 import { Item } from "@/types/Item";
 import { OrderItem } from "@/types/OrderItem";
-import { Topping } from "@/types/Topping";
 import axios from "axios";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    //全商品情報
     items: new Array<Item>(),
-    topping: new Array<Topping>(),
+    //カートの商品情報
     cartList: new Array<OrderItem>(),
   },
   mutations: {
@@ -52,7 +52,7 @@ export default new Vuex.Store({
 
     /**
      * カート(state.cartList)に商品を追加する.
-     * @param state ステートオブジェクト
+     * @param state ステート
      * @param buyItem 買う商品
      */
     addItemToCart(state, buyItem) {
@@ -60,7 +60,7 @@ export default new Vuex.Store({
     },
     /**
      * カート(state.cartList)の商品を1件削除.
-     * @param state ステートオブジェクト
+     * @param state ステート
      * @param index 対象の商品のindex番号
      */
     deleteItem(state, index) {
@@ -70,7 +70,6 @@ export default new Vuex.Store({
   actions: {
     /**
      * アイテム一覧情報をWebAPIから取得してmutationを呼び出す.
-     *
      * @param context コンテキスト
      */
     async getItemList(context) {
@@ -91,12 +90,19 @@ export default new Vuex.Store({
   getters: {
     /**
      * 全アイテム情報を返す.
-     *
      * @param state ステート
      * @returns 全アイテム情報
      */
     getItemList(state) {
       return state.items;
+    },
+    /**
+     * 全アイテム情報を返す.
+     * @param state ステート
+     * @returns カートの商品情報
+     */
+    getCartList(state) {
+      return state.cartList;
     },
   },
 });
