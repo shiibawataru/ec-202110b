@@ -9,7 +9,7 @@
         </div>
 
         <div class="header-right">
-          <a href="item_list.html">商品一覧</a>
+          <router-link to="/itemList">商品一覧</router-link>
           <a href="register_admin.html">会員登録</a>
           <a href="#"><i class="fas fa-shopping-cart"></i>カート</a>
           <a href="login.html" class="login">
