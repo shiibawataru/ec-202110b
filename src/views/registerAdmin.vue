@@ -3,7 +3,7 @@
     <div class="top-wrapper">
       <div class="container">
         <div class="row register-page">
-          <div class="error">エラーメッセージ</div>
+          <span class="error">{{ errorOfName }}</span>
           <div class="row">
             <div class="input-field col s6">
               <input
@@ -28,6 +28,7 @@
           </div>
           <div class="row">
             <div class="input-field col s12">
+              <span class="error">{{ errorOfMailAddress }}</span>
               <input
                 id="email"
                 type="email"
@@ -35,12 +36,14 @@
                 required
                 v-model="mailAddress"
               />
+
               <label for="email">メールアドレス</label>
             </div>
           </div>
           <div class="row">
             <div class="input-field col s12">
-              <input id="zipcode" type="text" maxlength="7" v-model="zipCode" />
+              <span class="error">{{ errorOfZipCode }}</span>
+              <input id="zipcode" type="text" maxlength="8" v-model="zipCode" />
               <label for="zipcode">郵便番号(ハイフンあり)</label>
               <button class="btn" type="button">
                 <span>住所検索</span>
@@ -49,18 +52,21 @@
           </div>
           <div class="row">
             <div class="input-field col s12">
+              <span class="error">{{ errorOfAddress }}</span>
               <input id="address" type="text" v-model="address" />
               <label for="address">住所</label>
             </div>
           </div>
           <div class="row">
             <div class="input-field col s12">
+              <span class="error">{{ errorOfPhone }}</span>
               <input id="tel" type="tel" v-model="phoneNumber" />
-              <label for="tel">電話番号</label>
+              <label for="tel">電話番号(ハイフンあり)</label>
             </div>
           </div>
           <div class="row">
             <div class="input-field col s12">
+              <span class="error">{{ errorOfPassword }}</span>
               <input
                 id="password"
                 type="password"
@@ -74,6 +80,7 @@
           </div>
           <div class="row">
             <div class="input-field col s12">
+              <span class="error">{{ errorOfCheckPassword }}</span>
               <input
                 id="confirmation_password"
                 type="password"
@@ -86,11 +93,7 @@
             </div>
           </div>
           <div class="row register-admin-btn">
-            <button
-              class="btn"
-              type="button"
-              onclick="location.href='login.html'"
-            >
+            <button class="btn" type="button" v-on:click="registerAdmin">
               <span>登録<i class="material-icons right">done</i></span>
             </button>
             <button type="button" v-on:click="clear">クリア</button>
@@ -140,11 +143,15 @@ export default class RegisterAdmin extends Vue {
   private errorOfZipCode = "";
   //エラーチェック
   private hasErrors = false;
+  //responseのerrorCodeE-02のエラーメッセージ
+  private errorMessage = "";
 
   /**
    * 登録したいユーザー情報を外部APIに送る.
    */
   async registerAdmin(): Promise<void> {
+    console.log("registerAdmin実行された");
+
     //エラーメッセージを初期化
     this.errorOfName = "";
     this.errorOfMailAddress = "";
@@ -153,6 +160,7 @@ export default class RegisterAdmin extends Vue {
     this.errorOfPassword = "";
     this.errorOfCheckPassword = "";
     this.errorOfZipCode = "";
+    this.hasErrors = false;
 
     //入力値エラーチェックし、エラーがあればメッセージを表示させreturn
     if (this.lastName === "" || this.firstName === "") {
@@ -162,8 +170,7 @@ export default class RegisterAdmin extends Vue {
     if (this.mailAddress === "") {
       this.errorOfMailAddress = "メールアドレスが入力されていません";
       this.hasErrors = true;
-    }
-    if (this.mailAddress.indexOf("@") === -1) {
+    } else if (this.mailAddress.indexOf("@") === -1) {
       this.errorOfMailAddress = "メールアドレスの形式が不正です";
       this.hasErrors = true;
     }
@@ -174,9 +181,17 @@ export default class RegisterAdmin extends Vue {
     if (this.phoneNumber === "") {
       this.errorOfPhone = "電話番号が入力されていません";
       this.hasErrors = true;
+    } else if (this.phoneNumber.indexOf("-") === -1) {
+      this.errorOfPhone = "電話番号はハイフンを入れて入力してください";
+      this.hasErrors = true;
     }
     if (this.password === "") {
       this.errorOfPassword = "パスワードが入力されていません";
+      this.hasErrors = true;
+    }
+    if (this.password.length < 8 || this.password.length > 16) {
+      this.errorOfPassword =
+        "パスワードは８文字以上１６文字以内で設定してください";
       this.hasErrors = true;
     }
     if (this.password !== this.checkPassword) {
@@ -184,8 +199,15 @@ export default class RegisterAdmin extends Vue {
       this.errorOfCheckPassword = "パスワードが不一致です";
       this.hasErrors = true;
     }
+    if (this.checkPassword === "") {
+      this.errorOfCheckPassword = "確認用パスワードを入力してください";
+      this.hasErrors = true;
+    }
     if (this.zipCode === "") {
       this.errorOfZipCode = "郵便番号が入力されていません";
+      this.hasErrors = true;
+    } else if (this.zipCode.indexOf("-") === -1) {
+      this.errorOfZipCode = "郵便番号はハイフンを入れて入力してください";
       this.hasErrors = true;
     }
     if (this.hasErrors === true) {
@@ -197,18 +219,23 @@ export default class RegisterAdmin extends Vue {
       "http://153.127.48.168:8080/ecsite-api/user",
       {
         name: this.lastName + " " + this.firstName,
-        mailAddress: this.mailAddress,
+        email: this.mailAddress,
         password: this.password,
         checkPassword: this.checkPassword,
-        zipCode: this.zipCode,
+        zipcode: this.zipCode,
         address: this.address,
-        phoneNumber: this.phoneNumber,
+        telephone: this.phoneNumber,
       }
     );
+    console.dir(JSON.stringify(response));
     if (response.data.status === "success") {
       this["$router"].push("/login");
+    } else if (response.data.errorCode === "E-01") {
+      this.errorOfMailAddress = response.data.message;
+    } else if (response.data.errorCode === "E-02") {
+      this.errorMessage = response.data.message;
     } else {
-      this.errorOfMailAddress = "そのメールアドレスはすでに使われています";
+      throw new Error("予期しないエラーが発生しました");
     }
   }
 
