@@ -41,7 +41,7 @@
           <div class="row">
             <div class="input-field col s12">
               <input id="zipcode" type="text" maxlength="7" v-model="zipCode" />
-              <label for="zipcode">郵便番号(ハイフンなし)</label>
+              <label for="zipcode">郵便番号(ハイフンあり)</label>
               <button class="btn" type="button">
                 <span>住所検索</span>
               </button>
@@ -163,6 +163,10 @@ export default class RegisterAdmin extends Vue {
       this.errorOfMailAddress = "メールアドレスが入力されていません";
       this.hasErrors = true;
     }
+    if (this.mailAddress.indexOf("@") === -1) {
+      this.errorOfMailAddress = "メールアドレスの形式が不正です";
+      this.hasErrors = true;
+    }
     if (this.address === "") {
       this.errorOfAddress = "住所が入力されていません";
       this.hasErrors = true;
@@ -193,8 +197,19 @@ export default class RegisterAdmin extends Vue {
       "http://153.127.48.168:8080/ecsite-api/user",
       {
         name: this.lastName + " " + this.firstName,
+        mailAddress: this.mailAddress,
+        password: this.password,
+        checkPassword: this.checkPassword,
+        zipCode: this.zipCode,
+        address: this.address,
+        phoneNumber: this.phoneNumber,
       }
     );
+    if (response.data.status === "success") {
+      this["$router"].push("/login");
+    } else {
+      this.errorOfMailAddress = "そのメールアドレスはすでに使われています";
+    }
   }
 
   /**
