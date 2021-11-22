@@ -104,6 +104,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import axios from "axios";
 
 @Component
 export default class RegisterAdmin extends Vue {
@@ -143,38 +144,58 @@ export default class RegisterAdmin extends Vue {
   /**
    * 登録したいユーザー情報を外部APIに送る.
    */
-  async registerAdmin(): Promise<void> {}
+  async registerAdmin(): Promise<void> {
+    //エラーメッセージを初期化
+    this.errorOfName = "";
+    this.errorOfMailAddress = "";
+    this.errorOfAddress = "";
+    this.errorOfPhone = "";
+    this.errorOfPassword = "";
+    this.errorOfCheckPassword = "";
+    this.errorOfZipCode = "";
 
-  /**
-   * エラーチェック処理.
-   *
-   * @returns エラーがある:true / エラーがない:false
-   */
-  // errorCheck():string{
-  //   this.errorOfName = "";
-  //   this.errorOfMailAddress = "";
-  //   this.errorOfPassword = "";
+    //入力値エラーチェックし、エラーがあればメッセージを表示させreturn
+    if (this.lastName === "" || this.firstName === "") {
+      this.errorOfName = "姓または名が入力されていません";
+      this.hasErrors = true;
+    }
+    if (this.mailAddress === "") {
+      this.errorOfMailAddress = "メールアドレスが入力されていません";
+      this.hasErrors = true;
+    }
+    if (this.address === "") {
+      this.errorOfAddress = "住所が入力されていません";
+      this.hasErrors = true;
+    }
+    if (this.phoneNumber === "") {
+      this.errorOfPhone = "電話番号が入力されていません";
+      this.hasErrors = true;
+    }
+    if (this.password === "") {
+      this.errorOfPassword = "パスワードが入力されていません";
+      this.hasErrors = true;
+    }
+    if (this.password !== this.checkPassword) {
+      // パスワード一致チェック
+      this.errorOfCheckPassword = "パスワードが不一致です";
+      this.hasErrors = true;
+    }
+    if (this.zipCode === "") {
+      this.errorOfZipCode = "郵便番号が入力されていません";
+      this.hasErrors = true;
+    }
+    if (this.hasErrors === true) {
+      return;
+    }
 
-  //   if (this.lastName === "" || this.firstName === "") {
-  //     this.errorOfName = "姓または名が入力されていません";
-  //     this.hasErrors = true;
-  //   }
-  //   if (this.mailAddress === "") {
-  //     this.errorOfMailAddress = "メールアドレスが入力されていません";
-  //     this.hasErrors = true;
-  //   }
-  //   if (this.password === "") {
-  //     this.errorOfPassword = "パスワードが入力されていません";
-  //     this.hasErrors = true;
-  //   } else if (this.password !== this.checkPassword) {
-  //     // パスワード一致チェック
-  //     this.errorOfPassword = "パスワードが不一致です";
-  //     this.hasErrors = true;
-  //   }
-
-  //   return hasError;
-  // }
-  //}
+    //ユーザー登録処理
+    const response = await axios.post(
+      "http://153.127.48.168:8080/ecsite-api/user",
+      {
+        name: this.lastName + " " + this.firstName,
+      }
+    );
+  }
 
   /**
    * 入力した情報をリセットする.
