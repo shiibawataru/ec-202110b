@@ -21,11 +21,15 @@
                 </div>
                 <span>{{ cartListItem.item.name }}</span>
               </td>
-              <td>
+              <td v-if="cartListItem.size === 'M'">
                 <span class="price">&nbsp;{{ cartListItem.size }}</span
-                >&nbsp;&nbsp;{{ cartListItem.totalPrice }}円 &nbsp;&nbsp;{{
-                  cartListItem.quantity
-                }}個
+                >&nbsp;&nbsp;{{ cartListItem.item.priceM.toLocaleString() }}円
+                &nbsp;&nbsp;{{ cartListItem.quantity }}個
+              </td>
+              <td v-if="cartListItem.size === 'L'">
+                <span class="price">&nbsp;{{ cartListItem.size }}</span
+                >&nbsp;&nbsp;{{ cartListItem.item.priceL.toLocaleString() }}円
+                &nbsp;&nbsp;{{ cartListItem.quantity }}個
               </td>
               <td
                 v-for="topping of cartListItem.item.toppingList"
@@ -41,7 +45,9 @@
                 </ul>
               </td>
               <td>
-                <div class="text-center">{{ cartListItem.totalPrice }}円</div>
+                <div class="text-center">
+                  {{ cartListItem.totalPrice.toLocaleString() }}円
+                </div>
               </td>
             </tr>
           </tbody>
@@ -58,6 +64,7 @@
         <div class="row">
           <div class="input-field">
             <!-- 名前 -->
+            <div class="error">{{ errorOfName }}</div>
             <input id="name" type="text" v-model="name" />
             <label for="name">お名前</label>
           </div>
@@ -65,6 +72,7 @@
         <div class="row">
           <div class="input-field">
             <!-- メールアドレス -->
+            <div class="error">{{ errorOfMailAddess }}</div>
             <input id="email" type="email" v-model="mailAddress" />
             <label for="email">メールアドレス</label>
           </div>
@@ -72,6 +80,7 @@
         <div class="row">
           <div class="input-field">
             <!-- 郵便番号 -->
+            <div class="error">{{ errorOfZipCode }}</div>
             <input id="zipcode" type="text" maxlength="7" v-model="zipCode" />
             <label for="zipcode">郵便番号(ハイフンなし)</label>
             <button class="btn" type="button">
@@ -82,6 +91,7 @@
         <div class="row">
           <div class="input-field">
             <!-- 住所 -->
+            <div class="error">{{ errorOfAddress }}</div>
             <input id="address" type="text" v-model="address" />
             <label for="address">住所</label>
           </div>
@@ -89,6 +99,7 @@
         <div class="row">
           <div class="input-field">
             <!-- 電話番号 -->
+            <div class="error">{{ errorOfTelephone }}</div>
             <input id="tel" type="tel" v-model="telephone" />
             <label for="tel">電話番号</label>
           </div>
@@ -96,17 +107,18 @@
         <div class="row order-confirm-delivery-datetime">
           <div class="input-field">
             <!-- 配達日 -->
+            <div class="error">{{ errorOfDeliveryDay }}</div>
             <input id="deliveryDate" type="date" v-model="deliveryDate" />
             <label for="address">配達日時</label>
           </div>
           <!-- 配達時間 -->
+          <div class="error">{{ errorOfDelivarytime }}</div>
           <label class="order-confirm-delivery-time">
             <input
               name="deliveryTime"
               type="radio"
-              value="10時"
+              value="10"
               checked="checked"
-              v-model="deliveryTime"
             />
             <span>10時</span>
           </label>
@@ -165,12 +177,7 @@
         </span>
       </div>
       <div class="row order-confirm-btn">
-        <button
-          class="btn"
-          type="button"
-          onclick="location.href='order_finished.html'"
-          v-on:click="order"
-        >
+        <button class="btn" type="button" v-on:click="order">
           <span>この内容で注文する</span>
         </button>
       </div>
@@ -181,7 +188,6 @@
 <script lang="ts">
 import { OrderItem } from "@/types/OrderItem";
 import { Item } from "@/types/Item";
-import { Topping } from "@/types/Topping";
 import { Component, Vue } from "vue-property-decorator";
 import axios from "axios";
 
@@ -232,7 +238,7 @@ export default class OrderConfirm extends Vue {
         "説明",
         2000,
         3000,
-        "/img_toy/4.jpg",
+        "/img/4.jpg",
         true,
         []
       ),
@@ -244,6 +250,63 @@ export default class OrderConfirm extends Vue {
    * 注文したい内容(indexのカートの配列)をAPIに送る.
    */
   async order(): Promise<void> {
+    //エラーコーナー
+    this.errorOfName = "";
+    this.errorOfMailAddess = "";
+    this.errorOfZipCode = "";
+    this.errorOfAddress = "";
+    this.errorOfTelephone = "";
+    this.errorOfDeliveryDay = "";
+    this.errorOfDelivarytime = "";
+
+    if (this.name === "") {
+      this.errorOfName = "名前を入力して下さい";
+    }
+    if (this.mailAddress === "") {
+      this.errorOfMailAddess = "メールアドレスを入力して下さい";
+    }
+    if (!this.mailAddress.includes("@")) {
+      this.errorOfMailAddess = "メールアドレスの形式が不正です";
+    }
+    if (this.zipCode === "") {
+      this.errorOfZipCode = "郵便番号を入力して下さい";
+    }
+    if (!this.zipCode.includes("-")) {
+      this.errorOfZipCode = "郵便番号はXXX-XXXXの形式で入力してください";
+    }
+    if (this.address === "") {
+      this.errorOfAddress = "住所を入力して下さい";
+    }
+    if (this.telephone === "") {
+      this.errorOfTelephone = "電話番号を入力して下さい";
+    }
+    if (!this.telephone.includes("-")) {
+      this.errorOfTelephone =
+        "電話番号はXXXX-XXXX-XXXXの形式で入力してください";
+    }
+    if (this.deliveryDay === "") {
+      this.errorOfDeliveryDay = "配達日を入力して下さい";
+    }
+    if (this.delivaryTime === "") {
+      this.errorOfDelivarytime = "配達時間を入力して下さい";
+    }
+    const now = new Date();
+    const nowTime = now.getHours;
+    if (Number(this.delivaryTime) - Number(nowTime) <= 3) {
+      this.errorOfDelivarytime = "今から3時間後の日時をご入力ください";
+    }
+    if (
+      this.errorOfName != "" ||
+      this.errorOfMailAddess != "" ||
+      this.errorOfZipCode != "" ||
+      this.errorOfAddress != "" ||
+      this.errorOfTelephone != "" ||
+      this.errorOfDeliveryDay != "" ||
+      this.errorOfDelivarytime != ""
+    ) {
+      return;
+    }
+
     const year = Number(this.deliveryDay.substr(0, 4));
     const month = Number(this.deliveryDay.substr(4, 2));
     const day = Number(this.deliveryDay.substr(6, 2));
@@ -274,64 +337,27 @@ export default class OrderConfirm extends Vue {
   }
 
   get tax(): string {
-    let tax = "";
+    let price = 0;
     for (const cartListItem of this.cartList) {
-      if (cartListItem.size === "M") {
-        tax = (
-          cartListItem.item.priceM *
-          cartListItem.quantity *
-          0.1
-        ).toLocaleString();
-      } else if (cartListItem.size === "L") {
-        tax = (
-          cartListItem.item.priceL *
-          cartListItem.quantity *
-          0.1
-        ).toLocaleString();
-      }
+      price += cartListItem.totalPrice;
     }
-    return tax;
+    return (price * 0.1).toLocaleString();
   }
 
   get taxIncludePrice(): string {
-    let price = "";
+    let price = 0;
     for (const cartListItem of this.cartList) {
-      if (cartListItem.size === "M") {
-        price = (
-          cartListItem.item.priceM * cartListItem.quantity +
-          this.tax
-        ).toLocaleString();
-      } else if (cartListItem.size === "L") {
-        price = (
-          cartListItem.item.priceL * cartListItem.quantity +
-          this.tax
-        ).toLocaleString();
-      }
+      price += cartListItem.totalPrice;
     }
-    return price;
+    return (price * 1.1).toLocaleString();
   }
 
   // 終わり
 }
 </script>
 <style scoped>
-.order-confirm-delivery-info {
-  margin: 0 200px 0 200px;
-}
-
-.order-confirm-delivery-datetime {
-  text-align: center;
-}
-
-.order-confirm-delivery-time {
-  margin-right: 10px;
-}
-
-.order-confirm-payment-method {
-  text-align: center;
-}
-
-.order-confirm-payment-method-radio {
-  margin-right: 10px;
+.error {
+  color: red;
+  text-align: left;
 }
 </style>
