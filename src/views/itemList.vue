@@ -4,6 +4,7 @@
     <div class="search-wrapper">
       <div class="container">
         <form method="post" class="search-form">
+          <div class="errorMessage">{{ errorOfSearch }}</div>
           <input
             type="text"
             name="name"
@@ -51,6 +52,8 @@ export default class ItemList extends Vue {
   private itemList: Array<Item> = [];
   // 曖昧検索ワード
   private searchWord = "";
+  // 検索エラーメッセージ
+  private errorOfSearch = "";
   //
   async created(): Promise<void> {
     await this["$store"].dispatch("getItemList");
@@ -62,6 +65,11 @@ export default class ItemList extends Vue {
     this.itemList = this.itemList.filter((item) =>
       item.name.includes(this.searchWord)
     );
+    // 該当商品がない場合はエラーメーセージの表示と全件表示
+    if (this.itemList.length === 0) {
+      this.errorOfSearch = "該当する商品がありません";
+      this.itemList = this["$store"].getters.getItemList;
+    }
   }
 }
 </script>
@@ -134,6 +142,10 @@ export default class ItemList extends Vue {
   background-image: none;
   border: 1px solid transparent;
   border-radius: 4px;
+}
+
+.errorMessage {
+  color: red;
 }
 
 /* ========================================
