@@ -107,7 +107,7 @@
         <div class="row order-confirm-delivery-datetime">
           <div class="input-field">
             <!-- 配達日 -->
-            <div class="error">{{ errorOfDeliveryDay }}</div>
+            <div class="error">{{ errorOfDeliveryDate }}</div>
             <input id="deliveryDate" type="date" v-model="deliveryDate" />
             <label for="address">配達日時</label>
           </div>
@@ -119,27 +119,53 @@
               type="radio"
               value="10"
               checked="checked"
+              v-model="delivaryTime"
             />
             <span>10時</span>
           </label>
           <label class="order-confirm-delivery-time">
-            <input name="deliveryTime" type="radio" value="11" />
+            <input
+              name="deliveryTime"
+              type="radio"
+              value="11"
+              v-model="delivaryTime"
+            />
             <span>11時</span>
           </label>
           <label class="order-confirm-delivery-time">
-            <input name="deliveryTime" type="radio" value="12" />
+            <input
+              name="deliveryTime"
+              type="radio"
+              value="12"
+              v-model="delivaryTime"
+            />
             <span>12時</span>
           </label>
           <label class="order-confirm-delivery-time">
-            <input name="deliveryTime" type="radio" value="13" />
+            <input
+              name="deliveryTime"
+              type="radio"
+              value="13"
+              v-model="delivaryTime"
+            />
             <span>13時</span>
           </label>
           <label class="order-confirm-delivery-time">
-            <input name="deliveryTime" type="radio" value="14" />
+            <input
+              name="deliveryTime"
+              type="radio"
+              value="14"
+              v-model="delivaryTime"
+            />
             <span>14時</span>
           </label>
           <label class="order-confirm-delivery-time">
-            <input name="deliveryTime" type="radio" value="15" />
+            <input
+              name="deliveryTime"
+              type="radio"
+              value="15"
+              v-model="delivaryTime"
+            />
             <span>15時</span>
           </label>
           <label class="order-confirm-delivery-time">
@@ -214,9 +240,9 @@ export default class OrderConfirm extends Vue {
   //電話番号エラー
   private errorOfTelephone = "";
   //配達日
-  private deliveryDay = "";
+  private deliveryDate = "";
   //配達日エラー
-  private errorOfDeliveryDay = "";
+  private errorOfDeliveryDate = "";
   //配達時間
   private delivaryTime = "";
   //配達時間エラー
@@ -250,13 +276,15 @@ export default class OrderConfirm extends Vue {
    * 注文したい内容(indexのカートの配列)をAPIに送る.
    */
   async order(): Promise<void> {
+    // this.cartList = this["$store"].getters.getCartList;
+
     //エラーコーナー
     this.errorOfName = "";
     this.errorOfMailAddess = "";
     this.errorOfZipCode = "";
     this.errorOfAddress = "";
     this.errorOfTelephone = "";
-    this.errorOfDeliveryDay = "";
+    this.errorOfDeliveryDate = "";
     this.errorOfDelivarytime = "";
 
     if (this.name === "") {
@@ -284,8 +312,8 @@ export default class OrderConfirm extends Vue {
       this.errorOfTelephone =
         "電話番号はXXXX-XXXX-XXXXの形式で入力してください";
     }
-    if (this.deliveryDay === "") {
-      this.errorOfDeliveryDay = "配達日を入力して下さい";
+    if (this.deliveryDate === "") {
+      this.errorOfDeliveryDate = "配達日を入力して下さい";
     }
     if (this.delivaryTime === "") {
       this.errorOfDelivarytime = "配達時間を入力して下さい";
@@ -295,21 +323,22 @@ export default class OrderConfirm extends Vue {
     if (Number(this.delivaryTime) - Number(nowTime) <= 3) {
       this.errorOfDelivarytime = "今から3時間後の日時をご入力ください";
     }
+
     if (
       this.errorOfName != "" ||
       this.errorOfMailAddess != "" ||
       this.errorOfZipCode != "" ||
       this.errorOfAddress != "" ||
       this.errorOfTelephone != "" ||
-      this.errorOfDeliveryDay != "" ||
+      this.errorOfDeliveryDate != "" ||
       this.errorOfDelivarytime != ""
     ) {
       return;
     }
+    const year = Number(this.deliveryDate.substr(0, 4));
+    const month = Number(this.deliveryDate.substr(5, 2));
+    const day = Number(this.deliveryDate.substr(8, 2));
 
-    const year = Number(this.deliveryDay.substr(0, 4));
-    const month = Number(this.deliveryDay.substr(4, 2));
-    const day = Number(this.deliveryDay.substr(6, 2));
     const delivery = new Date(year, month, day, Number(this.delivaryTime));
     for (const cartItem of this.cartList) {
       const response = await axios.post(
