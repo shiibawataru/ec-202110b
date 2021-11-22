@@ -1,19 +1,41 @@
 <template>
-  <!-- item list -->
-  <div class="item-wrapper">
-    <div class="container">
-      <div class="items">
-        <ul v-for="item of itemList" v-bind:key="item.id">
-          <div class="item">
-            <div class="item-icon">
-              <img v-bind:src="item.imagePath" />
+  <div>
+    <!-- search form -->
+    <div class="search-wrapper">
+      <div class="container">
+        <form method="post" class="search-form">
+          <input
+            type="text"
+            name="name"
+            class="search-name-input"
+            v-model="searchWord"
+          />
+          <button
+            class="btn search-btn"
+            type="button"
+            v-on:click="onclicksearch"
+          >
+            <span>検索</span>
+          </button>
+        </form>
+      </div>
+    </div>
+    <!-- item list -->
+    <div class="item-wrapper">
+      <div class="container">
+        <div class="items">
+          <ul v-for="item of itemList" v-bind:key="item.id">
+            <div class="item">
+              <div class="item-icon">
+                <img v-bind:src="item.imagePath" />
+              </div>
+              <a href="item_detail.html"> {{ item.name }}</a
+              ><br />
+              <span class="price">Ｍ</span>{{ item.priceM }}<br />
+              <span class="price">Ｌ</span>{{ item.priceL }}<br />
             </div>
-            <a href="item_detail.html"> {{ item.name }}</a
-            ><br />
-            <span class="price">Ｍ</span>{{ item.priceM }}<br />
-            <span class="price">Ｌ</span>{{ item.priceL }}<br />
-          </div>
-        </ul>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -27,11 +49,19 @@ import { Item } from "@/types/Item";
 export default class ItemList extends Vue {
   // 商品一覧
   private itemList: Array<Item> = [];
-  private imgUrl = "/img/";
+  // 曖昧検索ワード
+  private searchWord = "";
   //
   async created(): Promise<void> {
     await this["$store"].dispatch("getItemList");
     this.itemList = this["$store"].getters.getItemList;
+  }
+
+  // 曖昧検索
+  onclicksearch(): void {
+    this.itemList = this.itemList.filter((item) =>
+      item.name.includes(this.searchWord)
+    );
   }
 }
 </script>
