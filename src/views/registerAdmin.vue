@@ -96,7 +96,12 @@
             <button class="btn" type="button" v-on:click="registerAdmin">
               <span>登録<i class="material-icons right">done</i></span>
             </button>
-            <button type="button" v-on:click="clear">クリア</button>
+
+            <span class="clearBtn"
+              ><button class="btn" type="button" v-on:click="clear">
+                クリア
+              </button></span
+            >
           </div>
         </div>
       </div>
@@ -262,4 +267,8 @@ export default class RegisterAdmin extends Vue {
   }
 }
 </script>
-<style></style>
+<style scoped>
+.clearBtn {
+  margin-left: 10px;
+}
+</style>
