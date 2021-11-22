@@ -167,8 +167,8 @@ export default class ItemList extends Vue {
 }
 
 .item {
-  flex: 0 0 320px; /* paddingやborder含むitem全体の横幅を320pxにする */
   padding: 20px;
+  width: 320px;
 }
 
 .item-icon img {
