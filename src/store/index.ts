@@ -1,25 +1,23 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import { Item } from "@/types/Item";
-import { Order } from "@/types/Order";
 import { OrderItem } from "@/types/OrderItem";
-import { Topping } from "@/types/Topping";
-import { User } from "@/types/user";
 import axios from "axios";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    //全商品情報
     items: new Array<Item>(),
-    topping: new Array<Topping>(),
+    //カートの商品情報
     cartList: new Array<OrderItem>(),
   },
   mutations: {
     /**
      * 商品一覧情報を作成してstateに格納する.
      *
-     * @param context コンテキスト
+     * @param state ステートオブジェクト
      * @param payload WebAPIから取得した商品情報(JSON)
      */
     showItemList(state, payload) {
@@ -38,11 +36,7 @@ export default new Vuex.Store({
             item.priceL,
             item.imagePath,
             item.deleted,
-            [
-              new Topping(101, "toy", "男の子用シール", 200, 300),
-              new Topping(102, "toy", "女の子用シール", 200, 300),
-              new Topping(103, "toy", "AC電源ケーブル", 200, 300),
-            ]
+            []
           )
         );
       }
@@ -55,11 +49,27 @@ export default new Vuex.Store({
         }
       });
     },
+
+    /**
+     * カート(state.cartList)に商品を追加する.
+     * @param state ステート
+     * @param buyItem 買う商品
+     */
+    addItemToCart(state, buyItem) {
+      state.cartList.push(buyItem);
+    },
+    /**
+     * カート(state.cartList)の商品を1件削除.
+     * @param state ステート
+     * @param index 対象の商品のindex番号
+     */
+    deleteItem(state, index) {
+      state.cartList.splice(index, 1);
+    },
   }, // end mutations
   actions: {
     /**
      * アイテム一覧情報をWebAPIから取得してmutationを呼び出す.
-     *
      * @param context コンテキスト
      */
     async getItemList(context) {
@@ -80,12 +90,19 @@ export default new Vuex.Store({
   getters: {
     /**
      * 全アイテム情報を返す.
-     *
      * @param state ステート
      * @returns 全アイテム情報
      */
     getItemList(state) {
       return state.items;
+    },
+    /**
+     * 全アイテム情報を返す.
+     * @param state ステート
+     * @returns カートの商品情報
+     */
+    getCartList(state) {
+      return state.cartList;
     },
   },
 });
