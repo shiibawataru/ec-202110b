@@ -1,10 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import { Item } from "@/types/Item";
-import { Order } from "@/types/Order";
 import { OrderItem } from "@/types/OrderItem";
 import { Topping } from "@/types/Topping";
-import { User } from "@/types/user";
 import axios from "axios";
 
 Vue.use(Vuex);
@@ -19,7 +17,7 @@ export default new Vuex.Store({
     /**
      * 商品一覧情報を作成してstateに格納する.
      *
-     * @param context コンテキスト
+     * @param state ステートオブジェクト
      * @param payload WebAPIから取得した商品情報(JSON)
      */
     showItemList(state, payload) {
@@ -38,11 +36,7 @@ export default new Vuex.Store({
             item.priceL,
             item.imagePath,
             item.deleted,
-            [
-              new Topping(101, "toy", "男の子用シール", 200, 300),
-              new Topping(102, "toy", "女の子用シール", 200, 300),
-              new Topping(103, "toy", "AC電源ケーブル", 200, 300),
-            ]
+            []
           )
         );
       }
@@ -54,6 +48,23 @@ export default new Vuex.Store({
           return 1;
         }
       });
+    },
+
+    /**
+     * カート(state.cartList)に商品を追加する.
+     * @param state ステートオブジェクト
+     * @param buyItem 買う商品
+     */
+    addItemToCart(state, buyItem) {
+      state.cartList.push(buyItem);
+    },
+    /**
+     * カート(state.cartList)の商品を1件削除.
+     * @param state ステートオブジェクト
+     * @param index 対象の商品のindex番号
+     */
+    deleteItem(state, index) {
+      state.cartList.splice(index, 1);
     },
   }, // end mutations
   actions: {
