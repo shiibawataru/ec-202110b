@@ -12,9 +12,9 @@
           <router-link to="/itemList">商品一覧</router-link>
           <a href="register_admin.html">会員登録</a>
           <a href="#"><i class="fas fa-shopping-cart"></i>カート</a>
-          <a href="login.html" class="login">
+          <router-link to="/login" class="login">
             <i class="fas fa-sign-in-alt"></i>ログイン
-          </a>
+          </router-link>
 
           <a href="order_history.html">注文履歴</a>
         </div>
