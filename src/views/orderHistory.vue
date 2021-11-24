@@ -50,7 +50,7 @@
               </td>
               <td>
                 <div class="text-center">
-                  {{ orderItem.totalPrice.toLocaleString() }}円
+                  <!-- {{ orderItem.totalPrice.toLocaleString() }}円 -->
                 </div>
               </td>
             </tr>
@@ -76,79 +76,63 @@ export default class OrderHistory extends Vue {
   private nonOrderMsg = "";
   // 注文商品を仮で生成
   private orderList: Array<Order> = [
-    new Order(
-      13,
-      1111,
-      0,
-      10000,
-      new Date(2021 - 10 - 22),
-      "名前",
-      "aaa@aaa",
-      "2340052",
-      "住所",
-      "12345678",
-      new Date(2021 - 10 - 28),
-      1,
-      [new User(1, "名前", "aaa@aaa", "aaa", "2340052", "住所", "12345678")],
-      [
-        new OrderItem(
-          8,
-          1,
-          13,
-          2,
-          "M",
-          new Item(
-            1,
-            "aloha",
-            "Hawaiian パラダイス",
-            "商品名",
-            2160,
-            3380,
-            "/img_aloha/1.jpg",
-            false,
-            [new Topping(1, "aloha", "ハワイアンソルト", 200, 300)]
-          ),
-          [
-            new OrderTopping(
-              1,
-              1,
-              8,
-              new Topping(1, "aloha", "ハワイアンソルト", 200, 300)
-            ),
-          ]
-        ),
-      ]
-    ),
+    // new Order(
+    //   13,
+    //   1111,
+    //   0,
+    //   10000,
+    //   new Date(2021 - 10 - 22),
+    //   "名前",
+    //   "aaa@aaa",
+    //   "2340052",
+    //   "住所",
+    //   "12345678",
+    //   new Date(2021 - 10 - 28),
+    //   1,
+    //   [new User(1, "名前", "aaa@aaa", "aaa", "2340052", "住所", "12345678")],
+    //   [
+    //     new OrderItem(
+    //       8,
+    //       1,
+    //       13,
+    //       2,
+    //       "M",
+    //       new Item(
+    //         1,
+    //         "aloha",
+    //         "Hawaiian パラダイス",
+    //         "商品名",
+    //         2160,
+    //         3380,
+    //         "/img_aloha/1.jpg",
+    //         false,
+    //         [new Topping(1, "aloha", "ハワイアンソルト", 200, 300)]
+    //       ),
+    //       [
+    //         new OrderTopping(
+    //           1,
+    //           1,
+    //           8,
+    //           new Topping(1, "aloha", "ハワイアンソルト", 200, 300)
+    //         ),
+    //       ]
+    //     ),
+    //   ]
+    // ),
   ];
 
   async created(): Promise<void> {
     const response = await axios.get(
       "http://153.127.48.168:8080/ecsite-api/order/orders/toy"
     );
+    this.orderList = response.data.orders;
+    console.dir("注文商品一覧:" + JSON.stringify(response.data.orders));
 
-    if (response.data.status === "success") {
-      this["$router"].push("/employeeList");
-    } else {
-      this.nonOrderMsg =
-        "情報を取得できませんでした(Invalid request parameter.)";
-    }
-
-    console.dir("orderList:" + JSON.stringify(response));
     // ログインしていなければログイン画面へ遷移
     if (this.$store.getters.getLoginStatus === false) {
       this.$router.push("/login");
       return;
     }
-
-    // 取得内容確認用
-    console.dir("取得した注文情報：" + JSON.stringify(this.orderList));
-    console.dir(
-      "取得したトッピング情報：" +
-        JSON.stringify(
-          this.orderList[0].orderItemList[0].orderToppingList[0].topping.name
-        )
-    );
-    //
   }
 }
 </script>
