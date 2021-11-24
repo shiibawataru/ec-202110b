@@ -11,7 +11,7 @@
         <div class="header-right">
           <a href="item_list.html">商品一覧</a>
           <a href="register_admin.html">会員登録</a>
-          <a href="#"><i class="fas fa-shopping-cart"></i>カート</a>
+          <router-link to="/cartList">カート</router-link>
           <a href="login.html" class="login">
             <i class="fas fa-sign-in-alt"></i>ログイン
           </a>
