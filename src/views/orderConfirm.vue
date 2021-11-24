@@ -88,7 +88,7 @@
             <div class="error">{{ errorOfZipCode }}</div>
             <input id="zipcode" type="text" maxlength="8" v-model="zipCode" />
             <label for="zipcode">郵便番号</label>
-            <button class="btn" type="button">
+            <button class="btn" type="button" v-on:click="getAddress">
               <span>住所検索</span>
             </button>
           </div>
@@ -359,9 +359,44 @@ export default class OrderConfirm extends Vue {
   //   )
   // );
 
-  created() {
+  /**
+   * カートの中身をindexから取得.
+   */
+  created(): void {
     this.cartList = this["$store"].getters.getCartList;
     console.dir("カートの中身:" + JSON.stringify(this.cartList));
+  }
+
+  /**
+   * 郵便番号から住所を取得.
+   */
+  async getAddress(): Promise<void> {
+    //初期値リセット(住所、住所エラー)
+    this.address = "";
+    this.errorOfAddress = "";
+    //郵便番号から住所を取得APIに郵便番号を送る
+    try {
+      // const axios = require("axios");
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const axiosJsonpAdapter = require("axios-jsonp");
+
+      const response = await axios.get("https://zipcoda.net/api", {
+        adapter: axiosJsonpAdapter,
+        params: {
+          zipcode: this.zipCode,
+        },
+      });
+      //成功したら住所に取得したデータを代入
+      if (response.data.length === 1) {
+        this.address =
+          response.data.items[0].state_name + response.data.items[0].address;
+        //失敗したらエラーを出す
+      } else {
+        this.errorOfAddress = "住所が見つかりません";
+      }
+    } catch (e) {
+      this.errorOfAddress = "住所が見つかりません";
+    }
   }
 
   /**
@@ -458,24 +493,21 @@ export default class OrderConfirm extends Vue {
     }
 
     //APIに配達情報を送る
-    const response = await axios.post(
-      "http://153.127.48.168:8080/ecsite-api/order",
-      {
-        //★ユーザIDを持ってくる
-        userId: "1111",
-        status: String(this.paymentMethod),
-        totalPrice: String(Math.floor(this.taxIncludePrice)),
-        destinationName: this.name,
-        destinationEmail: this.mailAddress,
-        destinationZipcode: this.zipCode,
-        destinationAddress: this.address,
-        destinationTel: this.telephone,
-        deliveryTime: delivery,
-        paymentMethod: String(this.paymentMethod),
-        orderItemFormList: orderItems,
-        orderToppingFormList: toppings,
-      }
-    );
+    await axios.post("http://153.127.48.168:8080/ecsite-api/order", {
+      //★ユーザIDを持ってくる
+      userId: "1111",
+      status: String(this.paymentMethod),
+      totalPrice: String(Math.floor(this.taxIncludePrice)),
+      destinationName: this.name,
+      destinationEmail: this.mailAddress,
+      destinationZipcode: this.zipCode,
+      destinationAddress: this.address,
+      destinationTel: this.telephone,
+      deliveryTime: delivery,
+      paymentMethod: String(this.paymentMethod),
+      orderItemFormList: orderItems,
+      orderToppingFormList: toppings,
+    });
   }
 
   get tax(): string {
