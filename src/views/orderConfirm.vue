@@ -443,9 +443,6 @@ export default class OrderConfirm extends Vue {
     if (this.deliveryDate === "") {
       this.errorOfDeliveryDate = "配達日を入力して下さい";
     }
-    if (this.delivaryTime === "") {
-      this.errorOfDelivarytime = "配達時間を入力して下さい";
-    }
     const now = new Date();
     const nowAdd3Hours = addHours(now, 3);
 
@@ -467,6 +464,9 @@ export default class OrderConfirm extends Vue {
 
     if (ymdh <= nowAdd3Hours) {
       this.errorOfDelivarytime = "今から3時間後の日時をご入力ください";
+    }
+    if (this.delivaryTime === "") {
+      this.errorOfDelivarytime = "配達時間を入力して下さい";
     }
 
     if (
