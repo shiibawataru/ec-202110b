@@ -5,7 +5,7 @@
       <!-- table -->
       <div class="row">
         <div class="error-message">{{ nonItemMsg }}</div>
-        <table class="striped">
+        <table class="striped" v-if="showCart">
           <thead>
             <tr>
               <th class="cart-table-th">商品名</th>
@@ -90,7 +90,7 @@ import { OrderItem } from "@/types/OrderItem";
 import { OrderTopping } from "@/types/OrderTopping";
 import { Topping } from "@/types/Topping";
 import { Component, Vue } from "vue-property-decorator";
-// import axios from "axios";
+import axios from "axios";
 
 @Component
 export default class CartList extends Vue {
@@ -112,64 +112,64 @@ export default class CartList extends Vue {
    仮でオブジェクト生成してます.
    */
   // created(): void {
-  //   this.cartList = this["$store"].getters.getCartList;
   // }
   created(): void {
-    this.cartList = [
-      new OrderItem(
-        1,
-        101,
-        1,
-        1,
-        "M",
-        new Item(
-          101,
-          "toy",
-          "ビニールプール",
-          "商品説明",
-          1490,
-          2570,
-          "/img_toy/1.jpg",
-          false,
-          [
-            new Topping(1, "a", "aa", 100, 200),
-            new Topping(2, "b", "bb", 100, 200),
-          ]
-        ),
-        [
-          new OrderTopping(1, 1, 1, new Topping(1, "aa", "aaa", 100, 200)),
-          new OrderTopping(2, 2, 2, new Topping(2, "bb", "bbb", 100, 200)),
-        ]
-      ),
-      new OrderItem(
-        2,
-        101,
-        1,
-        1,
-        "M",
-        new Item(
-          101,
-          "toy",
-          "ビニールプール",
-          "商品説明",
-          1490,
-          2570,
-          "/img_toy/1.jpg",
-          false,
-          [
-            new Topping(1, "a", "aa", 100, 200),
-            new Topping(2, "b", "bb", 100, 200),
-          ]
-        ),
-        [
-          new OrderTopping(1, 1, 1, new Topping(1, "aa", "aaa", 100, 200)),
-          new OrderTopping(2, 2, 2, new Topping(2, "bb", "bbb", 100, 200)),
-        ]
-      ),
-    ];
+    this.cartList = this["$store"].getters.getCartList;
+    // this.cartList = [
+    // 消すこと！！！
+    // new OrderItem(
+    //   1,
+    //   101,
+    //   1,
+    //   1,
+    //   "M",
+    //   new Item(
+    //     101,
+    //     "toy",
+    //     "ビニールプール",
+    //     "商品説明",
+    //     1490,
+    //     2570,
+    //     "/img_toy/1.jpg",
+    //     false,
+    //     [
+    //       new Topping(1, "a", "aa", 100, 200),
+    //       new Topping(2, "b", "bb", 100, 200),
+    //     ]
+    //   ),
+    //   [
+    //     new OrderTopping(1, 1, 1, new Topping(1, "aa", "aaa", 100, 200)),
+    //     new OrderTopping(2, 2, 2, new Topping(2, "bb", "bbb", 100, 200)),
+    //   ]
+    // ),
+    // new OrderItem(
+    //   2,
+    //   101,
+    //   1,
+    //   1,
+    //   "M",
+    //   new Item(
+    //     101,
+    //     "toy",
+    //     "ビニールプール",
+    //     "商品説明",
+    //     1490,
+    //     2570,
+    //     "/img_toy/1.jpg",
+    //     false,
+    //     [
+    //       new Topping(1, "a", "aa", 100, 200),
+    //       new Topping(2, "b", "bb", 100, 200),
+    //     ]
+    //   ),
+    //   [
+    //     new OrderTopping(1, 1, 1, new Topping(1, "aa", "aaa", 100, 200)),
+    //     new OrderTopping(2, 2, 2, new Topping(2, "bb", "bbb", 100, 200)),
+    //   ]
+    // ),
+    // ];
 
     console.dir("カートの中身:" + JSON.stringify(this.cartList));
-
     this.getNonItemMsg();
   }
   /**
@@ -183,22 +183,22 @@ export default class CartList extends Vue {
   }
 
   /**
-   * 商品小計、トッピング小計、それぞれを足した小計を計算する.
+   * 税額、税込額を計算する.
    */
-  //  get tax(): string {
-  //   let price = 0;
-  //   for (const cartItem of this.cartList) {
-  //     price += cartItem.totalPrice;
-  //   }
-  //   return (price * 0.1).toLocaleString();
-  // }
-  // get taxIncludePrice(): number {
-  //   let price = 0;
-  //   for (const cartListItem of this.cartList) {
-  //     price += cartListItem.totalPrice;
-  //   }
-  //   return price * 1.1;
-  // }
+  get tax(): string {
+    let price = 0;
+    for (const cartItem of this.cartList) {
+      price += cartItem.totalPrice;
+    }
+    return (price * 0.1).toLocaleString();
+  }
+  get taxIncludePrice(): number {
+    let price = 0;
+    for (const cartItem of this.cartList) {
+      price += cartItem.totalPrice;
+    }
+    return price * 1.1;
+  }
 
   /**
    *カートから商品を削除する.
@@ -245,7 +245,6 @@ export default class CartList extends Vue {
 
 .error-message {
   text-align: center;
-  padding: 50px 0px;
   color: red;
 }
 </style>
