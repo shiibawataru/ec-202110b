@@ -606,19 +606,6 @@ export default class OrderConfirm extends Vue {
       this.errorOfDelivarytime = "配達時間を入力して下さい";
     }
 
-    if (
-      this.errorOfName != "" ||
-      this.errorOfMailAddess != "" ||
-      this.errorOfZipCode != "" ||
-      this.errorOfAddress != "" ||
-      this.errorOfTelephone != "" ||
-      this.errorOfDeliveryDate != "" ||
-      this.errorOfDelivarytime != ""
-    ) {
-      this.errorFlug = true;
-      return;
-    }
-
     //エラーチェック
     this.creditNumberError = "";
     this.creditMonthError = "";
@@ -626,56 +613,64 @@ export default class OrderConfirm extends Vue {
     this.creditNameError = "";
     this.creditsecurityCodeError = "";
 
-    //名義エラー
-    if (this.creditName.match(/[^A-Z]+/)) {
-      this.creditNameError = "半角英字(大文字)で入力して下さい";
+    if (this.creditFlug) {
+      //名義エラー
+      if (this.creditName.match(/[^A-Z]+/)) {
+        this.creditNameError = "半角英字(大文字)で入力して下さい";
+      }
+
+      //クレジット番号エラー
+      if (
+        (this.creditNumber.length != 14 && this.creditNumber.length != 16) ||
+        this.creditNumber.match(/[^0-9]+/)
+      ) {
+        this.creditNumberError =
+          "クレジットカード番号は14桁か16桁の数字で入力して下さい";
+      }
+
+      //セキュリティコードエラー
+      if (
+        (this.creditSecurityCode.length != 3 &&
+          this.creditSecurityCode.length != 4) ||
+        this.creditSecurityCode.match(/[^0-9]+/)
+      ) {
+        this.creditsecurityCodeError =
+          "セキュリティコードは3桁か4桁の数字で入力して下さい";
+      }
+
+      //空白エラー
+      if (this.creditNumber === "") {
+        this.creditNumberError = "クレジットカード番号を入力して下さい";
+      }
+      if (this.month === "") {
+        this.creditMonthError = "有効期限月を入力して下さい";
+      }
+      if (this.year === "") {
+        this.creditYearError = "有効期限年を入力して下さい";
+      }
+      if (this.creditName === "") {
+        this.creditNameError = "名前を入力して下さい";
+      }
+      if (this.creditSecurityCode === "") {
+        this.creditsecurityCodeError = "セキュリティコードを入力して下さい";
+      }
     }
 
-    //クレジット番号エラー
-    if (this.creditNumber.match(/[^0-9]+/)) {
-      this.creditNumberError = "クレジットカード番号は数字で入力して下さい";
-    }
-    if (this.creditNumber.length != 14 && this.creditNumber.length != 16) {
-      this.creditNumberError =
-        "クレジットカード番号は14桁か16桁で入力して下さい";
-    }
-
-    //セキュリティコードエラー
-    if (this.creditSecurityCode.match(/[^0-9]+/)) {
-      this.creditsecurityCodeError = "セキュリティコードは数字で入力して下さい";
-    }
     if (
-      this.creditSecurityCode.length != 3 &&
-      this.creditSecurityCode.length != 4
-    ) {
-      this.creditsecurityCodeError =
-        "セキュリティコードは3桁か4桁で入力して下さい";
-    }
-
-    //空白エラー
-    if (this.creditNumber === "") {
-      this.creditNumberError = "クレジットカード番号を入力して下さい";
-    }
-    if (this.month === "") {
-      this.creditMonthError = "有効期限月を入力して下さい";
-    }
-    if (this.year === "") {
-      this.creditYearError = "有効期限年を入力して下さい";
-    }
-    if (this.creditName === "") {
-      this.creditNameError = "名前を入力して下さい";
-    }
-    if (this.creditSecurityCode === "") {
-      this.creditsecurityCodeError = "セキュリティコードを入力して下さい";
-    }
-
-    if (
+      this.errorOfName != "" ||
+      this.errorOfMailAddess != "" ||
+      this.errorOfZipCode != "" ||
+      this.errorOfAddress != "" ||
+      this.errorOfTelephone != "" ||
+      this.errorOfDeliveryDate != "" ||
+      this.errorOfDelivarytime != "" ||
       this.creditNumberError != "" ||
       this.creditMonthError != "" ||
       this.creditYearError != "" ||
       this.creditNameError != "" ||
       this.creditsecurityCodeError != ""
     ) {
+      this.errorFlug = true;
       return;
     }
 
