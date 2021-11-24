@@ -16,7 +16,14 @@
             <div class="item-hedding">サイズ</div>
             <div>
               <label>
-                <input id="size-m" name="size" type="radio" checked="checked" />
+                <input
+                  id="size-m"
+                  name="size"
+                  type="radio"
+                  checked="checked"
+                  value="M"
+                  v-model="selectedSize"
+                />
                 <span>
                   &nbsp;<span class="price">Ｍ</span>&nbsp;&nbsp;{{
                     currentItem.priceM
@@ -24,7 +31,13 @@
                 >
               </label>
               <label>
-                <input id="size-l" name="size" type="radio" />
+                <input
+                  id="size-l"
+                  name="size"
+                  type="radio"
+                  value="L"
+                  v-model="selectedSize"
+                />
                 <span>
                   &nbsp;<span class="price">Ｌ</span>&nbsp;&nbsp;{{
                     currentItem.priceL
@@ -39,13 +52,14 @@
               <span>&nbsp;Ｍ&nbsp;</span>&nbsp;&nbsp;200円(税抜)
               <span>&nbsp;Ｌ</span>&nbsp;&nbsp;300円(税抜)
             </div>
-
-            <div
-              v-for="topping of currentItem.toppingList"
-              v-bind:key="topping.id"
-            >
+            {{ checked }}
+            <div v-for="(topping, i) of currentItem.toppingList" v-bind:key="i">
               <label class="item-topping">
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  value="topping.name"
+                  v-model="checked[i]"
+                />
                 <span>{{ topping.name }}</span>
               </label>
             </div>
@@ -73,7 +87,7 @@
             </div>
           </div>
           <div class="row item-total-price">
-            <span>この商品金額：38,000 円(税抜)</span>
+            <span>この商品金額：{{ subTotalPrice }}円(税抜)</span>
           </div>
           <div class="row item-cart-btn">
             <button
@@ -114,6 +128,10 @@ export default class ItemDetail extends Vue {
     true,
     this.currentToppingList
   );
+  // 選択されたサイズ
+  private selectedSize = "";
+  // チェックされたものを配列に入れる
+  private checked = [];
 
   /**
    * VuexストアのGetter経由で受け取ったリクエストパラメータのIDから１件の従業員情報を取得する.
@@ -144,6 +162,24 @@ export default class ItemDetail extends Vue {
       response.data.item.deleted,
       response.data.item.toppingList
     );
+  }
+  // チェックされたトッッピングの数
+  get checkedCount(): number {
+    let checkedCount = 0;
+    checkedCount = this.checked.filter(function (value) {
+      return value === true;
+    }).length;
+    return checkedCount;
+  }
+  // 選択されたものから小計を計算する
+  get subTotalPrice(): number {
+    let subTotalPrice = 0;
+    if (this.selectedSize === "M") {
+      subTotalPrice = this.currentItem.priceM + this.checkedCount * 200;
+    } else if (this.selectedSize === "L") {
+      subTotalPrice = this.currentItem.priceL + this.checkedCount * 300;
+    }
+    return subTotalPrice;
   }
 }
 </script>
