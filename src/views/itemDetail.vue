@@ -9,7 +9,7 @@
               <img v-bind:src="currentItem.imagePath" />
             </div>
             <div class="item-intro">
-              {{ currentItem.description }}
+              <pre>{{ currentItem.description }}</pre>
             </div>
           </div>
           <div class="row item-size">
@@ -39,46 +39,14 @@
               <span>&nbsp;Ｍ&nbsp;</span>&nbsp;&nbsp;200円(税抜)
               <span>&nbsp;Ｌ</span>&nbsp;&nbsp;300円(税抜)
             </div>
-            <div>
+
+            <div
+              v-for="topping of currentItem.toppingList"
+              v-bind:key="topping.id"
+            >
               <label class="item-topping">
                 <input type="checkbox" />
-                <span>{{ currentTopping.name }}</span>
-              </label>
-              <label class="item-topping">
-                <input type="checkbox" />
-                <span>ハワイアンマヨネーズ</span>
-              </label>
-              <label class="item-topping">
-                <input type="checkbox" />
-                <span>ハワイアントマト</span>
-              </label>
-              <label class="item-topping">
-                <input type="checkbox" />
-                <span>ブルーチーズ</span>
-              </label>
-              <label class="item-topping">
-                <input type="checkbox" />
-                <span>ハワイアンチョコレート</span>
-              </label>
-              <label class="item-topping">
-                <input type="checkbox" />
-                <span>アンチョビ</span>
-              </label>
-              <label class="item-topping">
-                <input type="checkbox" />
-                <span>エビ</span>
-              </label>
-              <label class="item-topping">
-                <input type="checkbox" />
-                <span>ガーリックスライス</span>
-              </label>
-              <label class="item-topping">
-                <input type="checkbox" />
-                <span>トロピカルフルーツ</span>
-              </label>
-              <label class="item-topping">
-                <input type="checkbox" />
-                <span>ココナッツ</span>
+                <span>{{ topping.name }}</span>
               </label>
             </div>
           </div>
@@ -133,7 +101,7 @@ import axios from "axios";
 @Component
 export default class ItemDetail extends Vue {
   //
-  private currentTopping: Array<Topping> = [];
+  private currentToppingList: Array<Topping> = [];
   //
   private currentItem = new Item(
     0,
@@ -144,9 +112,8 @@ export default class ItemDetail extends Vue {
     0,
     "/img/noImage.png",
     true,
-    this.currentTopping
+    this.currentToppingList
   );
-  //
 
   /**
    * VuexストアのGetter経由で受け取ったリクエストパラメータのIDから１件の従業員情報を取得する.
@@ -159,22 +126,23 @@ export default class ItemDetail extends Vue {
   async created(): Promise<void> {
     // 送られてきたリクエストパラメータのidをnumberに変換して取得する
     const itemId = parseInt(this.$route.params.id);
+    //
     const response = await axios.get(
       `http://153.127.48.168:8080/ecsite-api/item/${itemId}`
     );
     // 取得したJSONデータをコンソールに出力して確認
     console.dir("response1:" + JSON.stringify(response));
-    // Employeeオブジェクト型として代入
+    // Itemオブジェクト型として代入
     this.currentItem = new Item(
       response.data.item.id,
       response.data.item.type,
       response.data.item.name,
-      response.data.item.discription,
+      response.data.item.description,
       response.data.item.priceM,
       response.data.item.priceL,
       response.data.item.imagePath,
       response.data.item.deleted,
-      []
+      response.data.item.toppingList
     );
   }
 }
