@@ -111,62 +111,60 @@ export default class CartList extends Vue {
    * 注文商品一覧を取得する.
    仮でオブジェクト生成してます.
    */
-  // created(): void {
-  // }
   created(): void {
     this.cartList = this["$store"].getters.getCartList;
     // this.cartList = [
-    // 消すこと！！！
-    // new OrderItem(
-    //   1,
-    //   101,
-    //   1,
-    //   1,
-    //   "M",
-    //   new Item(
+    //   //消すこと！！！
+    //   new OrderItem(
+    //     1,
     //     101,
-    //     "toy",
-    //     "ビニールプール",
-    //     "商品説明",
-    //     1490,
-    //     2570,
-    //     "/img_toy/1.jpg",
-    //     false,
+    //     1,
+    //     1,
+    //     "M",
+    //     new Item(
+    //       101,
+    //       "toy",
+    //       "ビニールプール",
+    //       "商品説明",
+    //       1490,
+    //       2570,
+    //       "/img_toy/1.jpg",
+    //       false,
+    //       [
+    //         new Topping(1, "a", "aa", 100, 200),
+    //         new Topping(2, "b", "bb", 100, 200),
+    //       ]
+    //     ),
     //     [
-    //       new Topping(1, "a", "aa", 100, 200),
-    //       new Topping(2, "b", "bb", 100, 200),
+    //       new OrderTopping(1, 1, 1, new Topping(1, "aa", "aaa", 100, 200)),
+    //       new OrderTopping(2, 2, 2, new Topping(2, "bb", "bbb", 100, 200)),
     //     ]
     //   ),
-    //   [
-    //     new OrderTopping(1, 1, 1, new Topping(1, "aa", "aaa", 100, 200)),
-    //     new OrderTopping(2, 2, 2, new Topping(2, "bb", "bbb", 100, 200)),
-    //   ]
-    // ),
-    // new OrderItem(
-    //   2,
-    //   101,
-    //   1,
-    //   1,
-    //   "M",
-    //   new Item(
+    //   new OrderItem(
+    //     2,
     //     101,
-    //     "toy",
-    //     "ビニールプール",
-    //     "商品説明",
-    //     1490,
-    //     2570,
-    //     "/img_toy/1.jpg",
-    //     false,
+    //     1,
+    //     1,
+    //     "M",
+    //     new Item(
+    //       101,
+    //       "toy",
+    //       "ビニールプール",
+    //       "商品説明",
+    //       1490,
+    //       2570,
+    //       "/img_toy/1.jpg",
+    //       false,
+    //       [
+    //         new Topping(1, "a", "aa", 100, 200),
+    //         new Topping(2, "b", "bb", 100, 200),
+    //       ]
+    //     ),
     //     [
-    //       new Topping(1, "a", "aa", 100, 200),
-    //       new Topping(2, "b", "bb", 100, 200),
+    //       new OrderTopping(1, 1, 1, new Topping(1, "aa", "aaa", 100, 200)),
+    //       new OrderTopping(2, 2, 2, new Topping(2, "bb", "bbb", 100, 200)),
     //     ]
     //   ),
-    //   [
-    //     new OrderTopping(1, 1, 1, new Topping(1, "aa", "aaa", 100, 200)),
-    //     new OrderTopping(2, 2, 2, new Topping(2, "bb", "bbb", 100, 200)),
-    //   ]
-    // ),
     // ];
 
     console.dir("カートの中身:" + JSON.stringify(this.cartList));
@@ -212,7 +210,13 @@ export default class CartList extends Vue {
    * 「注文に進む」ボタンを押すと注文確認画面に遷移する.
    */
   goOrderPage(): void {
-    this["$router"].push("/orderConfirm");
+    //ログイン時パターン1か判定するフラグをtrueにする
+    this["$store"].state.goOrder = true;
+    if (this["$store"].state.isLogin === true) {
+      this["$router"].push("/orderConfirm");
+    } else {
+      this["$router"].push("/login");
+    }
   }
 }
 </script>

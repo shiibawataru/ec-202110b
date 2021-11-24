@@ -366,6 +366,12 @@ export default class OrderConfirm extends Vue {
    * カートの中身をindexから取得.
    */
   created(): void {
+    // ログインしていなければログイン画面へ遷移
+    if (this.$store.getters.getLoginStatus === false) {
+      this.$router.push("/login");
+      return;
+    }
+
     this.cartList = this["$store"].getters.getCartList;
     console.dir("カートの中身:" + JSON.stringify(this.cartList));
   }
