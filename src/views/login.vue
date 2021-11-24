@@ -4,7 +4,7 @@
       <div class="container">
         <div class="row login-page">
           <div class="col s12 z-depth-6 card-panel">
-            <div class="error">エラーメッセージ</div>
+            <div class="error">{{ errorMsg }}</div>
             <form class="login-form" action="employeeList.html">
               <div class="row"></div>
               <div class="row">
@@ -64,8 +64,12 @@ import axios from "axios";
 
 @Component
 export default class Login extends Vue {
+  //メールアドレス
   private mailAddress = "";
+  //パスワード
   private password = "";
+  //エラーメッセージ
+  private errorMsg = "";
 
   /**
    * ログイン情報を外部APIに送る.
@@ -78,6 +82,11 @@ export default class Login extends Vue {
         password: this.password,
       }
     );
+    console.dir("response:" + JSON.stringify(response));
+    //ログインに失敗した場合、エラーメッセージを表示させる
+    if (response.data.status === "error") {
+      this.errorMsg = response.data.message;
+    }
   }
 
   //   //async loginAdmin(): Promise<void> {
