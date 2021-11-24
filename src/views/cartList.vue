@@ -210,11 +210,13 @@ export default class CartList extends Vue {
    * 「注文に進む」ボタンを押すと注文確認画面に遷移する.
    */
   goOrderPage(): void {
-    //ログイン時パターン1か判定するフラグをtrueにする
-    this["$store"].state.goOrder = true;
-    if (this["$store"].state.isLogin === true) {
+    //初期化(goOrderフラグをfalseにする)
+    this.$store.commit("noGoOrdered");
+    if (this["$store"].getters.getLoginStatus) {
       this["$router"].push("/orderConfirm");
     } else {
+      //ログイン時パターン1か判定するフラグをtrueにする
+      this.$store.commit("goOrdered");
       this["$router"].push("/login");
     }
   }

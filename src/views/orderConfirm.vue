@@ -71,7 +71,7 @@
             <!-- 名前 -->
             <div class="error">{{ errorOfName }}</div>
             <input id="name" type="text" v-model="name" />
-            <label for="name">お名前</label>
+            <label for="name" v-show="!errorFlug">お名前</label>
           </div>
         </div>
         <div class="row">
@@ -79,7 +79,7 @@
             <!-- メールアドレス -->
             <div class="error">{{ errorOfMailAddess }}</div>
             <input id="email" type="email" v-model="mailAddress" />
-            <label for="email">メールアドレス</label>
+            <label for="email" v-show="!errorFlug">メールアドレス</label>
           </div>
         </div>
         <div class="row">
@@ -87,7 +87,7 @@
             <!-- 郵便番号 -->
             <div class="error">{{ errorOfZipCode }}</div>
             <input id="zipcode" type="text" maxlength="8" v-model="zipCode" />
-            <label for="zipcode">郵便番号</label>
+            <label for="zipcode" v-show="!errorFlug">郵便番号</label>
             <button class="btn" type="button" v-on:click="getAddress">
               <span>住所検索</span>
             </button>
@@ -98,7 +98,7 @@
             <!-- 住所 -->
             <div class="error">{{ errorOfAddress }}</div>
             <input id="address" type="text" v-model="address" />
-            <label for="address">住所</label>
+            <label for="address" v-show="!errorFlug">住所</label>
           </div>
         </div>
         <div class="row">
@@ -106,7 +106,7 @@
             <!-- 電話番号 -->
             <div class="error">{{ errorOfTelephone }}</div>
             <input id="tel" type="tel" v-model="telephone" />
-            <label for="tel">電話番号</label>
+            <label for="tel" v-show="!errorFlug">電話番号</label>
           </div>
         </div>
         <div class="row order-confirm-delivery-datetime">
@@ -114,7 +114,7 @@
             <!-- 配達日 -->
             <div class="error">{{ errorOfDeliveryDate }}</div>
             <input id="deliveryDate" type="date" v-model="deliveryDate" />
-            <label for="address">配達日時</label>
+            <label for="address" v-show="!errorFlug">配達日時</label>
           </div>
           <!-- 配達時間 -->
           <div class="error">{{ errorOfDelivarytime }}</div>
@@ -282,6 +282,8 @@ export default class OrderConfirm extends Vue {
   private paymentMethod = "";
   //カートの中身
   private cartList = new Array<OrderItem>();
+  //エラーの際、ラベルを非表示に
+  private errorFlug = false;
   // private cartList = new Array<OrderItem>(
   //   new OrderItem(
   //     1,
@@ -412,6 +414,7 @@ export default class OrderConfirm extends Vue {
    * 注文したい内容(indexのカートの配列)をAPIに送る.
    */
   async order(): Promise<void> {
+    this.errorFlug = false;
     //エラーコーナー
     this.errorOfName = "";
     this.errorOfMailAddess = "";
@@ -484,6 +487,7 @@ export default class OrderConfirm extends Vue {
       this.errorOfDeliveryDate != "" ||
       this.errorOfDelivarytime != ""
     ) {
+      this.errorFlug = true;
       return;
     }
 
@@ -502,10 +506,8 @@ export default class OrderConfirm extends Vue {
     }
 
     //APIに配達情報を送る
-
     try {
       await axios.post("http://153.127.48.168:8080/ecsite-api/order", {
-        //★ユーザIDを持ってくる
         userId: String(this["$store"].getters.getUserId),
         status: String(this.paymentMethod),
         totalPrice: String(Math.floor(this.taxIncludePrice)),
