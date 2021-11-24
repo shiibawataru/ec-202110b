@@ -234,6 +234,7 @@
         </button>
       </div>
     </div>
+    <button type="button" v-on:click="credit">決済確認ボタン</button>
   </div>
 </template>
 
@@ -367,16 +368,16 @@ export default class OrderConfirm extends Vue {
   /**
    * カートの中身をindexから取得.
    */
-  created(): void {
-    // ログインしていなければログイン画面へ遷移
-    if (this.$store.getters.getLoginStatus === false) {
-      this.$router.push("/login");
-      return;
-    }
+  // created(): void {
+  //   // ログインしていなければログイン画面へ遷移
+  //   if (this.$store.getters.getLoginStatus === false) {
+  //     this.$router.push("/login");
+  //     return;
+  //   }
 
-    this.cartList = this["$store"].getters.getCartList;
-    console.dir("カートの中身:" + JSON.stringify(this.cartList));
-  }
+  //   this.cartList = this["$store"].getters.getCartList;
+  //   console.dir("カートの中身:" + JSON.stringify(this.cartList));
+  // }
 
   /**
    * 郵便番号から住所を取得.
@@ -528,6 +529,23 @@ export default class OrderConfirm extends Vue {
     if (this.orderError === "") {
       this.$router.push("/orderFinished");
     }
+  }
+
+  async credit(): Promise<void> {
+    const response = await axios.post(
+      "http://153.127.48.168:8080/sample-credit-card-web-api/credit-card/payment ",
+      {
+        user_id: 1111, //利用者ID
+        order_number: 12345678901234, //数字14桁注文no
+        amount: 1234567890, //数字10桁の決済金額
+        card_number: 12345678901234, //クレジットカード番号
+        card_exp_year: 2023, //有効期限年
+        card_exp_month: 8, //有効期限月
+        card_name: "TARO", //名義
+        card_cvv: 123, //数字3桁or4桁のセキュリティコード
+      }
+    );
+    console.dir(JSON.stringify(response));
   }
 
   get tax(): string {
