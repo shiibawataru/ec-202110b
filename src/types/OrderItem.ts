@@ -78,25 +78,19 @@ export class OrderItem {
     this._orderToppingList = orderToppingList;
   }
 
-  public get totalToppingPrice(): number {
-    let price = 0;
-    if (this.size === "M") {
-      price = Number(200 * this.item.toppingList.length);
-    } else if (this.size === "L") {
-      price = Number(300 * this.item.toppingList.length);
-    }
-    return price;
-  }
-
   public get totalPrice(): number {
     let price = 0;
+    const toppingPriceM = this.orderToppingList[0].topping.priceM;
+    const toppingPriceL = this.orderToppingList[0].topping.priceL;
     if (this.size === "M") {
       price = Number(
-        (this.item.priceM + this.totalToppingPrice) * this.quantity
+        this.item.priceM * this.quantity +
+          toppingPriceM * this.orderToppingList.length
       );
     } else if (this.size === "L") {
       price = Number(
-        (this.item.priceL + this.totalToppingPrice) * this.quantity
+        this.item.priceL * this.quantity +
+          toppingPriceL * this.orderToppingList.length
       );
     }
     return price;

@@ -10,12 +10,13 @@
 
         <div class="header-right">
           <router-link to="/itemList">商品一覧</router-link>
-          <a href="register_admin.html">会員登録</a>
-          <a href="#"><i class="fas fa-shopping-cart"></i>カート</a>
-          <a href="login.html" class="login">
+          <router-link to="/registerAdmin">商会員登録</router-link>
+          <router-link to="/cartList">
+            <i class="fas fa-shopping-cart"></i>カート</router-link
+          >
+          <router-link to="/login">
             <i class="fas fa-sign-in-alt"></i>ログイン
-          </a>
-
+          </router-link>
           <a href="order_history.html">注文履歴</a>
         </div>
       </div>

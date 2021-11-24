@@ -31,16 +31,19 @@
                 >&nbsp;&nbsp;{{ cartListItem.item.priceL.toLocaleString() }}円
                 &nbsp;&nbsp;{{ cartListItem.quantity }}個
               </td>
-              <td
-                v-for="topping of cartListItem.item.toppingList"
-                :key="topping.id"
-              >
-                <ul>
+              <td>
+                <ul
+                  v-for="orderTopping of cartListItem.orderToppingList"
+                  :key="orderTopping.id"
+                >
                   <li v-if="cartListItem.size === 'M'">
-                    {{ topping.name }}{{ topping.priceM }}円
+                    {{ orderTopping.topping.name }}&emsp;{{
+                      orderTopping.topping.priceM
+                    }}円
                   </li>
                   <li v-if="cartListItem.size === 'L'">
-                    {{ topping.name }}{{ topping.priceL }}円
+                    {{ orderTopping.topping.name }} &emsp;
+                    {{ orderTopping.topping.priceL }}円
                   </li>
                 </ul>
               </td>
@@ -56,7 +59,9 @@
 
       <div class="row cart-total-price">
         <div>消費税：{{ tax }}円</div>
-        <div>ご注文金額合計：{{ taxIncludePrice }}円 (税込)</div>
+        <div>
+          ご注文金額合計：{{ taxIncludePrice.toLocaleString() }}円 (税込)
+        </div>
       </div>
 
       <h2 class="page-title">お届け先情報</h2>
@@ -81,8 +86,8 @@
           <div class="input-field">
             <!-- 郵便番号 -->
             <div class="error">{{ errorOfZipCode }}</div>
-            <input id="zipcode" type="text" maxlength="7" v-model="zipCode" />
-            <label for="zipcode">郵便番号(ハイフンなし)</label>
+            <input id="zipcode" type="text" maxlength="8" v-model="zipCode" />
+            <label for="zipcode">郵便番号</label>
             <button class="btn" type="button">
               <span>住所検索</span>
             </button>
@@ -169,15 +174,30 @@
             <span>15時</span>
           </label>
           <label class="order-confirm-delivery-time">
-            <input name="deliveryTime" type="radio" value="16" />
+            <input
+              name="deliveryTime"
+              type="radio"
+              value="16"
+              v-model="delivaryTime"
+            />
             <span>16時</span>
           </label>
           <label class="order-confirm-delivery-time">
-            <input name="deliveryTime" type="radio" value="17" />
+            <input
+              name="deliveryTime"
+              type="radio"
+              value="17"
+              v-model="delivaryTime"
+            />
             <span>17時</span>
           </label>
           <label class="order-confirm-delivery-time">
-            <input name="deliveryTime" type="radio" value="18" />
+            <input
+              name="deliveryTime"
+              type="radio"
+              value="18"
+              v-model="delivaryTime"
+            />
             <span>18時</span>
           </label>
         </div>
@@ -197,7 +217,12 @@
             <span>代金引換</span>
           </label>
           <label class="order-confirm-payment-method-radio">
-            <input name="paymentMethod" type="radio" value="2" />
+            <input
+              name="paymentMethod"
+              type="radio"
+              value="2"
+              v-model="paymentMethod"
+            />
             <span>クレジットカード</span>
           </label>
         </span>
@@ -213,9 +238,12 @@
 
 <script lang="ts">
 import { OrderItem } from "@/types/OrderItem";
+import { OrderTopping } from "@/types/OrderTopping";
+import { Topping } from "@/types/Topping";
 import { Item } from "@/types/Item";
 import { Component, Vue } from "vue-property-decorator";
 import axios from "axios";
+import { format, addHours } from "date-fns";
 
 @Component
 export default class OrderConfirm extends Vue {
@@ -250,27 +278,86 @@ export default class OrderConfirm extends Vue {
   //支払い方法
   private paymentMethod = "";
   //カートの中身
-  private cartList = new Array<OrderItem>(
-    new OrderItem(
-      1,
-      2,
-      3,
-      4,
-      "L",
-      new Item(
-        100,
-        "タイプ",
-        "名前",
-        "説明",
-        2000,
-        3000,
-        "/img/4.jpg",
-        true,
-        []
-      ),
-      []
-    )
-  );
+  private cartList = this["$store"].getters.getCartList;
+  // private cartList = new Array<OrderItem>(
+  //   new OrderItem(
+  //     1,
+  //     101,
+  //     3,
+  //     2,
+  //     "L",
+  //     new Item(
+  //       101,
+  //       "toy",
+  //       "ビニールプール",
+  //       "説明",
+  //       1490,
+  //       2570,
+  //       "/img_toy/1.jpg",
+  //       true,
+  //       [
+  //         new Topping(106, "toy", "単二電池４本", 200, 300),
+  //         new Topping(105, "toy", "単一電池４本", 200, 300),
+  //         new Topping(104, "toy", "片付け用きんちゃく袋", 200, 300),
+  //       ]
+  //     ),
+  //     [
+  //       new OrderTopping(
+  //         10,
+  //         106,
+  //         101,
+  //         new Topping(106, "toy", "単二電池４本", 200, 300)
+  //       ),
+  //       new OrderTopping(
+  //         20,
+  //         105,
+  //         101,
+  //         new Topping(105, "toy", "単一電池４本", 200, 300)
+  //       ),
+  //       new OrderTopping(
+  //         30,
+  //         104,
+  //         101,
+  //         new Topping(104, "toy", "片付け用きんちゃく袋", 200, 300)
+  //       ),
+  //     ]
+  //   ),
+  //   new OrderItem(
+  //     2,
+  //     101,
+  //     3,
+  //     4,
+  //     "M",
+  //     new Item(
+  //       101,
+  //       "toy",
+  //       "ビニールプール",
+  //       "説明",
+  //       1490,
+  //       2570,
+  //       "/img_toy/1.jpg",
+  //       true,
+  //       [
+  //         new Topping(102, "toy", "女の子用シール", 200, 300),
+  //         new Topping(101, "toy", "男の子用シール", 200, 300),
+  //       ]
+  //     ),
+  //     [
+  //       new OrderTopping(
+  //         10,
+  //         102,
+  //         101,
+  //         new Topping(102, "toy", "女の子用シール", 200, 300)
+  //       ),
+  //       new OrderTopping(
+  //         20,
+  //         101,
+  //         101,
+  //         new Topping(101, "toy", "男の子用シール", 200, 300)
+  //       ),
+  //     ]
+  //   )
+  // );
 
   /**
    * 注文したい内容(indexのカートの配列)をAPIに送る.
@@ -319,8 +406,25 @@ export default class OrderConfirm extends Vue {
       this.errorOfDelivarytime = "配達時間を入力して下さい";
     }
     const now = new Date();
-    const nowTime = now.getHours;
-    if (Number(this.delivaryTime) - Number(nowTime) <= 3) {
+    const nowAdd3Hours = addHours(now, 3);
+
+    //配達日時をnewDateの形にする
+    const MOON_ADJUSTMENT = 1;
+    const year = Number(this.deliveryDate.substr(0, 4));
+    const month = Number(this.deliveryDate.substr(5, 2));
+    const day = Number(this.deliveryDate.substr(8, 2));
+    const ymdh = new Date(
+      year,
+      month - MOON_ADJUSTMENT,
+      day,
+      Number(this.delivaryTime)
+    );
+    const delivery = format(
+      new Date(year, month - MOON_ADJUSTMENT, day, Number(this.delivaryTime)),
+      "yyyy/MM/dd HH:mm:ss"
+    );
+
+    if (ymdh <= nowAdd3Hours) {
       this.errorOfDelivarytime = "今から3時間後の日時をご入力ください";
     }
 
@@ -335,34 +439,41 @@ export default class OrderConfirm extends Vue {
     ) {
       return;
     }
-    const year = Number(this.deliveryDate.substr(0, 4));
-    const month = Number(this.deliveryDate.substr(5, 2));
-    const day = Number(this.deliveryDate.substr(8, 2));
 
-    const delivery = new Date(year, month, day, Number(this.delivaryTime));
-    for (const cartItem of this.cartList) {
-      const response = await axios.post(
-        "http://153.127.48.168:8080/ecsite-api/order",
-        {
-          userId: cartItem.id,
-          status: this.paymentMethod,
-          totalPrice: this.taxIncludePrice,
-          destinationName: this.name,
-          destinationEmail: this.mailAddress,
-          destinationZipcode: this.zipCode,
-          destinationAddress: this.address,
-          destinationTel: this.telephone,
-          deliveryTime: delivery,
-          paymentMethod: this.paymentMethod,
-          orderItemFormList: {
-            itemId: cartItem.item.id,
-            quantity: cartItem.quantity,
-            size: cartItem.size,
-          },
-        }
-      );
-      console.dir("response:" + JSON.stringify(response));
+    //注文商品情報の配列を作成
+    const orderItems = [];
+    const toppings = [];
+    for (const cartListItem of this.cartList) {
+      orderItems.push({
+        itemId: cartListItem.itemId,
+        quantity: cartListItem.quantity,
+        size: cartListItem.size,
+      });
+      for (const topping of cartListItem.orderToppingList) {
+        toppings.push(topping.toppingId);
+      }
     }
+
+    //APIに配達情報を送る
+    const response = await axios.post(
+      "http://153.127.48.168:8080/ecsite-api/order",
+      {
+        //★ユーザIDを持ってくる
+        userId: "1111",
+        status: String(this.paymentMethod),
+        totalPrice: String(Math.floor(this.taxIncludePrice)),
+        destinationName: this.name,
+        destinationEmail: this.mailAddress,
+        destinationZipcode: this.zipCode,
+        destinationAddress: this.address,
+        destinationTel: this.telephone,
+        deliveryTime: delivery,
+        paymentMethod: String(this.paymentMethod),
+        orderItemFormList: orderItems,
+        orderToppingFormList: toppings,
+      }
+    );
+    console.dir("response:" + JSON.stringify(response));
   }
 
   get tax(): string {
@@ -373,12 +484,12 @@ export default class OrderConfirm extends Vue {
     return (price * 0.1).toLocaleString();
   }
 
-  get taxIncludePrice(): string {
+  get taxIncludePrice(): number {
     let price = 0;
     for (const cartListItem of this.cartList) {
       price += cartListItem.totalPrice;
     }
-    return (price * 1.1).toLocaleString();
+    return price * 1.1;
   }
 
   // 終わり
