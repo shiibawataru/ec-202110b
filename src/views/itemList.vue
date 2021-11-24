@@ -22,6 +22,7 @@
       </form>
     </div>
     <!-- item list -->
+
     <div class="item-wrapper">
       <div class="container">
         <div class="items">
@@ -65,6 +66,8 @@ export default class ItemList extends Vue {
   private searchWord = "";
   // 検索エラーメッセージ
   private errorOfSearch = "";
+  //何順か
+  private sort = "安い";
 
   /**
    * Vuexストアのアクション経由で非同期でWebAPIから従業員一覧を取得する.
@@ -143,6 +146,39 @@ export default class ItemList extends Vue {
       this.displayList.push(this.itemList[i]);
     }
   }
+
+  /**
+   * 並び替え
+   */
+  sortChange(): void {
+    //安い順
+    if (this.sort === "安い") {
+      this.itemList.sort(function (boforeItems, afterItems) {
+        if (afterItems.priceM > boforeItems.priceM) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+    }
+    //高い順
+    if (this.sort === "安い") {
+      this.itemList.sort(function (boforeItems, afterItems) {
+        if (afterItems.priceM > boforeItems.priceM) {
+          return 1;
+        } else {
+          return -1;
+        }
+      });
+    }
+    //名前順
+    if (this.sort === "名前") {
+      this.itemList.sort((boforeItems, afterItems) =>
+        boforeItems.name.localeCompare(afterItems.name, "ja")
+      );
+    }
+  }
+
   // 終わり
 }
 </script>
