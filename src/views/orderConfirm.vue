@@ -359,6 +359,14 @@ export default class OrderConfirm extends Vue {
   //   )
   // );
 
+  created(): void {
+    // ログインしていなければログイン画面へ遷移
+    if (this.$store.getters.getLoginStatus === false) {
+      this.$router.push("/login");
+      return;
+    }
+  }
+
   /**
    * 注文したい内容(indexのカートの配列)をAPIに送る.
    */
