@@ -1,8 +1,8 @@
 <template>
   <footer>
     <div class="container">
-      <img src="img/header_logo.png" />
-      <p>アロハな気分をあなたにお届け！</p>
+      <img src="/img_toy/header_logo.png" />
+      <p>話題のおもちゃが続々登場！</p>
     </div>
   </footer>
 </template>

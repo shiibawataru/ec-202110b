@@ -4,7 +4,7 @@
       <div class="header">
         <div class="header-left">
           <a href="top.html">
-            <img class="logo" src="img/header_logo.png" />
+            <img class="logo" src="/img_toy/header_logo.png" />
           </a>
         </div>
 
