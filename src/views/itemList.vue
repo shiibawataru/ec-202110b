@@ -25,7 +25,7 @@
     <div class="item-wrapper">
       <div class="container">
         <div class="items">
-          <ul v-for="item of itemList" v-bind:key="item.id">
+          <ul v-for="item of displayList" v-bind:key="item.id">
             <div class="item">
               <div class="item-icon">
                 <img v-bind:src="item.imagePath" />
@@ -37,10 +37,14 @@
             </div>
           </ul>
         </div>
-        <span v-for="num of pageNumber" :key="num"
-          ><span class="row order-confirm-btn"
-            ><button class="btn" type="button">{{ num }}</button></span
-          ></span
+        <span
+          v-for="num of pageNumber"
+          :key="num"
+          class="row order-confirm-btn pageBtn"
+        >
+          <button class="btn" type="button" v-on:click="display(num)">
+            {{ num }}
+          </button></span
         >
       </div>
     </div>
@@ -55,6 +59,8 @@ import { Item } from "@/types/Item";
 export default class ItemList extends Vue {
   // 商品一覧
   private itemList: Array<Item> = [];
+  //表示する商品一覧
+  private displayList = new Array<Item>();
   // 曖昧検索ワード
   private searchWord = "";
   // 検索エラーメッセージ
@@ -73,123 +79,76 @@ export default class ItemList extends Vue {
   async created(): Promise<void> {
     await this["$store"].dispatch("getItemList");
     this.itemList = this["$store"].getters.getItemList;
+    this.startDisplay();
   }
 
   // 曖昧検索
   onclicksearch(): void {
-    this.itemList = this.itemList.filter((item) =>
+    //初期値リセット
+    this.errorOfSearch = "";
+    this.displayList.splice(0, this.displayList.length);
+    //検索する
+    this.displayList = this.itemList.filter((item) =>
       item.name.includes(this.searchWord)
     );
     // 該当商品がない場合はエラーメーセージの表示と全件表示
-    if (this.itemList.length === 0) {
+    if (this.displayList.length === 0 || this.searchWord === "") {
       this.errorOfSearch = "該当する商品がありません";
-      this.itemList = this["$store"].getters.getItemList;
+      this.startDisplay();
     }
   }
 
   /**
-   * ページ用配列作成
+   * ページボタン用配列作成.
    */
   get pageNumber(): Array<number> {
-    this.itemList.length;
-    const array = [1, 2, 3];
+    let btn = 0;
+    if (this.itemList.length % 6 === 0) {
+      btn = this.itemList.length / 6;
+    } else {
+      btn = Math.floor(this.itemList.length / 6) + 1;
+    }
+    const array = [];
+    for (let i = 1; i <= btn; i++) {
+      array.push(i);
+    }
     return array;
   }
+
+  /**
+   * 初期表示用.
+   */
+  startDisplay(): void {
+    this.displayList.splice(0, this.displayList.length);
+    for (let i = 0; i <= 5; i++) {
+      this.displayList.push(this.itemList[i]);
+    }
+  }
+
+  /**
+   * 表示数変更.
+   */
+  display(num: string): void {
+    const pageNum = Number(num);
+    //初期値リセット
+    this.displayList.splice(0, this.displayList.length);
+    //表示する情報の始めと終わりを決める
+    const start = 6 * (pageNum - 1);
+    let end = 6 * pageNum - 1;
+    if (end > this.itemList.length) {
+      end = this.itemList.length;
+    }
+    //表示用配列にpush
+    for (let i = start; i <= end; i++) {
+      this.displayList.push(this.itemList[i]);
+    }
+  }
+  // 終わり
 }
 </script>
 <style scoped>
-/* ========================================
-    商品一覧ページのスタイル
-   ======================================== */
-
-/* ========================================
-    search-wrapperの設定
-   ======================================== */
-
-.search-wrapper {
-  padding: 80px 0 50px 0; /* 上はヘッダが来るのでその分180px分空ける */
-  /* text-align: center; */
-  position: fixed; /* スクロールしても表示されるように位置を固定 */
-  height: 180px;
-  width: 100%;
-  background-color: rgba(255, 255, 255, 0.9);
-  z-index: 1; /* 上に表示されるようにする(数が多いほど上に来る。例えば-1にすると裏側に行き見えなくなります) */
-  padding-top: 0;
-  margin-top: 0;
-}
-
-.search-form {
-  margin: auto; /*検索窓を中央に配置*/
-  width: 40%;
-  text-align: center;
-}
-
-.search-name-input {
-  height: 30px;
-  padding: 5px 10px;
-  font-size: 12px;
-  line-height: 1.5;
-  border-radius: 3px;
-  /* display: block; */
-  width: 30%;
-  color: #555;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  font-family: inherit;
-  margin: 0;
-  text-rendering: auto;
-  letter-spacing: normal;
-  word-spacing: normal;
-  text-transform: none;
-  text-indent: 0px;
-  text-shadow: none;
-  text-align: start;
-  appearance: auto;
-  -webkit-rtl-ordering: logical;
-  cursor: text;
-}
-
-.search-btn {
-  color: #fff;
-  background-color: #337ab7;
-  border-color: #2e6da4;
-  display: inline-block;
-  padding: 6px 12px;
-  margin-bottom: 0;
-  font-size: 14px;
-  font-weight: normal;
-  line-height: 1.42857143;
-  text-align: center;
-  white-space: nowrap;
-  vertical-align: middle;
-  touch-action: manipulation;
-  cursor: pointer;
-  user-select: none;
-  background-image: none;
-  border: 1px solid transparent;
-  border-radius: 4px;
-}
-
 .errorMessage {
   color: red;
-}
-
-/* ========================================
-    item-wrapperの設定
-   ======================================== */
-
-.item-wrapper {
-  padding-top: 200px; /* 上はヘッダや検索フォームが来るのでその分空ける */
-  padding-bottom: 80px;
-  padding-left: 15%;
-  padding-right: 5%;
-  background-color: #f7f7f7;
-  text-align: center;
-}
-
-.items {
-  display: flex;
-  flex-wrap: wrap; /*表示内容が多かった時に自動的に複数行に分割される */
 }
 
 .item {
@@ -197,18 +156,20 @@ export default class ItemList extends Vue {
   width: 320px;
 }
 
-.item-icon img {
-  margin: auto;
-  display: block;
-  border-radius: 30px;
-  width: 200px;
-  height: 200px;
-  padding: 0 0 15px 0;
+.item-wrapper {
+  padding-top: 0;
+  margin-top: 0;
 }
 
-/* サイズをオレンジ〇で囲む */
-.price {
-  background-color: #ff4500;
-  border-radius: 50%; /* 角丸にする設定 */
+.container {
+  padding: 30px;
+}
+
+.pageBtn {
+  display: inline-flex;
+}
+
+.btn {
+  margin-right: 30px;
 }
 </style>
