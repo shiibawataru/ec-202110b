@@ -4,18 +4,22 @@
       <div class="header">
         <div class="header-left">
           <a href="top.html">
-            <img class="logo" src="img/header_logo.png" />
+            <img class="logo" src="/img_toy/header_logo.png" />
           </a>
         </div>
 
         <div class="header-right">
           <router-link to="/itemList">商品一覧</router-link>
-          <a href="register_admin.html">会員登録</a>
-          <a href="#"><i class="fas fa-shopping-cart"></i>カート</a>
-          <a href="login.html" class="login">
+          <router-link to="registerAdmin">会員登録</router-link>
+          <router-link to="/cartList">
+            <i class="fas fa-shopping-cart"></i>カート</router-link
+          >
+          <router-link to="/login" v-if="isLogin === false">
             <i class="fas fa-sign-in-alt"></i>ログイン
-          </a>
-
+          </router-link>
+          <router-link to="/logout" v-if="isLogin === true">
+            <i class="fas fa-sign-in-alt"></i>ログアウト
+          </router-link>
           <a href="order_history.html">注文履歴</a>
         </div>
       </div>
@@ -26,7 +30,11 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 @Component
-export default class Header extends Vue {}
+export default class Header extends Vue {
+  get isLogin(): boolean {
+    return this.$store.getters.getLoginStatus;
+  }
+}
 </script>
 
 <style scoped>

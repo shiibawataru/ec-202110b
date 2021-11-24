@@ -77,4 +77,22 @@ export class OrderItem {
   public set orderToppingList(orderToppingList: Array<OrderTopping>) {
     this._orderToppingList = orderToppingList;
   }
+
+  public get totalPrice(): number {
+    let price = 0;
+    const toppingPriceM = this.orderToppingList[0].topping.priceM;
+    const toppingPriceL = this.orderToppingList[0].topping.priceL;
+    if (this.size === "M") {
+      price = Number(
+        this.item.priceM * this.quantity +
+          toppingPriceM * this.orderToppingList.length
+      );
+    } else if (this.size === "L") {
+      price = Number(
+        this.item.priceL * this.quantity +
+          toppingPriceL * this.orderToppingList.length
+      );
+    }
+    return price;
+  }
 }

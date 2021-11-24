@@ -55,7 +55,17 @@ export default class ItemList extends Vue {
   private searchWord = "";
   // 検索エラーメッセージ
   private errorOfSearch = "";
-  //
+
+  /**
+   * Vuexストアのアクション経由で非同期でWebAPIから従業員一覧を取得する.
+   *
+   * @remarks
+   * Vueインスタンスが生成されたタイミングで
+   * Vuexストア内のアクションを呼ぶ(ディスパッチする)。
+   * ライフサイクルフックのcreatedイベント利用。
+   *
+   * 取得してからゲットするため、async awaitを利用している。
+   */
   async created(): Promise<void> {
     await this["$store"].dispatch("getItemList");
     this.itemList = this["$store"].getters.getItemList;
@@ -168,8 +178,8 @@ export default class ItemList extends Vue {
 }
 
 .item {
-  flex: 0 0 320px; /* paddingやborder含むitem全体の横幅を320pxにする */
   padding: 20px;
+  width: 320px;
 }
 
 .item-icon img {
