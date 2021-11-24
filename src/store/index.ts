@@ -8,6 +8,8 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    // ログインされているかどうかのフラグ(ログイン時:true/ログアウト時:false)
+    isLogin: false,
     //全商品情報
     items: new Array<Item>(),
     //カートの商品情報

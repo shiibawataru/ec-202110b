@@ -84,6 +84,9 @@ export default class Login extends Vue {
     );
     console.dir("response:" + JSON.stringify(response));
     //ログインに失敗した場合、エラーメッセージを表示させる
+    if (response.data.status === "success") {
+      this["$store"].state.isLogin = true;
+    }
     if (response.data.status === "error") {
       this.errorMsg = response.data.message;
     }
