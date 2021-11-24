@@ -1,25 +1,25 @@
 <template>
   <div>
     <!-- search form -->
-    <div class="search-wrapper">
-      <div class="container">
-        <form method="post" class="search-form">
-          <div class="errorMessage">{{ errorOfSearch }}</div>
-          <input
-            type="text"
-            name="name"
-            class="search-name-input"
-            v-model="searchWord"
-          />
+    <div class="container">
+      <form method="post" class="search-form">
+        <span class="errorMessage">{{ errorOfSearch }}</span>
+        <input
+          type="text"
+          name="name"
+          class="search-name-input"
+          v-model="searchWord"
+        />
+        <span class="row order-confirm-btn">
           <button
             class="btn search-btn"
             type="button"
             v-on:click="onclicksearch"
           >
-            <span>検索</span>
+            検索
           </button>
-        </form>
-      </div>
+        </span>
+      </form>
     </div>
     <!-- item list -->
     <div class="item-wrapper">
@@ -37,6 +37,11 @@
             </div>
           </ul>
         </div>
+        <span v-for="num of pageNumber" :key="num"
+          ><span class="row order-confirm-btn"
+            ><button class="btn" type="button">{{ num }}</button></span
+          ></span
+        >
       </div>
     </div>
   </div>
@@ -71,6 +76,15 @@ export default class ItemList extends Vue {
       this.itemList = this["$store"].getters.getItemList;
     }
   }
+
+  /**
+   * ページ用配列作成
+   */
+  get pageNumber(): Array<number> {
+    this.itemList.length;
+    const array = [1, 2, 3];
+    return array;
+  }
 }
 </script>
 <style scoped>
@@ -83,13 +97,15 @@ export default class ItemList extends Vue {
    ======================================== */
 
 .search-wrapper {
-  padding: 80px 0 50px 0; /*上はヘッダが来るのでその分180px分空ける*/
+  padding: 80px 0 50px 0; /* 上はヘッダが来るのでその分180px分空ける */
   /* text-align: center; */
   position: fixed; /* スクロールしても表示されるように位置を固定 */
   height: 180px;
   width: 100%;
   background-color: rgba(255, 255, 255, 0.9);
   z-index: 1; /* 上に表示されるようにする(数が多いほど上に来る。例えば-1にすると裏側に行き見えなくなります) */
+  padding-top: 0;
+  margin-top: 0;
 }
 
 .search-form {
