@@ -9,14 +9,15 @@
         </div>
 
         <div class="header-right">
-        <router-link to="/itemList">商品一覧</router-link>
+          <router-link to="/itemList">商品一覧</router-link>
           <router-link to="registerAdmin">会員登録</router-link>
           <router-link to="/cartList">
-            <i class="fas fa-shopping-cart"></i>カート</router-link>
+            <i class="fas fa-shopping-cart"></i>カート</router-link
+          >
           <router-link to="/login">
             <i class="fas fa-sign-in-alt"></i>ログイン
           </router-link>
-          <a href="order_history.html">注文履歴</a>
+          <router-link to="/orderHistory">注文履歴</router-link>
         </div>
       </div>
     </div>
