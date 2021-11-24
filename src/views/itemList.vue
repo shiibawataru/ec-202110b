@@ -19,6 +19,18 @@
             検索
           </button>
         </span>
+        <div>
+          <select
+            name="sort"
+            v-model="sort"
+            class="browser-default"
+            v-on:change="sortChange"
+          >
+            <option value="安い" selected>価格順(安い順)</option>
+            <option value="高い">価格順(高い順)</option>
+            <option value="名前">名前順</option>
+          </select>
+        </div>
       </form>
     </div>
     <!-- item list -->
@@ -148,9 +160,10 @@ export default class ItemList extends Vue {
   }
 
   /**
-   * 並び替え
+   * 並び替え.
    */
   sortChange(): void {
+    console.log(this.sort);
     //安い順
     if (this.sort === "安い") {
       this.itemList.sort(function (boforeItems, afterItems) {
@@ -162,7 +175,7 @@ export default class ItemList extends Vue {
       });
     }
     //高い順
-    if (this.sort === "安い") {
+    if (this.sort === "高い") {
       this.itemList.sort(function (boforeItems, afterItems) {
         if (afterItems.priceM > boforeItems.priceM) {
           return 1;
@@ -177,6 +190,7 @@ export default class ItemList extends Vue {
         boforeItems.name.localeCompare(afterItems.name, "ja")
       );
     }
+    this.startDisplay();
   }
 
   // 終わり
