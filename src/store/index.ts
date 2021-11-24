@@ -17,6 +17,8 @@ export default new Vuex.Store({
     items: new Array<Item>(),
     //カートの商品情報
     cartList: new Array<OrderItem>(),
+    //ログインしているユーザID
+    userId: "",
   },
   mutations: {
     /**
@@ -71,6 +73,13 @@ export default new Vuex.Store({
     deleteItem(state, index) {
       state.cartList.splice(index, 1);
     },
+
+    /**
+     * ログイン中のユーザIDを取得する.
+     */
+    loginUserId(state, userId) {
+      state.userId = userId;
+    },
   }, // end mutations
   actions: {
     /**
@@ -117,6 +126,15 @@ export default new Vuex.Store({
      */
     getCartList(state) {
       return state.cartList;
+    },
+
+    /**
+     * ユーザIDを返す.
+     * @param state ステート
+     * @returns ユーザID
+     */
+    getUserId(state) {
+      return state.userId;
     },
   },
   plugins: [

@@ -88,7 +88,7 @@
             <div class="error">{{ errorOfZipCode }}</div>
             <input id="zipcode" type="text" maxlength="8" v-model="zipCode" />
             <label for="zipcode">郵便番号</label>
-            <button class="btn" type="button">
+            <button class="btn" type="button" v-on:click="getAddress">
               <span>住所検索</span>
             </button>
           </div>
@@ -227,6 +227,7 @@
           </label>
         </span>
       </div>
+      <div class="error orderError">{{ this.orderError }}</div>
       <div class="row order-confirm-btn">
         <button class="btn" type="button" v-on:click="order">
           <span>この内容で注文する</span>
@@ -247,6 +248,8 @@ import { format, addHours } from "date-fns";
 
 @Component
 export default class OrderConfirm extends Vue {
+  //注文のエラー
+  private orderError = "";
   //名前
   private name = "";
   //名前のエラー
@@ -278,7 +281,7 @@ export default class OrderConfirm extends Vue {
   //支払い方法
   private paymentMethod = "";
   //カートの中身
-  private cartList = this["$store"].getters.getCartList;
+  private cartList = new Array<OrderItem>();
   // private cartList = new Array<OrderItem>(
   //   new OrderItem(
   //     1,
@@ -368,11 +371,49 @@ export default class OrderConfirm extends Vue {
   }
 
   /**
+   * カートの中身をindexから取得.
+   */
+  created(): void {
+    this.cartList = this["$store"].getters.getCartList;
+    console.dir("カートの中身:" + JSON.stringify(this.cartList));
+  }
+
+  /**
+   * 郵便番号から住所を取得.
+   */
+  async getAddress(): Promise<void> {
+    //初期値リセット(住所、住所エラー)
+    this.address = "";
+    this.errorOfAddress = "";
+    //郵便番号から住所を取得APIに郵便番号を送る
+    try {
+      // const axios = require("axios");
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const axiosJsonpAdapter = require("axios-jsonp");
+
+      const response = await axios.get("https://zipcoda.net/api", {
+        adapter: axiosJsonpAdapter,
+        params: {
+          zipcode: this.zipCode,
+        },
+      });
+      //成功したら住所に取得したデータを代入
+      if (response.data.length === 1) {
+        this.address =
+          response.data.items[0].state_name + response.data.items[0].address;
+        //失敗したらエラーを出す
+      } else {
+        this.errorOfAddress = "住所が見つかりません";
+      }
+    } catch (e) {
+      this.errorOfAddress = "住所が見つかりません";
+    }
+  }
+
+  /**
    * 注文したい内容(indexのカートの配列)をAPIに送る.
    */
   async order(): Promise<void> {
-    // this.cartList = this["$store"].getters.getCartList;
-
     //エラーコーナー
     this.errorOfName = "";
     this.errorOfMailAddess = "";
@@ -410,9 +451,6 @@ export default class OrderConfirm extends Vue {
     if (this.deliveryDate === "") {
       this.errorOfDeliveryDate = "配達日を入力して下さい";
     }
-    if (this.delivaryTime === "") {
-      this.errorOfDelivarytime = "配達時間を入力して下さい";
-    }
     const now = new Date();
     const nowAdd3Hours = addHours(now, 3);
 
@@ -434,6 +472,9 @@ export default class OrderConfirm extends Vue {
 
     if (ymdh <= nowAdd3Hours) {
       this.errorOfDelivarytime = "今から3時間後の日時をご入力ください";
+    }
+    if (this.delivaryTime === "") {
+      this.errorOfDelivarytime = "配達時間を入力して下さい";
     }
 
     if (
@@ -463,11 +504,11 @@ export default class OrderConfirm extends Vue {
     }
 
     //APIに配達情報を送る
-    const response = await axios.post(
-      "http://153.127.48.168:8080/ecsite-api/order",
-      {
+
+    try {
+      await axios.post("http://153.127.48.168:8080/ecsite-api/order", {
         //★ユーザIDを持ってくる
-        userId: "1111",
+        userId: String(this["$store"].getters.getUserId),
         status: String(this.paymentMethod),
         totalPrice: String(Math.floor(this.taxIncludePrice)),
         destinationName: this.name,
@@ -479,9 +520,14 @@ export default class OrderConfirm extends Vue {
         paymentMethod: String(this.paymentMethod),
         orderItemFormList: orderItems,
         orderToppingFormList: toppings,
-      }
-    );
-    console.dir("response:" + JSON.stringify(response));
+      });
+    } catch (e) {
+      this.orderError = "エラーが発生しました";
+    }
+    //成功したら注文完了ページに飛ぶ
+    if (this.orderError === "") {
+      this.$router.push("/orderFinished");
+    }
   }
 
   get tax(): string {
@@ -507,5 +553,9 @@ export default class OrderConfirm extends Vue {
 .error {
   color: red;
   text-align: left;
+}
+.orderError {
+  text-align: center;
+  font-size: 20px;
 }
 </style>
