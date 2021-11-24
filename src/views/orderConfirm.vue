@@ -278,7 +278,7 @@ export default class OrderConfirm extends Vue {
   //支払い方法
   private paymentMethod = "";
   //カートの中身
-  private cartList = this["$store"].getters.getCartList;
+  private cartList = new Array<OrderItem>();
   // private cartList = new Array<OrderItem>(
   //   new OrderItem(
   //     1,
@@ -359,12 +359,15 @@ export default class OrderConfirm extends Vue {
   //   )
   // );
 
+  created() {
+    this.cartList = this["$store"].getters.getCartList;
+    console.dir("カートの中身:" + JSON.stringify(this.cartList));
+  }
+
   /**
    * 注文したい内容(indexのカートの配列)をAPIに送る.
    */
   async order(): Promise<void> {
-    // this.cartList = this["$store"].getters.getCartList;
-
     //エラーコーナー
     this.errorOfName = "";
     this.errorOfMailAddess = "";
@@ -473,7 +476,6 @@ export default class OrderConfirm extends Vue {
         orderToppingFormList: toppings,
       }
     );
-    console.dir("response:" + JSON.stringify(response));
   }
 
   get tax(): string {
