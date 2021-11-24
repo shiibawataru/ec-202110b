@@ -458,8 +458,7 @@ export default class OrderConfirm extends Vue {
     const response = await axios.post(
       "http://153.127.48.168:8080/ecsite-api/order",
       {
-        //★ユーザIDを持ってくる
-        userId: "1111",
+        userId: String(this["$store"].getters.getUserId),
         status: String(this.paymentMethod),
         totalPrice: String(Math.floor(this.taxIncludePrice)),
         destinationName: this.name,
