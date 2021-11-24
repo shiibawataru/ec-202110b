@@ -30,7 +30,8 @@
               <div class="item-icon">
                 <img v-bind:src="item.imagePath" />
               </div>
-              <router-link to="/itemDetail"> {{ item.name }}</router-link
+              <router-link v-bind:to="'/itemDetail/' + item.id">
+                {{ item.name }}</router-link
               ><br />
               <span class="price">Ｍ</span>{{ item.priceM }}<br />
               <span class="price">Ｌ</span>{{ item.priceL }}<br />

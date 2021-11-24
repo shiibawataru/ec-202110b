@@ -2,14 +2,14 @@
   <div>
     <div class="top-wrapper">
       <div class="container">
-        <h1 class="page-title">Hawaiianパラダイス</h1>
+        <h1 class="page-title">{{ currentItem.name }}</h1>
         <div class="row">
           <div class="row item-detail">
             <div class="item-icon">
-              <img src="img/1.jpg" />
+              <img v-bind:src="currentItem.imagePath" />
             </div>
             <div class="item-intro">
-              ハワイで取れる名産物でかつオーガニックな食料がふんだんに使われたローカルフーズです。健康志向の方に大人気の商品です。
+              {{ currentItem.description }}
             </div>
           </div>
           <div class="row item-size">
@@ -18,15 +18,17 @@
               <label>
                 <input id="size-m" name="size" type="radio" checked="checked" />
                 <span>
-                  &nbsp;<span class="price">Ｍ</span
-                  >&nbsp;&nbsp;1,380円(税抜)</span
+                  &nbsp;<span class="price">Ｍ</span>&nbsp;&nbsp;{{
+                    currentItem.priceM
+                  }}円(税抜)</span
                 >
               </label>
               <label>
                 <input id="size-l" name="size" type="radio" />
                 <span>
-                  &nbsp;<span class="price">Ｌ</span
-                  >&nbsp;&nbsp;2,380円(税抜)</span
+                  &nbsp;<span class="price">Ｌ</span>&nbsp;&nbsp;{{
+                    currentItem.priceL
+                  }}円(税抜)</span
                 >
               </label>
             </div>
@@ -40,7 +42,7 @@
             <div>
               <label class="item-topping">
                 <input type="checkbox" />
-                <span>ハワイアンソルト</span>
+                <span>{{ currentTopping.name }}</span>
               </label>
               <label class="item-topping">
                 <input type="checkbox" />
@@ -124,9 +126,58 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { Item } from "@/types/Item";
+import { Topping } from "@/types/Topping";
+import axios from "axios";
 
 @Component
-export default class ItemDetail extends Vue {}
+export default class ItemDetail extends Vue {
+  //
+  private currentTopping: Array<Topping> = [];
+  //
+  private currentItem = new Item(
+    0,
+    "XX",
+    "XX",
+    "XX",
+    0,
+    0,
+    "/img/noImage.png",
+    true,
+    this.currentTopping
+  );
+  //
+
+  /**
+   * VuexストアのGetter経由で受け取ったリクエストパラメータのIDから１件の従業員情報を取得する.
+   *
+   * @remarks
+   * Vueインスタンスが生成されたタイミングで
+   * Vuexストア内のGetterを呼ぶ。
+   * ライフサイクルフックのcreatedイベント利用
+   */
+  async created(): Promise<void> {
+    // 送られてきたリクエストパラメータのidをnumberに変換して取得する
+    const itemId = parseInt(this.$route.params.id);
+    const response = await axios.get(
+      `http://153.127.48.168:8080/ecsite-api/item/${itemId}`
+    );
+    // 取得したJSONデータをコンソールに出力して確認
+    console.dir("response1:" + JSON.stringify(response));
+    // Employeeオブジェクト型として代入
+    this.currentItem = new Item(
+      response.data.item.id,
+      response.data.item.type,
+      response.data.item.name,
+      response.data.item.discription,
+      response.data.item.priceM,
+      response.data.item.priceL,
+      response.data.item.imagePath,
+      response.data.item.deleted,
+      []
+    );
+  }
+}
 </script>
 <style scoped>
 /* ========================================
