@@ -24,13 +24,15 @@
               </td>
               <td v-if="orderItem.size === 'M'">
                 <span class="price">&nbsp;{{ orderItem.size }}</span
-                >&nbsp;&nbsp;{{ orderItem.item.priceM.toLocaleString() }}円
-                &nbsp;&nbsp;{{ orderItem.quantity }}個
+                >&nbsp;&nbsp;{{ orderItem.item.priceM }}円 &nbsp;&nbsp;{{
+                  orderItem.quantity
+                }}個
               </td>
-              <td v-if="orderItem.item.size === 'L'">
-                <span class="price">&nbsp;{{ orderItem.item.size }}</span
-                >&nbsp;&nbsp;{{ orderItem.item.priceM.toLocaleString() }}円
-                &nbsp;&nbsp;{{ orderItem.quantity }}個
+              <td v-if="orderItem.size === 'L'">
+                <span class="price">&nbsp;{{ orderItem.size }}</span
+                >&nbsp;&nbsp;{{ orderItem.item.priceM }}円 &nbsp;&nbsp;{{
+                  orderItem.quantity
+                }}個
               </td>
               <td
                 v-for="orderTopping of orderItem.orderToppingList"
@@ -49,9 +51,7 @@
                 </ul>
               </td>
               <td>
-                <div class="text-center">
-                  <!-- {{ orderItem.totalPrice.toLocaleString() }}円 -->
-                </div>
+                <div class="text-center">{{ order.totalPrice }}円</div>
               </td>
             </tr>
           </tbody>
@@ -74,7 +74,7 @@ import axios from "axios";
 @Component
 export default class OrderHistory extends Vue {
   private nonOrderMsg = "";
-  // 注文商品を仮で生成
+  // 注文商品を仮で生成(消すこと)
   private orderList: Array<Order> = [
     // new Order(
     //   13,
@@ -122,16 +122,21 @@ export default class OrderHistory extends Vue {
   ];
 
   async created(): Promise<void> {
-    const response = await axios.get(
-      "http://153.127.48.168:8080/ecsite-api/order/orders/toy"
-    );
-    this.orderList = response.data.orders;
-    console.dir("注文商品一覧:" + JSON.stringify(response.data.orders));
-
     // ログインしていなければログイン画面へ遷移
     if (this.$store.getters.getLoginStatus === false) {
       this.$router.push("/login");
       return;
+    } else {
+      const userId: number = this["$store"].getters.getUseId;
+      const response = await axios.get(
+        `http://153.127.48.168:8080/ecsite-api/order/orders/toy/${userId}`
+      );
+      if (this.orderList.length === 0) {
+        this.nonOrderMsg = "注文履歴がありません";
+      } else {
+        this.orderList = response.data.orders;
+        console.dir("注文商品一覧:" + JSON.stringify(this.orderList));
+      }
     }
   }
 }
