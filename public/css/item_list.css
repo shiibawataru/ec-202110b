@@ -1,79 +1,5 @@
-<template>
-  <div>
-    <!-- search form -->
-    <div class="search-wrapper">
-      <div class="container">
-        <form method="post" class="search-form">
-          <div class="errorMessage">{{ errorOfSearch }}</div>
-          <input
-            type="text"
-            name="name"
-            class="search-name-input"
-            v-model="searchWord"
-          />
-          <button
-            class="btn search-btn"
-            type="button"
-            v-on:click="onclicksearch"
-          >
-            <span>検索</span>
-          </button>
-        </form>
-      </div>
-    </div>
-    <!-- item list -->
-    <div class="item-wrapper">
-      <div class="container">
-        <div class="items">
-          <ul v-for="item of itemList" v-bind:key="item.id">
-            <div class="item">
-              <div class="item-icon">
-                <img v-bind:src="item.imagePath" />
-              </div>
-              <a href="item_detail.html"> {{ item.name }}</a
-              ><br />
-              <span class="price">Ｍ</span>{{ item.priceM }}<br />
-              <span class="price">Ｌ</span>{{ item.priceL }}<br />
-            </div>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
+@charset "UTF-8";
 
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { Item } from "@/types/Item";
-
-@Component
-export default class ItemList extends Vue {
-  // 商品一覧
-  private itemList: Array<Item> = [];
-  // 曖昧検索ワード
-  private searchWord = "";
-  // 検索エラーメッセージ
-  private errorOfSearch = "";
-  //
-  async created(): Promise<void> {
-    await this["$store"].dispatch("getItemList");
-    this.itemList = this["$store"].getters.getItemList;
-  }
-
-  // 曖昧検索
-  onclicksearch(): void {
-    this.itemList = this.itemList.filter((item) =>
-      item.name.includes(this.searchWord)
-    );
-    // 該当商品がない場合はエラーメーセージの表示と全件表示
-    if (this.itemList.length === 0) {
-      this.errorOfSearch = "該当する商品がありません";
-      this.itemList = this["$store"].getters.getItemList;
-    }
-  }
-}
-</script>
-<style scoped>
 /* ========================================
     商品一覧ページのスタイル
    ======================================== */
@@ -144,10 +70,6 @@ export default class ItemList extends Vue {
   border-radius: 4px;
 }
 
-.errorMessage {
-  color: red;
-}
-
 /* ========================================
     item-wrapperの設定
    ======================================== */
@@ -163,7 +85,7 @@ export default class ItemList extends Vue {
 
 .items {
   display: flex;
-  flex-wrap: wrap; /*表示内容が多かった時に自動的に複数行に分割される */
+  flex-wrap: wrap; /* 表示内容が多かった時に自動的に複数行に分割される */
 }
 
 .item {
@@ -185,4 +107,3 @@ export default class ItemList extends Vue {
   background-color: #ff4500;
   border-radius: 50%; /* 角丸にする設定 */
 }
-</style>
