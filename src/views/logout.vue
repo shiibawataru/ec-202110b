@@ -32,7 +32,7 @@ export default class Logout extends Vue {
     );
     console.dir("response:" + JSON.stringify(response));
     // ログアウト状態にする(stateのisLoginをfalseにする)
-    this["$store"].state.isLogin = false;
+    this.$store.commit("logouted");
     // ログイン画面に遷移する
     this.$router.push("/login");
   }
