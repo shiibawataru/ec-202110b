@@ -3,6 +3,7 @@ import Vuex from "vuex";
 import { Item } from "@/types/Item";
 import { OrderItem } from "@/types/OrderItem";
 import axios from "axios";
+import createPersistedState from "vuex-persistedstate";
 
 Vue.use(Vuex);
 
@@ -10,6 +11,8 @@ export default new Vuex.Store({
   state: {
     // ログインされているかどうかのフラグ(ログイン時:true/ログアウト時:false)
     isLogin: false,
+    //「注文に進む」をクリックしたかどうかのフラグ(クリック時:true/クリックしていない時:false)
+    goOrder: false,
     //全商品情報
     items: new Array<Item>(),
     //カートの商品情報
@@ -91,6 +94,15 @@ export default new Vuex.Store({
   }, //end actions
   getters: {
     /**
+     * ログイン状態を返す.
+     *
+     * @param state ステート
+     * @returns ture:ログイン済/false:ログアウト済
+     */
+    getLoginStatus(state) {
+      return state.isLogin;
+    },
+    /**
      * 全アイテム情報を返す.
      * @param state ステート
      * @returns 全アイテム情報
@@ -107,4 +119,14 @@ export default new Vuex.Store({
       return state.cartList;
     },
   },
+  plugins: [
+    createPersistedState({
+      // ストレージのキーを指定
+      key: "vuex",
+      // ストレージの種類を指定
+      storage: window.sessionStorage,
+      // isLoginフラグのみセッションストレージに格納しブラウザ更新しても残るようにしている(ログイン時:true / ログアウト時:false)
+      paths: ["isLogin"],
+    }),
+  ],
 });

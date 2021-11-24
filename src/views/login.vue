@@ -32,11 +32,7 @@
                 </div>
               </div>
               <div class="row login-btn">
-                <button
-                  class="btn"
-                  type="button"
-                  onclick="location.href='item_list.html'"
-                >
+                <button class="btn" type="button" v-on:click="login">
                   <span>ログイン</span>
                 </button>
               </div>
@@ -82,30 +78,25 @@ export default class Login extends Vue {
         password: this.password,
       }
     );
+    //this["$store"].commit("loginUserId", response.data.user.id);
     console.dir("response:" + JSON.stringify(response));
-    //ログインに失敗した場合、エラーメッセージを表示させる
+
     if (response.data.status === "success") {
+      //stateのisLoginをtrueにし、ログイン状態に変更
       this["$store"].state.isLogin = true;
-    }
-    if (response.data.status === "error") {
+      //パターン1,2どちらかを判定する為、stateのgoOrderを条件分岐させる
+      if (this["$store"].state.goOrder === true) {
+        //goOrderがtrue(パターン1)なので注文確認画面に遷移
+        this["$router"].push("/orderConfirm");
+      } else {
+        //goOrderがfalse(パターン2)なので商品一覧に遷移
+        this["$router"].push("/itemList");
+      }
+    } else {
+      //ログインに失敗した場合、エラーメッセージを表示
       this.errorMsg = response.data.message;
     }
   }
-
-  //   //async loginAdmin(): Promise<void> {
-  //     const responce = await axios.post(
-  //       "http://35.86.97.127:8080/ex-emp-api/login",
-  //       {
-  //         mailAddress: this.mailAddress,
-  //         password: this.password,
-  //       }
-  //     );
-  //     if (responce.data.status === "success") {
-  //       this["$router"].push("/employeeList");
-  //     } else {
-  //       this.errorMessage = responce.data.message;
-  //     }
-  //   }
 }
 </script>
 <style></style>

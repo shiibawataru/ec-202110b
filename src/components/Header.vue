@@ -14,8 +14,11 @@
           <router-link to="/cartList">
             <i class="fas fa-shopping-cart"></i>カート</router-link
           >
-          <router-link to="/login">
+          <router-link to="/login" v-if="isLogin === false">
             <i class="fas fa-sign-in-alt"></i>ログイン
+          </router-link>
+          <router-link to="/logout" v-if="isLogin === true">
+            <i class="fas fa-sign-in-alt"></i>ログアウト
           </router-link>
           <a href="order_history.html">注文履歴</a>
         </div>
@@ -27,7 +30,11 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 @Component
-export default class Header extends Vue {}
+export default class Header extends Vue {
+  get isLogin(): boolean {
+    return this.$store.getters.getLoginStatus;
+  }
+}
 </script>
 
 <style scoped>
