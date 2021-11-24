@@ -227,6 +227,7 @@
           </label>
         </span>
       </div>
+      <div class="error orderError">{{ this.orderError }}</div>
       <div class="row order-confirm-btn">
         <button class="btn" type="button" v-on:click="order">
           <span>この内容で注文する</span>
@@ -247,6 +248,8 @@ import { format, addHours } from "date-fns";
 
 @Component
 export default class OrderConfirm extends Vue {
+  //注文のエラー
+  private orderError = "";
   //名前
   private name = "";
   //名前のエラー
@@ -493,21 +496,29 @@ export default class OrderConfirm extends Vue {
     }
 
     //APIに配達情報を送る
-    await axios.post("http://153.127.48.168:8080/ecsite-api/order", {
-      //★ユーザIDを持ってくる
-      userId: "1111",
-      status: String(this.paymentMethod),
-      totalPrice: String(Math.floor(this.taxIncludePrice)),
-      destinationName: this.name,
-      destinationEmail: this.mailAddress,
-      destinationZipcode: this.zipCode,
-      destinationAddress: this.address,
-      destinationTel: this.telephone,
-      deliveryTime: delivery,
-      paymentMethod: String(this.paymentMethod),
-      orderItemFormList: orderItems,
-      orderToppingFormList: toppings,
-    });
+    try {
+      await axios.post("http://153.127.48.168:8080/ecsite-api/order", {
+        //★ユーザIDを持ってくる
+        userId: "1111",
+        status: String(this.paymentMethod),
+        totalPrice: String(Math.floor(this.taxIncludePrice)),
+        destinationName: this.name,
+        destinationEmail: this.mailAddress,
+        destinationZipcode: this.zipCode,
+        destinationAddress: this.address,
+        destinationTel: this.telephone,
+        deliveryTime: delivery,
+        paymentMethod: String(this.paymentMethod),
+        orderItemFormList: orderItems,
+        orderToppingFormList: toppings,
+      });
+    } catch (e) {
+      this.orderError = "エラーが発生しました";
+    }
+    //成功したら注文完了ページに飛ぶ
+    if (this.orderError === "") {
+      this.$router.push("/orderFinished");
+    }
   }
 
   get tax(): string {
@@ -533,5 +544,9 @@ export default class OrderConfirm extends Vue {
 .error {
   color: red;
   text-align: left;
+}
+.orderError {
+  text-align: center;
+  font-size: 20px;
 }
 </style>
