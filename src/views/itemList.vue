@@ -4,76 +4,78 @@
 
     <!-- search form -->
     <div class="container">
-      <form method="post" class="search-form">
-        <span class="errorMessage">{{ errorOfSearch }}</span>
-        <input
-          type="text"
-          name="name"
-          class="search-name-input"
-          v-model="searchWord"
-          list="itemSuggest"
-        />
+      <div class="xmas">
+        <form method="post" class="search-form">
+          <span class="errorMessage">{{ errorOfSearch }}</span>
+          <input
+            type="text"
+            name="name"
+            class="search-name-input"
+            v-model="searchWord"
+            list="itemSuggest"
+          />
 
-        <datalist id="itemSuggest">
-          <div v-for="item of items" v-bind:key="item.id">
-            <option v-bind:value="item.name"></option>
-          </div>
-        </datalist>
-
-        <span class="row order-confirm-btn">
-          <button
-            class="btn search-btn"
-            type="button"
-            v-on:click="onclicksearch"
-          >
-            検索
-          </button>
-        </span>
-        <div>
-          <select
-            name="sort"
-            v-model="sort"
-            class="browser-default"
-            v-on:change="sortChange"
-          >
-            <option value="安い" selected>価格順(安い順)</option>
-            <option value="高い">価格順(高い順)</option>
-            <option value="名前">名前順</option>
-          </select>
-        </div>
-      </form>
-    </div>
-    <!-- item list -->
-
-    <div class="item-wrapper">
-      <div class="container">
-        <div class="items">
-          <ul v-for="item of displayList" v-bind:key="item.id">
-            <div class="item">
-              <router-link v-bind:to="'/itemDetail/' + item.id">
-                <div class="item-icon">
-                  <img v-bind:src="item.imagePath" />
-                </div>
-                <div>
-                  {{ item.name }}
-                </div> </router-link
-              ><br />
-              <span class="price">Ｍ</span
-              >{{ item.priceM.toLocaleString() }}円<br />
-              <span class="price">Ｌ</span
-              >{{ item.priceL.toLocaleString() }}円<br />
+          <datalist id="itemSuggest">
+            <div v-for="item of items" v-bind:key="item.id">
+              <option v-bind:value="item.name"></option>
             </div>
-          </ul>
+          </datalist>
+
+          <span class="row order-confirm-btn">
+            <button
+              class="btn search-btn"
+              type="button"
+              v-on:click="onclicksearch"
+            >
+              検索
+            </button>
+          </span>
+          <div>
+            <select
+              name="sort"
+              v-model="sort"
+              class="browser-default"
+              v-on:change="sortChange"
+            >
+              <option value="安い" selected>価格順(安い順)</option>
+              <option value="高い">価格順(高い順)</option>
+              <option value="名前">名前順</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <!-- item list -->
+
+      <div class="item-wrapper">
+        <div class="container">
+          <div class="items">
+            <ul v-for="item of displayList" v-bind:key="item.id">
+              <div class="item">
+                <router-link v-bind:to="'/itemDetail/' + item.id">
+                  <div class="item-icon">
+                    <img v-bind:src="item.imagePath" />
+                  </div>
+                  <div>
+                    {{ item.name }}
+                  </div> </router-link
+                ><br />
+                <span class="price">Ｍ</span
+                >{{ item.priceM.toLocaleString() }}円<br />
+                <span class="price">Ｌ</span
+                >{{ item.priceL.toLocaleString() }}円<br />
+              </div>
+            </ul>
+          </div>
+          <span
+            v-for="num of pageNumber"
+            :key="num"
+            class="row order-confirm-btn pageBtn"
+          >
+            <button class="btn" type="button" v-on:click="display(num)">
+              {{ num }}
+            </button></span
+          >
         </div>
-        <span
-          v-for="num of pageNumber"
-          :key="num"
-          class="row order-confirm-btn pageBtn"
-        >
-          <button class="btn" type="button" v-on:click="display(num)">
-            {{ num }}
-          </button></span
-        >
       </div>
     </div>
   </div>
@@ -242,8 +244,12 @@ export default class ItemList extends Vue {
 .top-wrapper {
   background-color: #dc143c;
 }
-.container {
-  background-color: lightgray;
+/* .item-wrapper {
+  background-color: #dc143c;
+} */
+.xmas {
+  background-color: ghostwhite;
+  border-radius: 15px 15px 0 0;
 }
 .snow {
   color: snow; /*雪の色*/
