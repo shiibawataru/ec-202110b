@@ -24,23 +24,25 @@
               </td>
               <td v-if="cartItem.size === 'M'">
                 <span class="price">&nbsp;{{ cartItem.size }}</span
-                >&nbsp;&nbsp;{{ cartItem.item.priceM.toLocaleString() }}円
-                &nbsp;&nbsp;{{ cartItem.quantity }}個
+                >&nbsp;&nbsp;{{ cartItem.item.priceM }}円 &nbsp;&nbsp;{{
+                  cartItem.quantity
+                }}個
               </td>
               <td v-if="cartItem.size === 'L'">
                 <span class="price">&nbsp;{{ cartItem.size }}</span
-                >&nbsp;&nbsp;{{ cartItem.item.priceL.toLocaleString() }}円
-                &nbsp;&nbsp;{{ cartItem.quantity }}個
+                >&nbsp;&nbsp;{{ cartItem.item.priceL }}円 &nbsp;&nbsp;{{
+                  cartItem.quantity
+                }}個
               </td>
               <div
                 v-for="orderTopping of cartItem.orderToppingList"
-                v-bind:key="orderTopping.id"
+                v-bind:key="orderTopping._id"
               >
                 <td>
                   <ul>
                     <li v-if="cartItem.size === 'M'">
-                      {{ orderTopping.topping.name }}&emsp;{{
-                        orderTopping.topping.priceM
+                      {{ orderTopping._topping.name }}&emsp;{{
+                        orderTopping._topping.priceM
                       }}円
                     </li>
                     <li v-if="cartItem.size === 'L'">
@@ -113,6 +115,7 @@ export default class CartList extends Vue {
    */
   created(): void {
     this.cartList = this["$store"].getters.getCartList;
+
     // this.cartList = [
     //   //消すこと！！！
     //   new OrderItem(
