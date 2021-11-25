@@ -46,8 +46,10 @@
               <router-link v-bind:to="'/itemDetail/' + item.id">
                 {{ item.name }}</router-link
               ><br />
-              <span class="price">Ｍ</span>{{ item.priceM }}<br />
-              <span class="price">Ｌ</span>{{ item.priceL }}<br />
+              <span class="price">Ｍ</span
+              >{{ item.priceM.toLocaleString() }}円<br />
+              <span class="price">Ｌ</span
+              >{{ item.priceL.toLocaleString() }}円<br />
             </div>
           </ul>
         </div>
@@ -72,7 +74,7 @@ import { Item } from "@/types/Item";
 @Component
 export default class ItemList extends Vue {
   // 商品一覧
-  private itemList: Array<Item> = [];
+  private itemList = new Array<Item>();
   //表示する商品一覧
   private displayList = new Array<Item>();
   // 曖昧検索ワード
@@ -83,7 +85,7 @@ export default class ItemList extends Vue {
   private sort = "安い";
 
   /**
-   * Vuexストアのアクション経由で非同期でWebAPIから従業員一覧を取得する.
+   * Vuexストアのアクション経由で非同期でWebAPIから商品一覧を取得する.
    *
    * @remarks
    * Vueインスタンスが生成されたタイミングで
