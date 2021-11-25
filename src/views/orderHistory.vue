@@ -151,6 +151,7 @@ export default class OrderHistory extends Vue {
    */
   dateFilter() {
     this.nonOrderMsg = "";
+    this.orderList.splice(0, this.orderList.length);
     // 確認用
     console.log(this.filterYear);
     for (let order of this.orderList) {
@@ -160,26 +161,12 @@ export default class OrderHistory extends Vue {
       );
     }
     let filterOrderList = this.orderList.filter(
-      (order) => new Date(order.orderDate).getFullYear() === this.filterYear
+      (orderItem) =>
+        Number(new Date(orderItem.orderDate).getFullYear()) === this.filterYear
     );
     console.log("絞り込みした" + JSON.stringify(filterOrderList));
     this.orderList = filterOrderList;
   }
-
-  //    onclicksearch(): void {
-  //     //初期値リセット
-  //     this.errorOfSearch = "";
-  //     this.displayList.splice(0, this.displayList.length);
-  //     //検索する
-  //     this.displayList = this.itemList.filter((item) =>
-  //       item.name.includes(this.searchWord)
-  //     );
-  //     // 該当商品がない場合はエラーメーセージの表示と全件表示
-  //     if (this.displayList.length === 0 || this.searchWord === "") {
-  //       this.errorOfSearch = "該当する商品がありません";
-  //       this.startDisplay();
-  //     }
-  //   }
 }
 </script>
 <style>
