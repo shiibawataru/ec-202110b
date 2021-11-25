@@ -173,7 +173,6 @@ export default class OrderHistory extends Vue {
         Number(order.orderDate.getFullYear()) === Number(this.filterYear)
     );
     this.showOrderHistory = true;
-    console.log("絞り込みした注文一覧：" + JSON.stringify(this.showOrderList));
     // 該当の注文履歴がない場合はエラーメーセージを表示
     if (this.filterYear === "指定なし") {
       this.startDisplay();
