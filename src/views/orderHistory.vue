@@ -2,12 +2,23 @@
   <div class="top-wrapper">
     <div class="container">
       <h1 class="page-title">注文履歴</h1>
+      <form>
+        <div>
+          <select name="filter" v-model="filterYear" class="browser-default">
+            <option value="2021">2021</option>
+            <option value="2020">2020</option>
+            <option value="2019">2019</option>
+          </select>
+          <button @click="dateFilter">絞り込み</button>
+        </div>
+      </form>
       <!-- table -->
       <div class="row">
         <div class="error-message">{{ nonOrderMsg }}</div>
-        <table class="striped">
+        <table class="striped" v-if="showOrderHistory">
           <thead>
             <tr>
+              <th>注文日</th>
               <th class="cart-table-th">商品名</th>
               <th>サイズ、価格(税抜)、数量</th>
               <th>トッピング、価格(税抜)</th>
@@ -16,6 +27,7 @@
           </thead>
           <tbody v-for="order of orderList" :key="order.id">
             <tr v-for="orderItem of order.orderItemList" :key="orderItem.id">
+              <td>{{ order.orderDate }}</td>
               <td class="cart-item-name">
                 <div class="cart-item-icon">
                   <img :src="orderItem.item.imagePath" />
@@ -34,24 +46,28 @@
                   orderItem.quantity
                 }}個
               </td>
-              <td
-                v-for="orderTopping of orderItem.orderToppingList"
-                :key="orderTopping.id"
-              >
-                <ul>
+              <td>
+                <ul
+                  v-for="orderTopping of orderItem.orderToppingList"
+                  :key="orderTopping.id"
+                >
                   <li v-if="orderItem.size === 'M'">
-                    {{ orderTopping.topping.name }}&emsp;{{
-                      orderTopping.topping.priceM
-                    }}円
+                    <span
+                      >{{ orderTopping.topping.name }}&emsp;{{
+                        orderTopping.topping.priceM
+                      }}円</span
+                    >
                   </li>
                   <li v-if="orderItem.size === 'L'">
-                    {{ orderTopping.topping.name }} &emsp;
-                    {{ orderTopping.topping.priceL }}円
+                    <span>
+                      {{ orderTopping.topping.name }} &emsp;
+                      {{ orderTopping.topping.priceL }}円</span
+                    >
                   </li>
                 </ul>
               </td>
               <td>
-                <div class="text-center">{{ order.totalPrice }}円</div>
+                <div class="text-center">{{ orderItem.subTotal }}円</div>
               </td>
             </tr>
           </tbody>
@@ -73,72 +89,100 @@ import axios from "axios";
 
 @Component
 export default class OrderHistory extends Vue {
+  // 注文履歴が0件の場合のエラーメッセージ
   private nonOrderMsg = "";
-  // 注文商品を仮で生成(消すこと)
-  private orderList: Array<Order> = [
-    // new Order(
-    //   13,
-    //   1111,
-    //   0,
-    //   10000,
-    //   new Date(2021 - 10 - 22),
-    //   "名前",
-    //   "aaa@aaa",
-    //   "2340052",
-    //   "住所",
-    //   "12345678",
-    //   new Date(2021 - 10 - 28),
-    //   1,
-    //   [new User(1, "名前", "aaa@aaa", "aaa", "2340052", "住所", "12345678")],
-    //   [
-    //     new OrderItem(
-    //       8,
-    //       1,
-    //       13,
-    //       2,
-    //       "M",
-    //       new Item(
-    //         1,
-    //         "aloha",
-    //         "Hawaiian パラダイス",
-    //         "商品名",
-    //         2160,
-    //         3380,
-    //         "/img_aloha/1.jpg",
-    //         false,
-    //         [new Topping(1, "aloha", "ハワイアンソルト", 200, 300)]
-    //       ),
-    //       [
-    //         new OrderTopping(
-    //           1,
-    //           1,
-    //           8,
-    //           new Topping(1, "aloha", "ハワイアンソルト", 200, 300)
-    //         ),
-    //       ]
-    //     ),
-    //   ]
-    // ),
-  ];
+  // 注文履歴が0件の場合のエラーメッセージ表示判定
+  private showOrderHistory = true;
+
+  private filterYear = 2021;
+  // 注文商品を入れる配列
+  private orderList: Array<Order> = [];
 
   async created(): Promise<void> {
     // ログインしていなければログイン画面へ遷移
     if (this.$store.getters.getLoginStatus === false) {
       this.$router.push("/login");
       return;
-    } else {
-      const userId: number = this["$store"].getters.getUseId;
-      const response = await axios.get(
-        `http://153.127.48.168:8080/ecsite-api/order/orders/toy/${userId}`
+    }
+    const userId: number = this["$store"].getters.getUserId;
+    console.log("userId: " + userId);
+
+    const response = await axios.get(
+      `http://153.127.48.168:8080/ecsite-api/order/orders/toy/1111`
+    );
+
+    console.dir("注文商品一覧:" + JSON.stringify(this.orderList));
+    for (let order of response.data.orders) {
+      new Order(
+        order.id,
+        order.userId,
+        order.status,
+        order.totalPrice,
+        new Date(order.orderDate),
+        order.distinationName,
+        order.distinationEmail,
+        order.distinationZipcode,
+        order.distinationAddress,
+        order.distinationTel,
+        new Date(order.deliveryTime),
+        order.paymentMethod,
+        order.user,
+        order.orderItemList
       );
-      if (this.orderList.length === 0) {
-        this.nonOrderMsg = "注文履歴がありません";
-      } else {
-        this.orderList = response.data.orders;
-        console.dir("注文商品一覧:" + JSON.stringify(this.orderList));
-      }
+      this.orderList.push(order);
+    }
+    this.getNonOrderMsg();
+  }
+
+  /**
+   * 注文履歴が0件だった場合、メッセージを表示する.
+   */
+  getNonOrderMsg(): void {
+    if (this.orderList.length === 0) {
+      this.showOrderHistory = false;
+      this.nonOrderMsg = "注文履歴がありません";
+      return;
     }
   }
+  /**
+   * 購入年で絞り込み検索
+   */
+  dateFilter() {
+    this.nonOrderMsg = "";
+    this.orderList.splice(0, this.orderList.length);
+    console.log(this.filterYear);
+    for (let order of this.orderList) {
+      console.dir(
+        "order.orderDate.getFullYear:" +
+          JSON.stringify(new Date(order.orderDate).getFullYear())
+      );
+      let filterOrderList = this.orderList.filter(
+        (order) => new Date(order.orderDate).getFullYear() === this.filterYear
+      );
+      console.log("絞り込みした" + JSON.stringify(filterOrderList));
+      this.orderList = filterOrderList;
+    }
+  }
+
+  //    onclicksearch(): void {
+  //     //初期値リセット
+  //     this.errorOfSearch = "";
+  //     this.displayList.splice(0, this.displayList.length);
+  //     //検索する
+  //     this.displayList = this.itemList.filter((item) =>
+  //       item.name.includes(this.searchWord)
+  //     );
+  //     // 該当商品がない場合はエラーメーセージの表示と全件表示
+  //     if (this.displayList.length === 0 || this.searchWord === "") {
+  //       this.errorOfSearch = "該当する商品がありません";
+  //       this.startDisplay();
+  //     }
+  //   }
 }
 </script>
-<style></style>
+<style>
+.error-message {
+  text-align: center;
+  color: red;
+}
+</style>
