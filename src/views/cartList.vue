@@ -199,6 +199,7 @@ export default class CartList extends Vue {
     return (price * 0.1).toLocaleString();
   }
   get taxIncludePrice(): number {
+    this.cartList = this["$store"].getters.getCartList;
     let price = 0;
     for (const cartItem of this.cartList) {
       price += cartItem.totalPrice;
