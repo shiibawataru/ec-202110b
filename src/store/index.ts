@@ -172,13 +172,13 @@ export default new Vuex.Store({
 
       for (const orderItem of state.cartList) {
         const toppingArray = new Array<OrderTopping>();
-        for (const item of orderItem._orderToppingList) {
+        for (const topping of orderItem._orderToppingList) {
           toppingArray.push(
             new OrderTopping(
-              item._id,
-              item._toppingId,
-              item._orderItemId,
-              item._topping
+              topping._id,
+              topping._toppingId,
+              topping._orderItemId,
+              topping._topping
             )
           );
         }

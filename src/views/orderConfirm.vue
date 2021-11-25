@@ -726,9 +726,7 @@ export default class OrderConfirm extends Vue {
     const response = await axios.post(
       "http://153.127.48.168:8080/sample-credit-card-web-api/credit-card/payment ",
       {
-        user_id: 1111,
-        // user_id: Number(this["$store"].getters.getUserId),
-        //★注文一覧をstoreのindexに置いたらそこから取得する↓
+        user_id: this["$store"].getters.getUserId,
         order_number: 12345678901234, //注文番号
         amount: Number(this.taxIncludePrice), //決済金額
         card_number: Number(this.creditNumber), //クレジットカード番号
