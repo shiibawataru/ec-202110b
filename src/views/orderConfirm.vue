@@ -213,6 +213,7 @@
               value="1"
               checked="checked"
               v-model="paymentMethod"
+              v-on:change="showCredit"
             />
             <span>代金引換</span>
           </label>
@@ -222,11 +223,104 @@
               type="radio"
               value="2"
               v-model="paymentMethod"
+              v-on:change="showCredit"
             />
             <span>クレジットカード</span>
           </label>
         </span>
       </div>
+      <!-- クレジットで支払う場合表示 -->
+      <div class="credit" v-show="creditFlug">
+        <div class="error">{{ creditNumberError }}</div>
+        <div class="error">{{ creditMonthError }}</div>
+        <div class="error">{{ creditYearError }}</div>
+        <div class="error">{{ creditNameError }}</div>
+        <div class="error">{{ creditsecurityCodeError }}</div>
+        <form>
+          <table>
+            <tr>
+              <td><label for="creditNumber">クレジットカード番号：</label></td>
+              <td>
+                <input
+                  type="text"
+                  name="creditNumber"
+                  id="creditNumber"
+                  minlength="14"
+                  maxlength="16"
+                  v-model="creditNumber"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td><label for="creditMonth">有効期限：</label></td>
+              <td>
+                <span class="creditSlect">
+                  <label for="creditMonth">月</label>
+                  <select
+                    name="creditMonth"
+                    id="creditMonth"
+                    class="browser-default"
+                    v-model="month"
+                  >
+                    <option
+                      :value="month"
+                      v-for="month of creditMonth"
+                      :key="month"
+                    >
+                      {{ month }}
+                    </option>
+                  </select>
+                  <label for="creditYear">年</label>
+                  <select
+                    name="creditYear"
+                    id="creditYear"
+                    class="browser-default"
+                    v-model="year"
+                  >
+                    <option
+                      :value="year"
+                      v-for="year of creditYear"
+                      :key="year"
+                    >
+                      {{ year }}
+                    </option>
+                  </select>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td><label for="creditName">カード名義人：</label></td>
+
+              <td>
+                <input
+                  type="text"
+                  name="creditName"
+                  id="creditName"
+                  v-model="creditName"
+                  maxlength="50"
+                  pattern="^[A-Z]*$"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label for="creditSecurityCode">セキュリティコード：</label>
+              </td>
+              <td>
+                <input
+                  type="text"
+                  name="creditSecurityCode"
+                  id="creditSecurityCode"
+                  v-model="creditSecurityCode"
+                  minlength="3"
+                  maxlength="4"
+                />
+              </td>
+            </tr>
+          </table>
+        </form>
+      </div>
+      <!-- クレジットカードコーナー終わり -->
       <div class="error orderError">{{ this.orderError }}</div>
       <div class="row order-confirm-btn">
         <button class="btn" type="button" v-on:click="order">
@@ -284,6 +378,40 @@ export default class OrderConfirm extends Vue {
   private cartList = new Array<OrderItem>();
   //エラーの際、ラベルを非表示に
   private errorFlug = false;
+  //クレジット払いの際は表示
+  private creditFlug = false;
+  //クレジットカード有効期限(月の選択肢)
+  private creditMonth = [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+  ];
+  //クレジットカード番号
+  private creditNumber = "";
+  //クレジットカード有効期限(月)
+  private month = "";
+  //クレジットカード有効期限(年)
+  private year = "";
+  //クレジットカード名義人
+  private creditName = "";
+  //クレジットカードセキュリティコード
+  private creditSecurityCode = "";
+  //エラーチェック
+  private creditNumberError = "";
+  private creditMonthError = "";
+  private creditYearError = "";
+  private creditNameError = "";
+  private creditsecurityCodeError = "";
+
   // private cartList = new Array<OrderItem>(
   //   new OrderItem(
   //     1,
@@ -478,6 +606,56 @@ export default class OrderConfirm extends Vue {
       this.errorOfDelivarytime = "配達時間を入力して下さい";
     }
 
+    //エラーチェック
+    this.creditNumberError = "";
+    this.creditMonthError = "";
+    this.creditYearError = "";
+    this.creditNameError = "";
+    this.creditsecurityCodeError = "";
+
+    if (this.creditFlug) {
+      //名義エラー
+      if (this.creditName.match(/[^A-Z]+/)) {
+        this.creditNameError = "半角英字(大文字)で入力して下さい";
+      }
+
+      //クレジット番号エラー
+      if (
+        (this.creditNumber.length != 14 && this.creditNumber.length != 16) ||
+        this.creditNumber.match(/[^0-9]+/)
+      ) {
+        this.creditNumberError =
+          "クレジットカード番号は14桁か16桁の数字で入力して下さい";
+      }
+
+      //セキュリティコードエラー
+      if (
+        (this.creditSecurityCode.length != 3 &&
+          this.creditSecurityCode.length != 4) ||
+        this.creditSecurityCode.match(/[^0-9]+/)
+      ) {
+        this.creditsecurityCodeError =
+          "セキュリティコードは3桁か4桁の数字で入力して下さい";
+      }
+
+      //空白エラー
+      if (this.creditNumber === "") {
+        this.creditNumberError = "クレジットカード番号を入力して下さい";
+      }
+      if (this.month === "") {
+        this.creditMonthError = "有効期限月を入力して下さい";
+      }
+      if (this.year === "") {
+        this.creditYearError = "有効期限年を入力して下さい";
+      }
+      if (this.creditName === "") {
+        this.creditNameError = "名前を入力して下さい";
+      }
+      if (this.creditSecurityCode === "") {
+        this.creditsecurityCodeError = "セキュリティコードを入力して下さい";
+      }
+    }
+
     if (
       this.errorOfName != "" ||
       this.errorOfMailAddess != "" ||
@@ -485,7 +663,12 @@ export default class OrderConfirm extends Vue {
       this.errorOfAddress != "" ||
       this.errorOfTelephone != "" ||
       this.errorOfDeliveryDate != "" ||
-      this.errorOfDelivarytime != ""
+      this.errorOfDelivarytime != "" ||
+      this.creditNumberError != "" ||
+      this.creditMonthError != "" ||
+      this.creditYearError != "" ||
+      this.creditNameError != "" ||
+      this.creditsecurityCodeError != ""
     ) {
       this.errorFlug = true;
       return;
@@ -503,6 +686,11 @@ export default class OrderConfirm extends Vue {
       for (const topping of cartListItem.orderToppingList) {
         toppings.push(topping.toppingId);
       }
+    }
+
+    //APIにクレジットカード情報を送る
+    if (this.creditFlug) {
+      this.credit();
     }
 
     //APIに配達情報を送る
@@ -530,6 +718,44 @@ export default class OrderConfirm extends Vue {
     }
   }
 
+  /**
+   * クレジットカード情報API.
+   */
+  async credit(): Promise<void> {
+    //クレジットカードAPIに情報を送る
+    const response = await axios.post(
+      "http://153.127.48.168:8080/sample-credit-card-web-api/credit-card/payment ",
+      {
+        user_id: 1111,
+        // user_id: Number(this["$store"].getters.getUserId),
+        //★注文一覧をstoreのindexに置いたらそこから取得する↓
+        order_number: 12345678901234, //注文番号
+        amount: Number(this.taxIncludePrice), //決済金額
+        card_number: Number(this.creditNumber), //クレジットカード番号
+        card_exp_year: Number(this.year), //有効期限年
+        card_exp_month: Number(this.month), //有効期限月
+        card_name: this.creditName, //名義
+        card_cvv: Number(this.creditSecurityCode), //数字3桁or4桁のセキュリティコード
+      }
+    );
+    console.dir(JSON.stringify(response));
+  }
+
+  /**
+   * クレジットカード払いを選択→クレジットコーナーを表示.
+   */
+  showCredit(): void {
+    if (this.paymentMethod === "2") {
+      this.creditFlug = true;
+    } else {
+      this.creditFlug = false;
+    }
+  }
+
+  /**
+   * 合計金額の税を返す.
+   * @return 税金
+   */
   get tax(): string {
     let price = 0;
     for (const cartListItem of this.cartList) {
@@ -538,12 +764,30 @@ export default class OrderConfirm extends Vue {
     return (price * 0.1).toLocaleString();
   }
 
+  /**
+   * 税込み金額を返す.
+   * @return 税込み金額
+   */
   get taxIncludePrice(): number {
     let price = 0;
     for (const cartListItem of this.cartList) {
       price += cartListItem.totalPrice;
     }
     return price * 1.1;
+  }
+
+  /**
+   * クレジットカード有効期限の年選択肢配列を返す.
+   * @return クレジットカード有効期限年の選択肢配列
+   */
+  get creditYear(): Array<string> {
+    const array = new Array<string>();
+    for (let i = 22; i <= 38; i++) {
+      let stringNum = String(i);
+      array.push("20" + stringNum);
+    }
+    console.log(array[0], array[1], array[2]);
+    return array;
   }
 
   // 終わり
@@ -557,5 +801,13 @@ export default class OrderConfirm extends Vue {
 .orderError {
   text-align: center;
   font-size: 20px;
+}
+.creditSlect {
+  display: flex;
+}
+
+.credit {
+  width: 1000px;
+  padding: 30px;
 }
 </style>
