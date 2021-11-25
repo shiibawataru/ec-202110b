@@ -9,7 +9,9 @@
             <option value="2020">2020</option>
             <option value="2019">2019</option>
           </select>
-          <button @click="dateFilter">絞り込み</button>
+          <button class="btn" type="button" @click="dateFilter">
+            絞り込み
+          </button>
         </div>
       </form>
       <!-- table -->
@@ -149,19 +151,19 @@ export default class OrderHistory extends Vue {
    */
   dateFilter() {
     this.nonOrderMsg = "";
-    this.orderList.splice(0, this.orderList.length);
+    // 確認用
     console.log(this.filterYear);
     for (let order of this.orderList) {
       console.dir(
         "order.orderDate.getFullYear:" +
           JSON.stringify(new Date(order.orderDate).getFullYear())
       );
-      let filterOrderList = this.orderList.filter(
-        (order) => new Date(order.orderDate).getFullYear() === this.filterYear
-      );
-      console.log("絞り込みした" + JSON.stringify(filterOrderList));
-      this.orderList = filterOrderList;
     }
+    let filterOrderList = this.orderList.filter(
+      (order) => new Date(order.orderDate).getFullYear() === this.filterYear
+    );
+    console.log("絞り込みした" + JSON.stringify(filterOrderList));
+    this.orderList = filterOrderList;
   }
 
   //    onclicksearch(): void {
