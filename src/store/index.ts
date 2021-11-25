@@ -22,6 +22,39 @@ export default new Vuex.Store({
   },
   mutations: {
     /**
+     * 注文に進むをクリック.
+     *
+     * @param state ステート
+     */
+    goOrdered(state) {
+      state.goOrder = true;
+    },
+    /**
+     * 注文に進むをクリックしていない時.
+     *
+     * @param state ステート
+     */
+    noGoOrdered(state) {
+      state.goOrder = false;
+    },
+
+    /**
+     * ログインする.
+     *
+     * @param state ステート
+     */
+    logined(state) {
+      state.isLogin = true;
+    },
+    /**
+     * ログアウトする.
+     *
+     * @param state ステート
+     */
+    logouted(state) {
+      state.isLogin = false;
+    },
+    /**
      * 商品一覧情報を作成してstateに格納する.
      *
      * @param state ステートオブジェクト
@@ -102,6 +135,15 @@ export default new Vuex.Store({
     },
   }, //end actions
   getters: {
+    /**
+     * 注文に進むをクリックした状態を返す.
+     *
+     * @param state ステート
+     * @returns ture:クリック済/false:クリックしていない
+     */
+    getGoOrderStatus(state) {
+      return state.goOrder;
+    },
     /**
      * ログイン状態を返す.
      *

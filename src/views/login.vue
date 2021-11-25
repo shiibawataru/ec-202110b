@@ -83,9 +83,9 @@ export default class Login extends Vue {
 
     if (response.data.status === "success") {
       //stateのisLoginをtrueにし、ログイン状態に変更
-      this["$store"].state.isLogin = true;
+      this.$store.commit("logined");
       //パターン1,2どちらかを判定する為、stateのgoOrderを条件分岐させる
-      if (this["$store"].state.goOrder === true) {
+      if (this["$store"].getters.getGoOrderStatus === true) {
         //goOrderがtrue(パターン1)なので注文確認画面に遷移
         this["$router"].push("/orderConfirm");
       } else {
