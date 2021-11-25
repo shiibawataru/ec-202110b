@@ -79,6 +79,8 @@ export class OrderItem {
   }
 
   public get totalPrice(): number {
+    console.log("呼ばれた！！！");
+
     let price = 0;
     const toppingPriceM = this.orderToppingList[0].topping.priceM;
     const toppingPriceL = this.orderToppingList[0].topping.priceL;
@@ -93,6 +95,8 @@ export class OrderItem {
           toppingPriceL * this.orderToppingList.length
       );
     }
+    console.log("price:" + price);
+
     return price;
   }
 }
