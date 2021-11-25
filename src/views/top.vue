@@ -24,8 +24,7 @@
               <img src="/img_toy/delivery.jpg" />
             </div>
             <p class="text-contents">
-              配達
-              アロハテーブルやウルフギャング、田中オブ東京などのハワイの有名店で修行を積んだ一流シェフによる本格的なハワイアン料理が家にいてもお手軽に楽しむことができます。
+              ラクラクトイはお客様の自宅まで責任を持ってお届けします。12時までに注文していただくと追加料金なしで翌日にお届け！お得な配達サービスぜひご利用ください。
             </p>
           </div>
           <div class="top-item">
@@ -33,27 +32,18 @@
               <img src="/img_toy/present.jpeg" />
             </div>
             <p class="text-contents">
-              ラッピング
-              アイランドビンテージコーヒーやボガーツカフェのアサイボウルはもちろんのこと、最近流行りのバナンのソフトクリーム、エッグスンシングスのふわふわパンケーキなど有名店のスイーツも充実しています。
+              クリスマスや誕生日にぴったりなラッピングもラクラクトイにお任せください！シックなものからゴージャスなものまで、お好きなものをお選びいただけます。
             </p>
           </div>
           <div class="top-item">
             <div class="top-item-icon">
-              <img src="img/14.jpg" />
+              <img src="/img_toy/toy.jpeg" />
             </div>
             <p class="text-contents">
-              ハワイといえばビーチでマイタイ！コナブリューイングのハワイアンコナビールなどハワイでしか飲めないアルコールも豊富にあります。
+              品揃えには自信があります！話題の新作ゲームから、小さなお子様も楽しめるおもちゃまで、種類が豊富にございます。
+              お子様へのプレゼントや自分へのご褒美にぜひお買い求めください。
             </p>
           </div>
-          <!-- <div class="top-item">
-            <div class="top-item-icon">
-              <img src="img/13.jpg" />
-              <p>ホテル創作料理</p>
-            </div>
-            <p class="text-contents">
-              シェラトンワイキキ、ロイヤルハワイアン、モアナサーフライダー、アウラニに入っているレストランの創作料理も「ラクラクアロハ」なら気軽に注文できます。
-            </p>
-          </div> -->
         </div>
       </div>
     </div>
@@ -61,10 +51,8 @@
     <div class="message-wrapper">
       <div class="container">
         <div class="heading">
-          <h2>さぁ、今すぐALOHAの旅に出よう！</h2>
-          <h3>Let's go on an Aloha trip!</h3>
+          <h2>遊びの楽しさを学ぼう！</h2>
         </div>
-        <span class="btn message">ALOHAの旅に出る！</span>
       </div>
     </div>
   </div>
@@ -79,21 +67,23 @@ export default {};
     top-wrapperの設定
    ======================================== */
 .top-wrapper {
-  padding: 100px 0 200px 0; /* 上はヘッダが来るのでその分180px分空ける */
+  padding: 250px 0 200px 0; /* 上はヘッダが来るのでその分180px分空ける */
   background-image: url(/img_toy/toy_xmas.jpg); /* 背景画像設定 */
   background-size: cover; /*画像の縦横比を崩すことなく、画像ができるだけ大きくなるよう拡大縮小*/
   color: white;
   text-align: center;
+  height: 800px;
 }
 
 .top-wrapper h1 {
   opacity: 0.9; /* 文字の透明度を指定 */
-  font-size: 45px;
+  font-size: 60px;
   letter-spacing: 5px; /* 文字の間隔を設定 */
 }
 
 .top-wrapper p {
   opacity: 0.7; /* 文字の透明度を指定 */
+  font-size: 20px;
 }
 
 .btn-wrapper {
