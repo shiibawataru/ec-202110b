@@ -2,29 +2,21 @@
   <div class="top-wrapper">
     <div class="container">
       <h1 class="page-title">注文履歴</h1>
-      <form>
-        <div class="filter-year">
-          <select
-            name="filter"
-            v-model.number="filterYear"
-            class="browser-default"
-          >
-            <option value="2021">2021年</option>
-            <option value="2020">2020年</option>
-            <option value="2019">2019年</option>
-            <option value="2018">2018年</option>
-            <option value="2017">2017年</option>
-            <option value="2016">2016年</option>
-            <option value="2015">2015年</option>
-            <option value="2014">2014年</option>
-            <option value="2013">2013年</option>
-            <option value="2012">2012年</option>
-            <option value="2011">2011年</option>
-          </select>
-          <button class="btn" type="button" @click="dateFilter">
-            絞り込み
-          </button>
-        </div>
+      <form class="form">
+        <select name="filter" v-model="filterYear" class="browser-default">
+          <option value="2021">2021年</option>
+          <option value="2020">2020年</option>
+          <option value="2019">2019年</option>
+          <option value="2018">2018年</option>
+          <option value="2017">2017年</option>
+          <option value="2016">2016年</option>
+          <option value="2015">2015年</option>
+          <option value="2014">2014年</option>
+          <option value="2013">2013年</option>
+          <option value="2012">2012年</option>
+          <option value="2011">2011年</option>
+        </select>
+        <button class="btn" type="button" @click="dateFilter">絞り込み</button>
       </form>
       <!-- table -->
       <div class="row">
@@ -32,56 +24,58 @@
         <table class="striped" v-if="showOrderHistory">
           <thead>
             <tr>
-              <th>注文日</th>
-              <th class="cart-table-th">商品名</th>
+              <th class="order-history-table-th">注文日</th>
+              <th class="order-history-table-th">商品名</th>
               <th>サイズ、価格(税抜)、数量</th>
               <th>トッピング、価格(税抜)</th>
               <th>小計</th>
             </tr>
           </thead>
-          <tbody v-for="order of orderList" :key="order.id">
+          <tbody v-for="order of showOrderList" :key="order.id">
             <tr v-for="orderItem of order.orderItemList" :key="orderItem.id">
-              <td>{{ order.formatDate }}</td>
-              <td class="cart-item-name">
-                <div class="cart-item-icon">
+              <td class="order-history-item-name">{{ order.formatDate }}</td>
+              <td class="order-history-item-name">
+                <div class="order-history-item-icon img">
                   <img :src="orderItem.item.imagePath" />
                 </div>
                 <span>{{ orderItem.item.name }}</span>
               </td>
               <td v-if="orderItem.size === 'M'">
                 <span class="price">&nbsp;{{ orderItem.size }}</span
-                >&nbsp;&nbsp;{{ orderItem.item.priceM }}円 &nbsp;&nbsp;{{
-                  orderItem.quantity
-                }}個
+                >&nbsp;&nbsp;{{ orderItem.item.priceM.toLocaleString() }}円
+                &nbsp;&nbsp;{{ orderItem.quantity }}個
               </td>
               <td v-if="orderItem.size === 'L'">
                 <span class="price">&nbsp;{{ orderItem.size }}</span
-                >&nbsp;&nbsp;{{ orderItem.item.priceM }}円 &nbsp;&nbsp;{{
-                  orderItem.quantity
-                }}個
+                >&nbsp;&nbsp;{{ orderItem.item.priceM.toLocaleString() }}円
+                &nbsp;&nbsp;{{ orderItem.quantity }}個
               </td>
+              <div>
+                <td>
+                  <ul
+                    v-for="orderTopping of orderItem.orderToppingList"
+                    :key="orderTopping.id"
+                  >
+                    <li v-if="orderItem.size === 'M'">
+                      <span
+                        >{{ orderTopping.topping.name }}&emsp;{{
+                          orderTopping.topping.priceM
+                        }}円</span
+                      >
+                    </li>
+                    <li v-if="orderItem.size === 'L'">
+                      <span>
+                        {{ orderTopping.topping.name }} &emsp;
+                        {{ orderTopping.topping.priceL }}円</span
+                      >
+                    </li>
+                  </ul>
+                </td>
+              </div>
               <td>
-                <ul
-                  v-for="orderTopping of orderItem.orderToppingList"
-                  :key="orderTopping.id"
-                >
-                  <li v-if="orderItem.size === 'M'">
-                    <span
-                      >{{ orderTopping.topping.name }}&emsp;{{
-                        orderTopping.topping.priceM
-                      }}円</span
-                    >
-                  </li>
-                  <li v-if="orderItem.size === 'L'">
-                    <span>
-                      {{ orderTopping.topping.name }} &emsp;
-                      {{ orderTopping.topping.priceL }}円</span
-                    >
-                  </li>
-                </ul>
-              </td>
-              <td>
-                <div class="text-center">{{ orderItem.subTotal }}円</div>
+                <div class="text-center">
+                  {{ orderItem.subTotal.toLocaleString() }}円
+                </div>
               </td>
             </tr>
           </tbody>
@@ -103,7 +97,9 @@ export default class OrderHistory extends Vue {
   // 注文履歴が0件の場合のエラーメッセージ表示判定
   private showOrderHistory = true;
   // 購入年
-  private filterYear = 2021;
+  private filterYear = "指定なし";
+  // 表示する注文商品を入れる配列
+  private showOrderList: Array<Order> = [];
   // 注文商品を入れる配列
   private orderList: Array<Order> = [];
 
@@ -113,6 +109,7 @@ export default class OrderHistory extends Vue {
       this.$router.push("/login");
       return;
     }
+    // stateのユーザーIDをAPIに送り、注文履歴を取得
     const userId: number = this["$store"].getters.getUserId;
     console.log("userId: " + userId);
 
@@ -141,8 +138,17 @@ export default class OrderHistory extends Vue {
     }
     console.dir("注文商品一覧:" + JSON.stringify(this.orderList));
     this.getNonOrderMsg();
+    this.startDisplay();
   }
 
+  /**
+   * 初期表示用.
+   */
+  startDisplay(): void {
+    for (let i = 0; i < this.orderList.length; i++) {
+      this.showOrderList.push(this.orderList[i]);
+    }
+  }
   /**
    * 注文履歴が0件だった場合、メッセージを表示する.
    */
@@ -154,25 +160,33 @@ export default class OrderHistory extends Vue {
     }
   }
   /**
-   * 購入年で絞り込み検索
+   * 購入年で絞り込み検索.
    */
   dateFilter(): void {
+    // 初期化
     this.nonOrderMsg = "";
-    // this.orderList.splice(0, this.orderList.length);
-    // 確認用
+    this.showOrderList.splice(0, this.showOrderList.length);
+    // 絞り込む年
     console.log(this.filterYear);
-    console.dir(
-      "order.orderDate.getFullYear:" +
-        new Date(this.orderList[0].orderDate).getFullYear()
-    );
-    // フィルターをかけた配列を入れる
-    let filterOrderList = this.orderList;
-    filterOrderList.filter(
+
+    this.showOrderList = this.orderList.filter(
       (order) =>
-        Number(new Date(order.orderDate).getFullYear()) === this.filterYear
+        Number(order.orderDate.getFullYear()) === Number(this.filterYear)
     );
-    console.log("絞り込みした" + JSON.stringify(filterOrderList));
-    this.orderList = filterOrderList;
+    this.showOrderHistory = true;
+    // for (let order of this.orderList) {
+    //   if (Number(order.orderDate.getFullYear()) === Number(this.filterYear)) {
+    //     this.showOrderList.push(order);
+    //   }
+    // }
+    console.log("絞り込みした注文一覧：" + JSON.stringify(this.showOrderList));
+
+    // 該当の注文履歴がない場合はエラーメーセージの表示と全件表示
+    if (this.showOrderList.length === 0) {
+      this.nonOrderMsg = "該当する注文履歴がありません";
+      this.showOrderHistory = false;
+      // this.startDisplay();
+    }
   }
 }
 </script>
@@ -182,15 +196,14 @@ export default class OrderHistory extends Vue {
   color: red;
 }
 
-.btn {
-  margin-right: 30px;
-}
-.filter-year {
-  margin: auto;
+.form {
+  width: 30%;
   text-align: center;
+  display: flex;
 }
 select {
-  width: 120px;
+  width: 200px;
+  margin-right: 10px;
   text-align: center;
 }
 </style>
