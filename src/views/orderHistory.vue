@@ -3,11 +3,23 @@
     <div class="container">
       <h1 class="page-title">注文履歴</h1>
       <form>
-        <div>
-          <select name="filter" v-model="filterYear" class="browser-default">
-            <option value="2021">2021</option>
-            <option value="2020">2020</option>
-            <option value="2019">2019</option>
+        <div class="filter-year">
+          <select
+            name="filter"
+            v-model.number="filterYear"
+            class="browser-default"
+          >
+            <option value="2021">2021年</option>
+            <option value="2020">2020年</option>
+            <option value="2019">2019年</option>
+            <option value="2018">2018年</option>
+            <option value="2017">2017年</option>
+            <option value="2016">2016年</option>
+            <option value="2015">2015年</option>
+            <option value="2014">2014年</option>
+            <option value="2013">2013年</option>
+            <option value="2012">2012年</option>
+            <option value="2011">2011年</option>
           </select>
           <button class="btn" type="button" @click="dateFilter">
             絞り込み
@@ -80,12 +92,7 @@
 </template>
 
 <script lang="ts">
-import { User } from "@/types/User";
-import { Item } from "@/types/Item";
 import { Order } from "@/types/Order";
-import { OrderItem } from "@/types/OrderItem";
-import { OrderTopping } from "@/types/OrderTopping";
-import { Topping } from "@/types/Topping";
 import { Component, Vue } from "vue-property-decorator";
 import axios from "axios";
 
@@ -95,7 +102,7 @@ export default class OrderHistory extends Vue {
   private nonOrderMsg = "";
   // 注文履歴が0件の場合のエラーメッセージ表示判定
   private showOrderHistory = true;
-
+  // 購入年
   private filterYear = 2021;
   // 注文商品を入れる配列
   private orderList: Array<Order> = [];
@@ -110,12 +117,11 @@ export default class OrderHistory extends Vue {
     console.log("userId: " + userId);
 
     const response = await axios.get(
-      `http://153.127.48.168:8080/ecsite-api/order/orders/toy/1111`
+      `http://153.127.48.168:8080/ecsite-api/order/orders/toy/${userId}`
     );
 
-    console.dir("注文商品一覧:" + JSON.stringify(this.orderList));
     for (let order of response.data.orders) {
-      new Order(
+      let newOrder = new Order(
         order.id,
         order.userId,
         order.status,
@@ -131,8 +137,9 @@ export default class OrderHistory extends Vue {
         order.user,
         order.orderItemList
       );
-      this.orderList.push(order);
+      this.orderList.push(newOrder);
     }
+    console.dir("注文商品一覧:" + JSON.stringify(this.orderList));
     this.getNonOrderMsg();
   }
 
@@ -149,17 +156,14 @@ export default class OrderHistory extends Vue {
   /**
    * 購入年で絞り込み検索
    */
-  dateFilter() {
+  dateFilter(): void {
     this.nonOrderMsg = "";
-    this.orderList.splice(0, this.orderList.length);
+    // this.orderList.splice(0, this.orderList.length);
     // 確認用
     console.log(this.filterYear);
-    for (let order of this.orderList) {
-      console.dir(
-        "order.orderDate.getFullYear:" +
-          JSON.stringify(new Date(order.orderDate).getFullYear())
-      );
-    }
+
+    console.dir("order.orderDate.getFullYear:" + this.orderList[0].orderDate);
+
     let filterOrderList = this.orderList.filter(
       (orderItem) =>
         Number(new Date(orderItem.orderDate).getFullYear()) === this.filterYear
@@ -169,9 +173,21 @@ export default class OrderHistory extends Vue {
   }
 }
 </script>
-<style>
+<style scoped>
 .error-message {
   text-align: center;
   color: red;
+}
+
+.btn {
+  margin-right: 30px;
+}
+.filter-year {
+  margin: auto;
+  text-align: center;
+}
+select {
+  width: 120px;
+  text-align: center;
 }
 </style>
