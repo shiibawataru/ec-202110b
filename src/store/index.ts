@@ -4,6 +4,7 @@ import { Item } from "@/types/Item";
 import { OrderItem } from "@/types/OrderItem";
 import axios from "axios";
 import createPersistedState from "vuex-persistedstate";
+import { OrderTopping } from "@/types/OrderTopping";
 
 Vue.use(Vuex);
 
@@ -168,6 +169,42 @@ export default new Vuex.Store({
      */
     getCartList(state) {
       return state.cartList;
+      // const array = new Array<OrderItem>();
+      // for (const orderItem of state.cartList) {
+      //   const toppingArray = new Array<OrderTopping>();
+      //   for (const topping of orderItem._orderToppingList) {
+      //     toppingArray.push(
+      //       new OrderTopping(
+      //         topping._id,
+      //         topping._toppingId,
+      //         topping._orderItemId,
+      //         topping._topping
+      //       )
+      //     );
+      //   }
+      //   array.push(
+      //     new OrderItem(
+      //       orderItem._id,
+      //       orderItem._itemId,
+      //       orderItem._orderId,
+      //       orderItem._quantity,
+      //       orderItem._size,
+      //       new Item(
+      //         orderItem._item._id,
+      //         orderItem._item._type,
+      //         orderItem._item._name,
+      //         orderItem._item._description,
+      //         orderItem._item._priceM,
+      //         orderItem._item._priceL,
+      //         orderItem._item._imagePath,
+      //         orderItem._item._deleted,
+      //         orderItem._item._toppingList
+      //       ),
+      //       toppingArray
+      //     )
+      //   );
+      // }
+      // return array;
     },
 
     /**

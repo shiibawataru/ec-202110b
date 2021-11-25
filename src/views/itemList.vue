@@ -9,7 +9,15 @@
           name="name"
           class="search-name-input"
           v-model="searchWord"
+          list="itemSuggest"
         />
+
+        <datalist id="itemSuggest">
+          <div v-for="item of items" v-bind:key="item.id">
+            <option v-bind:value="item.name"></option>
+          </div>
+        </datalist>
+
         <span class="row order-confirm-btn">
           <button
             class="btn search-btn"
@@ -40,11 +48,13 @@
         <div class="items">
           <ul v-for="item of displayList" v-bind:key="item.id">
             <div class="item">
-              <div class="item-icon">
-                <img v-bind:src="item.imagePath" />
-              </div>
               <router-link v-bind:to="'/itemDetail/' + item.id">
-                {{ item.name }}</router-link
+                <div class="item-icon">
+                  <img v-bind:src="item.imagePath" />
+                </div>
+                <div>
+                  {{ item.name }}
+                </div> </router-link
               ><br />
               <span class="price">Ｍ</span
               >{{ item.priceM.toLocaleString() }}円<br />
@@ -70,7 +80,6 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { Item } from "@/types/Item";
-
 @Component
 export default class ItemList extends Vue {
   // 商品一覧
@@ -83,7 +92,8 @@ export default class ItemList extends Vue {
   private errorOfSearch = "";
   //何順か
   private sort = "安い";
-
+  //サジェスト機能の配列
+  private items = [];
   /**
    * Vuexストアのアクション経由で非同期でWebAPIから商品一覧を取得する.
    *
@@ -98,6 +108,8 @@ export default class ItemList extends Vue {
     await this["$store"].dispatch("getItemList");
     this.itemList = this["$store"].getters.getItemList;
     this.startDisplay();
+    //サジェスト機能の配列に商品情報を代入
+    this.items = this["$store"].getters.getItemList;
   }
 
   // 曖昧検索

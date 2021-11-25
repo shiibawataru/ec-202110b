@@ -4,15 +4,15 @@
 export class Topping {
   constructor(
     // ID
-    private _id: number,
+    public _id: number,
     // タイプ
-    private _type: string,
+    public _type: string,
     // 名前
-    private _name: string,
+    public _name: string,
     // Mの価格
-    private _priceM: number,
+    public _priceM: number,
     // Lの価格
-    private _priceL: number
+    public _priceL: number
   ) {}
 
   public get id(): number {

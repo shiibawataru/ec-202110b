@@ -333,9 +333,6 @@
 
 <script lang="ts">
 import { OrderItem } from "@/types/OrderItem";
-import { OrderTopping } from "@/types/OrderTopping";
-import { Topping } from "@/types/Topping";
-import { Item } from "@/types/Item";
 import { Component, Vue } from "vue-property-decorator";
 import axios from "axios";
 import { format, addHours } from "date-fns";
@@ -503,7 +500,7 @@ export default class OrderConfirm extends Vue {
     }
 
     this.cartList = this["$store"].getters.getCartList;
-    console.dir("カートの中身:" + JSON.stringify(this.cartList));
+    console.dir("注文確定カートの中身:" + JSON.stringify(this.cartList[0]));
   }
 
   /**
@@ -726,9 +723,7 @@ export default class OrderConfirm extends Vue {
     const response = await axios.post(
       "http://153.127.48.168:8080/sample-credit-card-web-api/credit-card/payment ",
       {
-        user_id: 1111,
-        // user_id: Number(this["$store"].getters.getUserId),
-        //★注文一覧をstoreのindexに置いたらそこから取得する↓
+        user_id: this["$store"].getters.getUserId,
         order_number: 12345678901234, //注文番号
         amount: Number(this.taxIncludePrice), //決済金額
         card_number: Number(this.creditNumber), //クレジットカード番号

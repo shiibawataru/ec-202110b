@@ -7,19 +7,19 @@ import { OrderTopping } from "./OrderTopping";
 export class OrderItem {
   constructor(
     // ID
-    private _id: number,
+    public _id: number,
     // 商品ID
-    private _itemId: number,
+    public _itemId: number,
     // 注文ID
-    private _orderId: number,
+    public _orderId: number,
     // 数量
-    private _quantity: number,
+    public _quantity: number,
     // サイズ
-    private _size: string,
+    public _size: string,
     // 商品
-    private _item: Item,
+    public _item: Item,
     // 注文トッピングリスト
-    private _orderToppingList: Array<OrderTopping>
+    public _orderToppingList: Array<OrderTopping>
   ) {}
 
   public get id(): number {
@@ -82,8 +82,8 @@ export class OrderItem {
     console.log("呼ばれた！！！");
 
     let price = 0;
-    const toppingPriceM = this.orderToppingList[0].topping.priceM;
-    const toppingPriceL = this.orderToppingList[0].topping.priceL;
+    const toppingPriceM = Number(this.orderToppingList[0].topping.priceM);
+    const toppingPriceL = Number(this.orderToppingList[0].topping.priceL);
     if (this.size === "M") {
       price = Number(
         this.item.priceM * this.quantity +
@@ -95,7 +95,8 @@ export class OrderItem {
           toppingPriceL * this.orderToppingList.length
       );
     }
-    console.log("price:" + price);
+    console.log("toppingPriceM" + toppingPriceM);
+    console.log("length" + this.orderToppingList.length);
 
     return price;
   }

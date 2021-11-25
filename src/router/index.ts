@@ -40,6 +40,10 @@ const routes: Array<RouteConfig> = [
     path: "/logout",
     component: () => import("../views/logout.vue"),
   },
+  {
+    path: "/orderHistory",
+    component: () => import("../views/orderHistory.vue"),
+  },
 ];
 
 const router = new VueRouter({

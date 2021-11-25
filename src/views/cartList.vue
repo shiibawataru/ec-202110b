@@ -24,13 +24,15 @@
               </td>
               <td v-if="cartItem.size === 'M'">
                 <span class="price">&nbsp;{{ cartItem.size }}</span
-                >&nbsp;&nbsp;{{ cartItem.item.priceM.toLocaleString() }}円
-                &nbsp;&nbsp;{{ cartItem.quantity }}個
+                >&nbsp;&nbsp;{{ cartItem.item.priceM }}円 &nbsp;&nbsp;{{
+                  cartItem.quantity
+                }}個
               </td>
               <td v-if="cartItem.size === 'L'">
                 <span class="price">&nbsp;{{ cartItem.size }}</span
-                >&nbsp;&nbsp;{{ cartItem.item.priceL.toLocaleString() }}円
-                &nbsp;&nbsp;{{ cartItem.quantity }}個
+                >&nbsp;&nbsp;{{ cartItem.item.priceL }}円 &nbsp;&nbsp;{{
+                  cartItem.quantity
+                }}個
               </td>
               <div
                 v-for="orderTopping of cartItem.orderToppingList"
@@ -71,6 +73,9 @@
         </div>
       </div>
       <div class="row order-confirm-btn">
+        <button class="btn" type="return" v-on:click="onclickReturn">
+          商品一覧へ戻る</button
+        >&nbsp;&nbsp;
         <button
           class="btn"
           type="button"
@@ -113,6 +118,7 @@ export default class CartList extends Vue {
    */
   created(): void {
     this.cartList = this["$store"].getters.getCartList;
+
     // this.cartList = [
     //   //消すこと！！！
     //   new OrderItem(
@@ -197,7 +203,12 @@ export default class CartList extends Vue {
     }
     return price * 1.1;
   }
-
+  /**
+   * 商品一覧へ戻る
+   */
+  onclickReturn(): void {
+    this["$router"].push("/itemList");
+  }
   /**
    *カートから商品を削除する.
    */

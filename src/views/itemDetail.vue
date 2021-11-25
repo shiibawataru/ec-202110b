@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div class="snow">●</div>
     <div class="top-wrapper">
       <div class="container">
         <h1 class="page-title">{{ currentItem.name }}</h1>
@@ -12,60 +13,62 @@
               <pre>{{ currentItem.description }}</pre>
             </div>
           </div>
-          <div class="row item-size">
-            <div class="item-hedding">サイズ</div>
-            <div>
-              <label>
-                <input
-                  id="size-m"
-                  name="size"
-                  type="radio"
-                  value="M"
-                  v-model="selectedSize"
-                />
-                <span>
-                  &nbsp;<span class="price">Ｍ</span>&nbsp;&nbsp;{{
-                    formatPriceM
-                  }}円(税抜)</span
-                >
-              </label>
-              <label>
-                <input
-                  id="size-l"
-                  name="size"
-                  type="radio"
-                  value="L"
-                  v-model="selectedSize"
-                />
-                <span>
-                  &nbsp;<span class="price">Ｌ</span>&nbsp;&nbsp;{{
-                    formatPriceL
-                  }}円(税抜)</span
-                >
-              </label>
+          <form class="form">
+            <div class="row item-size">
+              <div class="item-hedding">サイズ</div>
+              <div>
+                <label>
+                  <input
+                    id="size-m"
+                    name="size"
+                    type="radio"
+                    value="M"
+                    v-model="selectedSize"
+                  />
+                  <span>
+                    &nbsp;<span class="price">Ｍ</span>&nbsp;&nbsp;{{
+                      this.currentItem.priceM.toLocaleString()
+                    }}円(税抜)</span
+                  >
+                </label>
+                <label>
+                  <input
+                    id="size-l"
+                    name="size"
+                    type="radio"
+                    value="L"
+                    v-model="selectedSize"
+                  />
+                  <span>
+                    &nbsp;<span class="price">Ｌ</span>&nbsp;&nbsp;{{
+                      this.currentItem.priceL.toLocaleString()
+                    }}円(税抜)</span
+                  >
+                </label>
+              </div>
             </div>
-          </div>
-          <div class="row item-toppings">
-            <div class="item-hedding">
-              トッピング：&nbsp;1つにつき
-              <span>&nbsp;Ｍ&nbsp;</span>&nbsp;&nbsp;200円(税抜)
-              <span>&nbsp;Ｌ</span>&nbsp;&nbsp;300円(税抜)
+            <div class="row item-toppings">
+              <div class="item-hedding">
+                トッピング：&nbsp;1つにつき
+                <span>&nbsp;Ｍ&nbsp;</span>&nbsp;&nbsp;200円(税抜)
+                <span>&nbsp;Ｌ</span>&nbsp;&nbsp;300円(税抜)
+              </div>
+              <span
+                v-for="topping of currentItem.toppingList"
+                v-bind:key="topping.name"
+              >
+                <label class="item-topping">
+                  <input
+                    type="checkbox"
+                    :value="topping"
+                    v-model="checked"
+                    name="topping"
+                  />
+                  <span>{{ topping.name }}</span>
+                </label>
+              </span>
             </div>
-            <span
-              v-for="topping of currentItem.toppingList"
-              v-bind:key="topping.name"
-            >
-              <label class="item-topping">
-                <input
-                  type="checkbox"
-                  :value="topping"
-                  v-model="checked"
-                  name="topping"
-                />
-                <span>{{ topping.name }}</span>
-              </label>
-            </span>
-          </div>
+          </form>
           <div class="row item-quantity">
             <div class="item-hedding item-hedding-quantity">数量</div>
             <div class="item-quantity-selectbox">
@@ -92,6 +95,10 @@
             <span>この商品金額：{{ subTotalPrice }}円(税抜)</span>
           </div>
           <div class="row item-cart-btn">
+            <button class="btn" type="return" v-on:click="onclickReturn">
+              商品一覧へ戻る
+            </button>
+            &nbsp;&nbsp;
             <button class="btn" type="button" v-on:click="onclickAddItemToCart">
               <span>カートに入れる</span>
             </button>
@@ -114,21 +121,11 @@ import { OrderTopping } from "@/types/OrderTopping";
 
 @Component
 export default class ItemDetail extends Vue {
-  // チェックされたものを配列に入れる
+  // チェックされたトッピングを配列に入れる
   private checked: Array<Topping> = [];
-  // private currentToppingList: Array<Topping> = this.checked;
+  // 注文するトッピングリスト
   private currentOrderToppingList: Array<OrderTopping> = [];
-
-  // 表示されている商品のトッピングリスト
-  // private currentToppingList = new Topping(0, "AA", "AA", 0, 0);
-  // 送るトッッピングを入れるリスト
-  // private currentOrderToppingList = new OrderTopping(
-  //   0,
-  //   0,
-  //   0,
-  //   this.currentToppingList
-  // );
-  // 表示されている商品の詳細
+  //商品情報
   private currentItem = new Item(
     0,
     "BB",
@@ -140,7 +137,7 @@ export default class ItemDetail extends Vue {
     true,
     Array<Topping>()
   );
-  // カートに入れられた
+  // カートに入れられた商品情報
   private currentOrderItem = new OrderItem(
     0,
     0,
@@ -157,7 +154,7 @@ export default class ItemDetail extends Vue {
   private quantity = 1;
 
   /**
-   * VuexストアのGetter経由で受け取ったリクエストパラメータのIDから１件の従業員情報を取得する.
+   * VuexストアのGetter経由で受け取ったリクエストパラメータのIDから１件の商品情報を取得する.
    *
    * @remarks
    * Vueインスタンスが生成されたタイミングで
@@ -186,21 +183,16 @@ export default class ItemDetail extends Vue {
       response.data.item.toppingList
     );
   }
-  // 3桁カンマ区切りに変更
-  get formatPriceM(): string {
-    return this.currentItem.priceM.toLocaleString();
-  }
-  // 3桁カンマ区切りに変更
-  get formatPriceL(): string {
-    return this.currentItem.priceL.toLocaleString();
-  }
 
-  // チェックされたトッピングの数
+  /**
+   * チェックされたトッピングの数
+   */
   get checkedCount(): number {
     return this.checked.length;
   }
-
-  // 選択されたものから小計を計算する
+  /**
+   * 小計を計算する
+   */
   get subTotalPrice(): string {
     let subTotalPrice = 0;
     if (this.selectedSize === "M") {
@@ -214,8 +206,16 @@ export default class ItemDetail extends Vue {
     }
     return subTotalPrice.toLocaleString();
   }
+  /**
+   * 商品一覧へ戻る
+   */
+  onclickReturn(): void {
+    this["$router"].push("/itemList");
+  }
 
-  // カートに商品を追加
+  /*
+   * カートに追加する
+   */
   onclickAddItemToCart(): void {
     this.orderCart();
     const namingId = this["$store"].getters.getCartList.length + 1;
@@ -233,7 +233,9 @@ export default class ItemDetail extends Vue {
     this["$router"].push("/cartList");
   }
 
-  //
+  /**
+   * 選択されたトッピングを配列に入れる
+   */
   orderCart(): void {
     for (const check of this.checked) {
       this.currentOrderToppingList.push(
@@ -244,78 +246,31 @@ export default class ItemDetail extends Vue {
 }
 </script>
 <style scoped>
-/* ========================================
-    商品詳細ページのスタイル
-   ======================================== */
-
-.item-detail {
-  display: flex;
-  /* 中央揃え */
-  justify-content: center;
+.top-wrapper {
+  background-color: #dc143c;
 }
-.item-icon img {
-  margin: auto;
-  display: block;
-  border-radius: 30px;
-  width: 250px;
-  height: 250px;
-  padding: 0 0 15px 0;
+.container {
+  background-color: ghostwhite;
+  border-radius: 15px;
+  width: 70%;
+  padding-top: 1px;
+  margin-top: -50px;
 }
-
-.item-intro {
-  width: 400px;
-  padding-top: 50px;
-  padding-left: 50px;
-  font-size: 20px;
+.snow {
+  color: snow; /*雪の色*/
+  font-size: 25px; /*雪の大きさ*/
+  position: fixed;
+  top: -5%; /*初期位置*/
+  text-shadow: 5vw -100px 2px, 10vw -400px 3px, 20vw -500px 4px, 30vw -580px 1px,
+    39vw -250px 2px, 42vw -340px 5px, 56vw -150px 2px, 63vw -180px 0,
+    78vw -220px 4px, 86vw -320px 9px, 94vw -170px 7px;
+  animation: anim 5s linear infinite;
 }
 
-.item-hedding {
-  font-weight: bold;
-  font-size: 17px;
-  text-align: left;
-}
-.item-size {
-  /* text-align: center; */
-  font-size: 15px;
-  margin-bottom: 20px;
-  padding: 0 200px 0 200px;
-}
-
-/* サイズをオレンジ〇で囲む */
-.price {
-  background-color: #ff4500;
-  border-radius: 50%; /* 角丸にする設定 */
-  color: black;
-}
-
-.item-toppings {
-  font-size: 15px;
-  padding: 0 200px 0 200px;
-}
-
-.item-topping {
-  margin-right: 10px;
-}
-
-.item-hedding-quantity {
-  margin-left: 200px;
-}
-
-.item-quantity {
-  text-align: center;
-  font-size: 15px;
-}
-
-.item-quantity-selectbox {
-  padding: 0 300px 0 300px;
-}
-
-.item-total-price {
-  font-size: 35px;
-  text-align: center;
-}
-
-.item-cart-btn {
-  text-align: center;
+@keyframes anim {
+  100% {
+    color: transparent;
+    top: 150%;
+  }
 }
 </style>
