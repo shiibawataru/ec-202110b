@@ -14,13 +14,14 @@
           <router-link to="/cartList">
             <i class="fas fa-shopping-cart"></i>カート</router-link
           >
+
           <router-link to="/login" v-if="isLogin === false">
             <i class="fas fa-sign-in-alt"></i>ログイン
           </router-link>
           <router-link to="/logout" v-if="isLogin === true">
             <i class="fas fa-sign-in-alt"></i>ログアウト
           </router-link>
-          <a href="order_history.html">注文履歴</a>
+          <router-link to="/orderHistory">注文履歴</router-link>
         </div>
       </div>
     </div>
