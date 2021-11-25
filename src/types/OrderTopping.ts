@@ -5,13 +5,14 @@ import { Topping } from "./Topping";
 export class OrderTopping {
   constructor(
     //ID
-    private _id: number,
+
+    public _id: number,
     //トッピングID
-    private _toppingId: number,
+    public _toppingId: number,
     //注文商品ID
-    private _orderItemId: number,
+    public _orderItemId: number,
     //トッピング
-    private _topping: Topping
+    public _topping: Topping
   ) {}
 
   public get id(): number {

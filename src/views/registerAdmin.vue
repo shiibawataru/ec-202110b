@@ -45,7 +45,7 @@
               <span class="error">{{ errorOfZipCode }}</span>
               <input id="zipcode" type="text" maxlength="8" v-model="zipCode" />
               <label for="zipcode">郵便番号(ハイフンあり)</label>
-              <button class="btn" type="button">
+              <button class="btn" type="button" v-on:click="getAddress">
                 <span>住所検索</span>
               </button>
             </div>
@@ -241,6 +241,38 @@ export default class RegisterAdmin extends Vue {
       this.errorMessage = response.data.message;
     } else {
       throw new Error("予期しないエラーが発生しました");
+    }
+  }
+
+  /**
+   * 郵便番号から住所を取得.
+   */
+  async getAddress(): Promise<void> {
+    //初期値リセット(住所、住所エラー)
+    this.address = "";
+    this.errorOfAddress = "";
+    //郵便番号から住所を取得APIに郵便番号を送る
+    try {
+      // const axios = require("axios");
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const axiosJsonpAdapter = require("axios-jsonp");
+
+      const response = await axios.get("https://zipcoda.net/api", {
+        adapter: axiosJsonpAdapter,
+        params: {
+          zipcode: this.zipCode,
+        },
+      });
+      //成功したら住所に取得したデータを代入
+      if (response.data.length === 1) {
+        this.address =
+          response.data.items[0].state_name + response.data.items[0].address;
+        //失敗したらエラーを出す
+      } else {
+        this.errorOfAddress = "住所が見つかりません";
+      }
+    } catch (e) {
+      this.errorOfAddress = "住所が見つかりません";
     }
   }
 
