@@ -25,7 +25,7 @@
                 />
                 <span>
                   &nbsp;<span class="price">Ｍ</span>&nbsp;&nbsp;{{
-                    formatPriceM
+                    this.currentItem.priceM.toLocaleString()
                   }}円(税抜)</span
                 >
               </label>
@@ -39,7 +39,7 @@
                 />
                 <span>
                   &nbsp;<span class="price">Ｌ</span>&nbsp;&nbsp;{{
-                    formatPriceL
+                    this.currentItem.priceL.toLocaleString()
                   }}円(税抜)</span
                 >
               </label>
@@ -114,21 +114,11 @@ import { OrderTopping } from "@/types/OrderTopping";
 
 @Component
 export default class ItemDetail extends Vue {
-  // チェックされたものを配列に入れる
+  // チェックされたトッピングを配列に入れる
   private checked: Array<Topping> = [];
-  // private currentToppingList: Array<Topping> = this.checked;
+  // 注文するトッピングリスト
   private currentOrderToppingList: Array<OrderTopping> = [];
-
-  // 表示されている商品のトッピングリスト
-  // private currentToppingList = new Topping(0, "AA", "AA", 0, 0);
-  // 送るトッッピングを入れるリスト
-  // private currentOrderToppingList = new OrderTopping(
-  //   0,
-  //   0,
-  //   0,
-  //   this.currentToppingList
-  // );
-  // 表示されている商品の詳細
+  //商品情報
   private currentItem = new Item(
     0,
     "BB",
@@ -140,7 +130,7 @@ export default class ItemDetail extends Vue {
     true,
     Array<Topping>()
   );
-  // カートに入れられた
+  // カートに入れられた商品情報
   private currentOrderItem = new OrderItem(
     0,
     0,
@@ -157,7 +147,7 @@ export default class ItemDetail extends Vue {
   private quantity = 1;
 
   /**
-   * VuexストアのGetter経由で受け取ったリクエストパラメータのIDから１件の従業員情報を取得する.
+   * VuexストアのGetter経由で受け取ったリクエストパラメータのIDから１件の商品情報を取得する.
    *
    * @remarks
    * Vueインスタンスが生成されたタイミングで
@@ -186,21 +176,16 @@ export default class ItemDetail extends Vue {
       response.data.item.toppingList
     );
   }
-  // 3桁カンマ区切りに変更
-  get formatPriceM(): string {
-    return this.currentItem.priceM.toLocaleString();
-  }
-  // 3桁カンマ区切りに変更
-  get formatPriceL(): string {
-    return this.currentItem.priceL.toLocaleString();
-  }
 
-  // チェックされたトッピングの数
+  /**
+   * チェックされたトッピングの数
+   */
   get checkedCount(): number {
     return this.checked.length;
   }
-
-  // 選択されたものから小計を計算する
+  /**
+   * 小計を計算する
+   */
   get subTotalPrice(): string {
     let subTotalPrice = 0;
     if (this.selectedSize === "M") {
@@ -214,8 +199,9 @@ export default class ItemDetail extends Vue {
     }
     return subTotalPrice.toLocaleString();
   }
-
-  // カートに商品を追加
+  /**
+   * カートに追加する
+   */
   onclickAddItemToCart(): void {
     this.orderCart();
     const namingId = this["$store"].getters.getCartList.length + 1;
@@ -233,7 +219,9 @@ export default class ItemDetail extends Vue {
     this["$router"].push("/cartList");
   }
 
-  //
+  /**
+   * 選択されたトッピングを配列に入れる
+   */
   orderCart(): void {
     for (const check of this.checked) {
       this.currentOrderToppingList.push(
@@ -243,79 +231,4 @@ export default class ItemDetail extends Vue {
   }
 }
 </script>
-<style scoped>
-/* ========================================
-    商品詳細ページのスタイル
-   ======================================== */
-
-.item-detail {
-  display: flex;
-  /* 中央揃え */
-  justify-content: center;
-}
-.item-icon img {
-  margin: auto;
-  display: block;
-  border-radius: 30px;
-  width: 250px;
-  height: 250px;
-  padding: 0 0 15px 0;
-}
-
-.item-intro {
-  width: 400px;
-  padding-top: 50px;
-  padding-left: 50px;
-  font-size: 20px;
-}
-
-.item-hedding {
-  font-weight: bold;
-  font-size: 17px;
-  text-align: left;
-}
-.item-size {
-  /* text-align: center; */
-  font-size: 15px;
-  margin-bottom: 20px;
-  padding: 0 200px 0 200px;
-}
-
-/* サイズをオレンジ〇で囲む */
-.price {
-  background-color: #ff4500;
-  border-radius: 50%; /* 角丸にする設定 */
-  color: black;
-}
-
-.item-toppings {
-  font-size: 15px;
-  padding: 0 200px 0 200px;
-}
-
-.item-topping {
-  margin-right: 10px;
-}
-
-.item-hedding-quantity {
-  margin-left: 200px;
-}
-
-.item-quantity {
-  text-align: center;
-  font-size: 15px;
-}
-
-.item-quantity-selectbox {
-  padding: 0 300px 0 300px;
-}
-
-.item-total-price {
-  font-size: 35px;
-  text-align: center;
-}
-
-.item-cart-btn {
-  text-align: center;
-}
-</style>
+<style scoped></style>
