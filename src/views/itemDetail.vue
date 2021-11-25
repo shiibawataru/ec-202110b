@@ -51,16 +51,20 @@
               <span>&nbsp;Ｍ&nbsp;</span>&nbsp;&nbsp;200円(税抜)
               <span>&nbsp;Ｌ</span>&nbsp;&nbsp;300円(税抜)
             </div>
-            <div v-for="(topping, i) of currentItem.toppingList" v-bind:key="i">
+            <span
+              v-for="topping of currentItem.toppingList"
+              v-bind:key="topping.name"
+            >
               <label class="item-topping">
                 <input
                   type="checkbox"
-                  value="topping.name"
-                  v-model="checked[i]"
+                  :value="topping"
+                  v-model="checked"
+                  name="topping"
                 />
                 <span>{{ topping.name }}</span>
               </label>
-            </div>
+            </span>
           </div>
           <div class="row item-quantity">
             <div class="item-hedding item-hedding-quantity">数量</div>
@@ -88,7 +92,7 @@
             <span>この商品金額：{{ subTotalPrice }}円(税抜)</span>
           </div>
           <div class="row item-cart-btn">
-            <button class="btn" type="button" onclick="addItemToCart">
+            <button class="btn" type="button" v-on:click="onclickAddItemToCart">
               <span>カートに入れる</span>
             </button>
           </div>
@@ -104,30 +108,53 @@
 import { Component, Vue } from "vue-property-decorator";
 import { Item } from "@/types/Item";
 import { Topping } from "@/types/Topping";
+import { OrderItem } from "@/types/OrderItem";
 import axios from "axios";
+import { OrderTopping } from "@/types/OrderTopping";
 
 @Component
 export default class ItemDetail extends Vue {
-  //
-  private currentToppingList: Array<Topping> = [];
-  //
+  // チェックされたものを配列に入れる
+  private checked: Array<Topping> = [];
+  // private currentToppingList: Array<Topping> = this.checked;
+  private currentOrderToppingList: Array<OrderTopping> = [];
+
+  // 表示されている商品のトッピングリスト
+  // private currentToppingList = new Topping(0, "AA", "AA", 0, 0);
+  // 送るトッッピングを入れるリスト
+  // private currentOrderToppingList = new OrderTopping(
+  //   0,
+  //   0,
+  //   0,
+  //   this.currentToppingList
+  // );
+  // 表示されている商品の詳細
   private currentItem = new Item(
     0,
-    "XX",
-    "XX",
-    "XX",
+    "BB",
+    "BB",
+    "BB",
     0,
     0,
     "/img/noImage.png",
     true,
-    this.currentToppingList
+    Array<Topping>()
+  );
+  // カートに入れられた
+  private currentOrderItem = new OrderItem(
+    0,
+    0,
+    0,
+    0,
+    "CC",
+    this.currentItem,
+    Array<OrderTopping>()
   );
   // 選択されたサイズ
   private selectedSize = "M";
-  // チェックされたものを配列に入れる
-  private checked = [];
+
   // 選択された数量
-  private quantity = 0;
+  private quantity = 1;
 
   /**
    * VuexストアのGetter経由で受け取ったリクエストパラメータのIDから１件の従業員情報を取得する.
@@ -145,7 +172,7 @@ export default class ItemDetail extends Vue {
       `http://153.127.48.168:8080/ecsite-api/item/${itemId}`
     );
     // 取得したJSONデータをコンソールに出力して確認
-    console.dir("response1:" + JSON.stringify(response));
+    console.dir("response:" + JSON.stringify(response));
     // Itemオブジェクト型として代入
     this.currentItem = new Item(
       response.data.item.id,
@@ -168,13 +195,9 @@ export default class ItemDetail extends Vue {
     return this.currentItem.priceL.toLocaleString();
   }
 
-  // チェックされたトッッピングの数
+  // チェックされたトッピングの数
   get checkedCount(): number {
-    let checkedCount = 0;
-    checkedCount = this.checked.filter(function (value) {
-      return value === true;
-    }).length;
-    return checkedCount;
+    return this.checked.length;
   }
 
   // 選択されたものから小計を計算する
@@ -193,7 +216,31 @@ export default class ItemDetail extends Vue {
   }
 
   // カートに商品を追加
-  // addItemToCart(): Promise<void> {}
+  onclickAddItemToCart(): void {
+    this.orderCart();
+    const namingId = this["$store"].getters.getCartList.length + 1;
+    this["$store"].commit("addItemToCart", {
+      OrderItem: new OrderItem(
+        (this.currentOrderItem.id = namingId),
+        (this.currentOrderItem.itemId = this.currentItem.id),
+        (this.currentOrderItem.orderId = namingId),
+        (this.currentOrderItem.quantity = Number(this.quantity)),
+        (this.currentOrderItem.size = this.selectedSize),
+        (this.currentOrderItem.item = this.currentItem),
+        this.currentOrderToppingList
+      ),
+    });
+    this["$router"].push("/cartList");
+  }
+
+  //
+  orderCart(): void {
+    for (const check of this.checked) {
+      this.currentOrderToppingList.push(
+        new OrderTopping(1, check.id, this.currentItem.id, check)
+      );
+    }
+  }
 }
 </script>
 <style scoped>

@@ -63,7 +63,7 @@ export default new Vuex.Store({
      * @param buyItem 買う商品
      */
     addItemToCart(state, buyItem) {
-      state.cartList.push(buyItem);
+      state.cartList.push(buyItem.OrderItem);
     },
     /**
      * カート(state.cartList)の商品を1件削除.
@@ -120,7 +120,7 @@ export default new Vuex.Store({
       return state.items;
     },
     /**
-     * 全アイテム情報を返す.
+     * カート情報を返す.
      * @param state ステート
      * @returns カートの商品情報
      */
