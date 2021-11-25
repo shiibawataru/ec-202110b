@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div class="snow">●</div>
     <div class="top-wrapper">
       <div class="container">
         <h1 class="page-title">{{ currentItem.name }}</h1>
@@ -12,60 +13,62 @@
               <pre>{{ currentItem.description }}</pre>
             </div>
           </div>
-          <div class="row item-size">
-            <div class="item-hedding">サイズ</div>
-            <div>
-              <label>
-                <input
-                  id="size-m"
-                  name="size"
-                  type="radio"
-                  value="M"
-                  v-model="selectedSize"
-                />
-                <span>
-                  &nbsp;<span class="price">Ｍ</span>&nbsp;&nbsp;{{
-                    this.currentItem.priceM.toLocaleString()
-                  }}円(税抜)</span
-                >
-              </label>
-              <label>
-                <input
-                  id="size-l"
-                  name="size"
-                  type="radio"
-                  value="L"
-                  v-model="selectedSize"
-                />
-                <span>
-                  &nbsp;<span class="price">Ｌ</span>&nbsp;&nbsp;{{
-                    this.currentItem.priceL.toLocaleString()
-                  }}円(税抜)</span
-                >
-              </label>
+          <form class="form">
+            <div class="row item-size">
+              <div class="item-hedding">サイズ</div>
+              <div>
+                <label>
+                  <input
+                    id="size-m"
+                    name="size"
+                    type="radio"
+                    value="M"
+                    v-model="selectedSize"
+                  />
+                  <span>
+                    &nbsp;<span class="price">Ｍ</span>&nbsp;&nbsp;{{
+                      this.currentItem.priceM.toLocaleString()
+                    }}円(税抜)</span
+                  >
+                </label>
+                <label>
+                  <input
+                    id="size-l"
+                    name="size"
+                    type="radio"
+                    value="L"
+                    v-model="selectedSize"
+                  />
+                  <span>
+                    &nbsp;<span class="price">Ｌ</span>&nbsp;&nbsp;{{
+                      this.currentItem.priceL.toLocaleString()
+                    }}円(税抜)</span
+                  >
+                </label>
+              </div>
             </div>
-          </div>
-          <div class="row item-toppings">
-            <div class="item-hedding">
-              トッピング：&nbsp;1つにつき
-              <span>&nbsp;Ｍ&nbsp;</span>&nbsp;&nbsp;200円(税抜)
-              <span>&nbsp;Ｌ</span>&nbsp;&nbsp;300円(税抜)
+            <div class="row item-toppings">
+              <div class="item-hedding">
+                トッピング：&nbsp;1つにつき
+                <span>&nbsp;Ｍ&nbsp;</span>&nbsp;&nbsp;200円(税抜)
+                <span>&nbsp;Ｌ</span>&nbsp;&nbsp;300円(税抜)
+              </div>
+              <span
+                v-for="topping of currentItem.toppingList"
+                v-bind:key="topping.name"
+              >
+                <label class="item-topping">
+                  <input
+                    type="checkbox"
+                    :value="topping"
+                    v-model="checked"
+                    name="topping"
+                  />
+                  <span>{{ topping.name }}</span>
+                </label>
+              </span>
             </div>
-            <span
-              v-for="topping of currentItem.toppingList"
-              v-bind:key="topping.name"
-            >
-              <label class="item-topping">
-                <input
-                  type="checkbox"
-                  :value="topping"
-                  v-model="checked"
-                  name="topping"
-                />
-                <span>{{ topping.name }}</span>
-              </label>
-            </span>
-          </div>
+          </form>
           <div class="row item-quantity">
             <div class="item-hedding item-hedding-quantity">数量</div>
             <div class="item-quantity-selectbox">
@@ -242,4 +245,32 @@ export default class ItemDetail extends Vue {
   }
 }
 </script>
-<style scoped></style>
+<style scoped>
+.top-wrapper {
+  background-color: #dc143c;
+}
+.container {
+  background-color: lightgray;
+  border-radius: 15px;
+  width: 70%;
+  padding-top: 1px;
+  margin-top: -50px;
+}
+.snow {
+  color: snow; /*雪の色*/
+  font-size: 25px; /*雪の大きさ*/
+  position: fixed;
+  top: -5%; /*初期位置*/
+  text-shadow: 5vw -100px 2px, 10vw -400px 3px, 20vw -500px 4px, 30vw -580px 1px,
+    39vw -250px 2px, 42vw -340px 5px, 56vw -150px 2px, 63vw -180px 0,
+    78vw -220px 4px, 86vw -320px 9px, 94vw -170px 7px;
+  animation: anim 5s linear infinite;
+}
+
+@keyframes anim {
+  100% {
+    color: transparent;
+    top: 150%;
+  }
+}
+</style>
