@@ -13,7 +13,7 @@ const routes: Array<RouteConfig> = [
     component: () => import("../views/login.vue"),
   },
   {
-    path: "/itemDetail",
+    path: "/itemDetail/:id",
     component: () => import("../views/itemDetail.vue"),
   },
   {
