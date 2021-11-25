@@ -34,23 +34,25 @@
                   cartItem.quantity
                 }}個
               </td>
-              <div
-                v-for="orderTopping of cartItem.orderToppingList"
-                v-bind:key="orderTopping.id"
-              >
-                <td>
-                  <ul>
-                    <li v-if="cartItem.size === 'M'">
-                      {{ orderTopping.topping.name }}&emsp;{{
-                        orderTopping.topping.priceM
-                      }}円
-                    </li>
-                    <li v-if="cartItem.size === 'L'">
-                      {{ orderTopping.topping.name }} &emsp;
-                      {{ orderTopping.topping.priceL }}円
-                    </li>
-                  </ul>
-                </td>
+              <div>
+                <div
+                  v-for="orderTopping of cartItem.orderToppingList"
+                  v-bind:key="orderTopping.id"
+                >
+                  <td>
+                    <ul>
+                      <li v-if="cartItem.size === 'M'">
+                        {{ orderTopping.topping.name }}&emsp;{{
+                          orderTopping.topping.priceM
+                        }}円
+                      </li>
+                      <li v-if="cartItem.size === 'L'">
+                        {{ orderTopping.topping.name }} &emsp;
+                        {{ orderTopping.topping.priceL }}円
+                      </li>
+                    </ul>
+                  </td>
+                </div>
               </div>
               <td>
                 <div class="text-center">
@@ -197,6 +199,7 @@ export default class CartList extends Vue {
     return (price * 0.1).toLocaleString();
   }
   get taxIncludePrice(): number {
+    this.cartList = this["$store"].getters.getCartList;
     let price = 0;
     for (const cartItem of this.cartList) {
       price += cartItem.totalPrice;
