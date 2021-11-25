@@ -41,7 +41,7 @@
           </thead>
           <tbody v-for="order of orderList" :key="order.id">
             <tr v-for="orderItem of order.orderItemList" :key="orderItem.id">
-              <td>{{ order.orderDate }}</td>
+              <td>{{ order.formatDate }}</td>
               <td class="cart-item-name">
                 <div class="cart-item-icon">
                   <img :src="orderItem.item.imagePath" />
@@ -117,7 +117,7 @@ export default class OrderHistory extends Vue {
     console.log("userId: " + userId);
 
     const response = await axios.get(
-      `http://153.127.48.168:8080/ecsite-api/order/orders/toy/${userId}`
+      `http://153.127.48.168:8080/ecsite-api/order/orders/toy/1111`
     );
 
     for (let order of response.data.orders) {
@@ -161,12 +161,15 @@ export default class OrderHistory extends Vue {
     // this.orderList.splice(0, this.orderList.length);
     // 確認用
     console.log(this.filterYear);
-
-    console.dir("order.orderDate.getFullYear:" + this.orderList[0].orderDate);
-
-    let filterOrderList = this.orderList.filter(
-      (orderItem) =>
-        Number(new Date(orderItem.orderDate).getFullYear()) === this.filterYear
+    console.dir(
+      "order.orderDate.getFullYear:" +
+        new Date(this.orderList[0].orderDate).getFullYear()
+    );
+    // フィルターをかけた配列を入れる
+    let filterOrderList = this.orderList;
+    filterOrderList.filter(
+      (order) =>
+        Number(new Date(order.orderDate).getFullYear()) === this.filterYear
     );
     console.log("絞り込みした" + JSON.stringify(filterOrderList));
     this.orderList = filterOrderList;
