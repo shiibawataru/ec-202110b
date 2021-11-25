@@ -92,6 +92,10 @@
             <span>この商品金額：{{ subTotalPrice }}円(税抜)</span>
           </div>
           <div class="row item-cart-btn">
+            <button class="btn" type="return" v-on:click="onclickReturn">
+              商品一覧へ戻る
+            </button>
+            &nbsp;&nbsp;
             <button class="btn" type="button" v-on:click="onclickAddItemToCart">
               <span>カートに入れる</span>
             </button>
@@ -200,6 +204,13 @@ export default class ItemDetail extends Vue {
     return subTotalPrice.toLocaleString();
   }
   /**
+   * 商品一覧へ戻る
+   */
+  onclickReturn(): void {
+    this["$router"].push("/itemList");
+  }
+
+  /*
    * カートに追加する
    */
   onclickAddItemToCart(): void {

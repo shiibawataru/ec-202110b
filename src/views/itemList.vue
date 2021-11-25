@@ -48,11 +48,13 @@
         <div class="items">
           <ul v-for="item of displayList" v-bind:key="item.id">
             <div class="item">
-              <div class="item-icon">
-                <img v-bind:src="item.imagePath" />
-              </div>
               <router-link v-bind:to="'/itemDetail/' + item.id">
-                {{ item.name }}</router-link
+                <div class="item-icon">
+                  <img v-bind:src="item.imagePath" />
+                </div>
+                <div>
+                  {{ item.name }}
+                </div> </router-link
               ><br />
               <span class="price">Ｍ</span
               >{{ item.priceM.toLocaleString() }}円<br />

@@ -73,6 +73,9 @@
         </div>
       </div>
       <div class="row order-confirm-btn">
+        <button class="btn" type="return" v-on:click="onclickReturn">
+          商品一覧へ戻る</button
+        >&nbsp;&nbsp;
         <button
           class="btn"
           type="button"
@@ -200,7 +203,12 @@ export default class CartList extends Vue {
     }
     return price * 1.1;
   }
-
+  /**
+   * 商品一覧へ戻る
+   */
+  onclickReturn(): void {
+    this["$router"].push("/itemList");
+  }
   /**
    *カートから商品を削除する.
    */
