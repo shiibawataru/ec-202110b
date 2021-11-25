@@ -108,7 +108,6 @@ export default class ItemList extends Vue {
     this.startDisplay();
     //サジェスト機能の配列に商品情報を代入
     this.items = this["$store"].getters.getItemList;
-    console.dir("items:" + JSON.stringify(this.items));
   }
 
   // 曖昧検索
