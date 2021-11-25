@@ -4,6 +4,7 @@
       <h1 class="page-title">注文履歴</h1>
       <form class="form">
         <select name="filter" v-model="filterYear" class="browser-default">
+          <option value="指定なし">指定なし</option>
           <option value="2021">2021年</option>
           <option value="2020">2020年</option>
           <option value="2019">2019年</option>
@@ -97,7 +98,7 @@ export default class OrderHistory extends Vue {
   // 注文履歴が0件の場合のエラーメッセージ表示判定
   private showOrderHistory = true;
   // 購入年
-  private filterYear = "指定なし";
+  private filterYear = "";
   // 表示する注文商品を入れる配列
   private showOrderList: Array<Order> = [];
   // 注文商品を入れる配列
@@ -109,12 +110,12 @@ export default class OrderHistory extends Vue {
       this.$router.push("/login");
       return;
     }
-    // stateのユーザーIDをAPIに送り、注文履歴を取得
+    // state内ののユーザーIDをAPIに送り、注文履歴を取得
     const userId: number = this["$store"].getters.getUserId;
     console.log("userId: " + userId);
 
     const response = await axios.get(
-      `http://153.127.48.168:8080/ecsite-api/order/orders/toy/1111`
+      `http://153.127.48.168:8080/ecsite-api/order/orders/toy/${userId}`
     );
 
     for (let order of response.data.orders) {
@@ -166,26 +167,19 @@ export default class OrderHistory extends Vue {
     // 初期化
     this.nonOrderMsg = "";
     this.showOrderList.splice(0, this.showOrderList.length);
-    // 絞り込む年
-    console.log(this.filterYear);
 
     this.showOrderList = this.orderList.filter(
       (order) =>
         Number(order.orderDate.getFullYear()) === Number(this.filterYear)
     );
     this.showOrderHistory = true;
-    // for (let order of this.orderList) {
-    //   if (Number(order.orderDate.getFullYear()) === Number(this.filterYear)) {
-    //     this.showOrderList.push(order);
-    //   }
-    // }
     console.log("絞り込みした注文一覧：" + JSON.stringify(this.showOrderList));
-
-    // 該当の注文履歴がない場合はエラーメーセージの表示と全件表示
-    if (this.showOrderList.length === 0) {
+    // 該当の注文履歴がない場合はエラーメーセージを表示
+    if (this.filterYear === "指定なし") {
+      this.startDisplay();
+    } else if (this.showOrderList.length === 0) {
       this.nonOrderMsg = "該当する注文履歴がありません";
       this.showOrderHistory = false;
-      // this.startDisplay();
     }
   }
 }
