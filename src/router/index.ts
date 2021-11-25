@@ -5,6 +5,10 @@ Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
   {
+    path: "/",
+    component: () => import("../views/top.vue"),
+  },
+  {
     path: "/registerAdmin",
     component: () => import("../views/registerAdmin.vue"),
   },

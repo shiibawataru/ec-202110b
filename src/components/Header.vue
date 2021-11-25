@@ -3,9 +3,9 @@
     <div class="container">
       <div class="header">
         <div class="header-left">
-          <a href="top.html">
+          <router-link to="/">
             <img class="logo" src="/img_toy/header_logo.png" />
-          </a>
+          </router-link>
         </div>
 
         <div class="header-right">
@@ -39,7 +39,7 @@ export default class Header extends Vue {
 
 <style scoped>
 header {
-  height: 65px;
+  height: 10px;
   width: 100%;
   background-color: rgba(255, 255, 255, 0.9);
   position: fixed; /* スクロールしてもヘッダが表示されるように位置を固定する */
@@ -52,8 +52,9 @@ header {
 }
 
 .logo {
-  width: 200px;
-  margin-top: 15px;
+  height: 40px;
+  width: 150px;
+  /* margin-top: 15px; */
 }
 
 /* .header-left {
