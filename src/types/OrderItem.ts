@@ -80,24 +80,33 @@ export class OrderItem {
 
   public get totalPrice(): number {
     console.log("呼ばれた！！！");
-
     let price = 0;
-    const toppingPriceM = Number(this.orderToppingList[0].topping.priceM);
-    const toppingPriceL = Number(this.orderToppingList[0].topping.priceL);
-    if (this.size === "M") {
-      price = Number(
-        this.item.priceM * this.quantity +
-          toppingPriceM * this.orderToppingList.length
-      );
-    } else if (this.size === "L") {
-      price = Number(
-        this.item.priceL * this.quantity +
-          toppingPriceL * this.orderToppingList.length
-      );
-    }
-    console.log("toppingPriceM" + toppingPriceM);
-    console.log("length" + this.orderToppingList.length);
 
-    return price;
+    if (this.orderToppingList.length != 0) {
+      const toppingPriceM = Number(this.orderToppingList[0].topping.priceM);
+      const toppingPriceL = Number(this.orderToppingList[0].topping.priceL);
+      if (this.size === "M") {
+        price = Number(
+          this.item.priceM * this.quantity +
+            toppingPriceM * this.orderToppingList.length
+        );
+      } else if (this.size === "L") {
+        price = Number(
+          this.item.priceL * this.quantity +
+            toppingPriceL * this.orderToppingList.length
+        );
+      }
+      console.log("toppingPriceM" + toppingPriceM);
+      console.log("length" + this.orderToppingList.length);
+
+      return price;
+    } else {
+      if (this.size === "M") {
+        price = Number(this.item.priceM * this.quantity);
+      } else if (this.size === "L") {
+        price = Number(this.item.priceL * this.quantity);
+      }
+      return price;
+    }
   }
 }
