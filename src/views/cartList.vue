@@ -36,13 +36,13 @@
               </td>
               <div
                 v-for="orderTopping of cartItem.orderToppingList"
-                v-bind:key="orderTopping._id"
+                v-bind:key="orderTopping.id"
               >
                 <td>
                   <ul>
                     <li v-if="cartItem.size === 'M'">
-                      {{ orderTopping._topping.name }}&emsp;{{
-                        orderTopping._topping.priceM
+                      {{ orderTopping.topping.name }}&emsp;{{
+                        orderTopping.topping.priceM
                       }}円
                     </li>
                     <li v-if="cartItem.size === 'L'">
