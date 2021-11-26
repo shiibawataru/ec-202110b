@@ -164,22 +164,28 @@ export default class ItemDetail extends Vue {
   async created(): Promise<void> {
     // 送られてきたリクエストパラメータのidをnumberに変換して取得する
     const itemId = parseInt(this.$route.params.id);
-    //
-    const response = await axios.get(
-      `http://153.127.48.168:8080/ecsite-api/item/${itemId}`
-    );
-    // Itemオブジェクト型として代入
-    this.currentItem = new Item(
-      response.data.item.id,
-      response.data.item.type,
-      response.data.item.name,
-      response.data.item.description,
-      response.data.item.priceM,
-      response.data.item.priceL,
-      response.data.item.imagePath,
-      response.data.item.deleted,
-      response.data.item.toppingList
-    );
+    // URLを直書きし、存在しないページだった場合の処理
+    try {
+      const response = await axios.get(
+        `http://153.127.48.168:8080/ecsite-api/item/${itemId}`
+      );
+      // Itemオブジェクト型として代入
+      this.currentItem = new Item(
+        response.data.item.id,
+        response.data.item.type,
+        response.data.item.name,
+        response.data.item.description,
+        response.data.item.priceM,
+        response.data.item.priceL,
+        response.data.item.imagePath,
+        response.data.item.deleted,
+        response.data.item.toppingList
+      );
+      // 存在しないidだった場合はエラー画面に遷移する
+    } catch (e) {
+      this["$router"].push("/notFound");
+      return;
+    }
   }
 
   /**
