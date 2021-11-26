@@ -9,6 +9,11 @@ const routes: Array<RouteConfig> = [
     component: () => import("../views/top.vue"),
   },
   {
+    path: "*",
+    name: "notFound",
+    component: () => import("../views/notFound.vue"),
+  },
+  {
     path: "/registerAdmin",
     component: () => import("../views/registerAdmin.vue"),
   },
