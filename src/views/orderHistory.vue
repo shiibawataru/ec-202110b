@@ -36,10 +36,12 @@
             <tr v-for="orderItem of order.orderItemList" :key="orderItem.id">
               <td class="order-history-item-name">{{ order.formatDate }}</td>
               <td class="order-history-item-name">
-                <div class="order-history-item-icon img">
-                  <img :src="orderItem.item.imagePath" />
-                </div>
-                <span>{{ orderItem.item.name }}</span>
+                <router-link v-bind:to="'/itemDetail/' + orderItem.item.id">
+                  <div class="order-history-item-icon img">
+                    <img :src="orderItem.item.imagePath" />
+                  </div>
+                  <span>{{ orderItem.item.name }}</span>
+                </router-link>
               </td>
               <td v-if="orderItem.size === 'M'">
                 <span class="price">&nbsp;{{ orderItem.size }}</span
