@@ -1,77 +1,81 @@
 <template>
-  <div>
+  <div class="top-wrapper">
+    <div class="snow">●</div>
+
     <!-- search form -->
     <div class="container">
-      <form method="post" class="search-form">
-        <span class="errorMessage">{{ errorOfSearch }}</span>
-        <input
-          type="text"
-          name="name"
-          class="search-name-input"
-          v-model="searchWord"
-          list="itemSuggest"
-        />
+      <div class="xmas">
+        <form method="post" class="search-form">
+          <span class="errorMessage">{{ errorOfSearch }}</span>
+          <input
+            type="text"
+            name="name"
+            class="search-name-input"
+            v-model="searchWord"
+            list="itemSuggest"
+          />
 
-        <datalist id="itemSuggest">
-          <div v-for="item of items" v-bind:key="item.id">
-            <option v-bind:value="item.name"></option>
-          </div>
-        </datalist>
-
-        <span class="row order-confirm-btn">
-          <button
-            class="btn search-btn"
-            type="button"
-            v-on:click="onclicksearch"
-          >
-            検索
-          </button>
-        </span>
-        <div>
-          <select
-            name="sort"
-            v-model="sort"
-            class="browser-default"
-            v-on:change="sortChange"
-          >
-            <option value="安い" selected>価格順(安い順)</option>
-            <option value="高い">価格順(高い順)</option>
-            <option value="名前">名前順</option>
-          </select>
-        </div>
-      </form>
-    </div>
-    <!-- item list -->
-
-    <div class="item-wrapper">
-      <div class="container">
-        <div class="items">
-          <ul v-for="item of displayList" v-bind:key="item.id">
-            <div class="item">
-              <router-link v-bind:to="'/itemDetail/' + item.id">
-                <div class="item-icon">
-                  <img v-bind:src="item.imagePath" />
-                </div>
-                <div>
-                  {{ item.name }}
-                </div> </router-link
-              ><br />
-              <span class="price">Ｍ</span
-              >{{ item.priceM.toLocaleString() }}円<br />
-              <span class="price">Ｌ</span
-              >{{ item.priceL.toLocaleString() }}円<br />
+          <datalist id="itemSuggest">
+            <div v-for="item of items" v-bind:key="item.id">
+              <option v-bind:value="item.name"></option>
             </div>
-          </ul>
+          </datalist>
+
+          <span class="row order-confirm-btn">
+            <button
+              class="btn search-btn"
+              type="button"
+              v-on:click="onclicksearch"
+            >
+              検索
+            </button>
+          </span>
+          <div>
+            <select
+              name="sort"
+              v-model="sort"
+              class="browser-default"
+              v-on:change="sortChange"
+            >
+              <option value="安い" selected>価格順(安い順)</option>
+              <option value="高い">価格順(高い順)</option>
+              <option value="名前">名前順</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <!-- item list -->
+
+      <div class="item-wrapper">
+        <div class="container">
+          <div class="items">
+            <ul v-for="item of displayList" v-bind:key="item.id">
+              <div class="item">
+                <router-link v-bind:to="'/itemDetail/' + item.id">
+                  <div class="item-icon">
+                    <img v-bind:src="item.imagePath" />
+                  </div>
+                  <div>
+                    {{ item.name }}
+                  </div> </router-link
+                ><br />
+                <span class="price">Ｍ</span
+                >{{ item.priceM.toLocaleString() }}円<br />
+                <span class="price">Ｌ</span
+                >{{ item.priceL.toLocaleString() }}円<br />
+              </div>
+            </ul>
+          </div>
+          <span
+            v-for="num of pageNumber"
+            :key="num"
+            class="row order-confirm-btn pageBtn"
+          >
+            <button class="btn" type="button" v-on:click="display(num)">
+              {{ num }}
+            </button></span
+          >
         </div>
-        <span
-          v-for="num of pageNumber"
-          :key="num"
-          class="row order-confirm-btn pageBtn"
-        >
-          <button class="btn" type="button" v-on:click="display(num)">
-            {{ num }}
-          </button></span
-        >
       </div>
     </div>
   </div>
@@ -178,7 +182,6 @@ export default class ItemList extends Vue {
    * 並び替え.
    */
   sortChange(): void {
-    console.log(this.sort);
     //安い順
     if (this.sort === "安い") {
       this.itemList.sort(function (boforeItems, afterItems) {
@@ -236,5 +239,35 @@ export default class ItemList extends Vue {
 
 .btn {
   margin-right: 30px;
+}
+.top-wrapper {
+  background-color: #dc143c;
+}
+/* .item-wrapper {
+  background-color: #dc143c;
+} */
+.container {
+  width: 100%;
+}
+.xmas {
+  background-color: ghostwhite;
+  border-radius: 15px 15px 0 0;
+}
+.snow {
+  color: snow; /*雪の色*/
+  font-size: 25px; /*雪の大きさ*/
+  position: fixed;
+  top: -5%; /*初期位置*/
+  text-shadow: 5vw -100px 2px, 10vw -400px 3px, 20vw -500px 4px, 30vw -580px 1px,
+    39vw -250px 2px, 42vw -340px 5px, 56vw -150px 2px, 63vw -180px 0,
+    78vw -220px 4px, 86vw -320px 9px, 94vw -170px 7px;
+  animation: anim 5s linear infinite;
+}
+
+@keyframes anim {
+  100% {
+    color: transparent;
+    top: 150%;
+  }
 }
 </style>

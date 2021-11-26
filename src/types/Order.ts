@@ -1,6 +1,6 @@
 import { OrderItem } from "./OrderItem";
 import { User } from "./User";
-
+import { format } from "date-fns";
 /**
  * 注文を表すクラスです
  *
@@ -147,5 +147,10 @@ export class Order {
 
   public set orderItemList(orderItemList: Array<OrderItem>) {
     this._orderItemList = orderItemList;
+  }
+
+  //注文日を「年月日」のフォーマットで返す
+  get formatDate(): string {
+    return format(new Date(this.orderDate), "yyyy年MM月dd日");
   }
 }
