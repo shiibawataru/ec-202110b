@@ -2,6 +2,10 @@
   <div class="main">
     <div class="top-wrapper">
       <div class="container">
+        <div class="xmasCount">
+          <h3>クリスマスまであと</h3>
+          <flip-countdown deadline="2021-12-25 00:00:00"> </flip-countdown>
+        </div>
         <h1>You’ve got a friend in me.</h1>
         <p>おうちにいながら話題のおもちゃをあなたにお届け！</p>
         <p>ラクラクトイは、自宅から新着商品が簡単に手に入るECサイトです。</p>
@@ -58,16 +62,33 @@
   </div>
 </template>
 
-<script>
-export default {};
+<script lang="ts">
+import Vue from "vue";
+import Component from "vue-class-component";
+import FlipCountdown from "vue2-flip-countdown";
+
+@Component({
+  components: {
+    FlipCountdown,
+  },
+})
+export default class Top extends Vue {}
 </script>
 
 <style scoped>
+.xmasCount {
+  text-align: center;
+  color: white;
+}
+h3 {
+  font-weight: bolder;
+}
+
 /* ========================================
     top-wrapperの設定
    ======================================== */
 .top-wrapper {
-  padding: 250px 0 200px 0; /* 上はヘッダが来るのでその分180px分空ける */
+  padding: 150px 0 200px 0; /* 上はヘッダが来るのでその分180px分空ける */
   background-image: url(/img_toy/toy_xmas.jpg); /* 背景画像設定 */
   background-size: cover; /*画像の縦横比を崩すことなく、画像ができるだけ大きくなるよう拡大縮小*/
   color: white;
