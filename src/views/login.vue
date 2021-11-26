@@ -40,7 +40,7 @@
                 <div class="input-field col s6 m6 l6">
                   <p class="margin medium-small">
                     <router-link to="/registerAdmin"
-                      >管理者登録はこちら</router-link
+                      >会員登録はこちら</router-link
                     >
                   </p>
                 </div>
@@ -77,10 +77,6 @@ export default class Login extends Vue {
         email: this.mailAddress,
         password: this.password,
       }
-    );
-    console.dir("response:" + JSON.stringify(response));
-    console.dir(
-      "response.data.user" + JSON.stringify(response.data.responseMap.user.id)
     );
     this["$store"].commit("loginUserId", response.data.responseMap.user.id);
 
