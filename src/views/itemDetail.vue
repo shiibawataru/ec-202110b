@@ -168,8 +168,6 @@ export default class ItemDetail extends Vue {
     const response = await axios.get(
       `http://153.127.48.168:8080/ecsite-api/item/${itemId}`
     );
-    // 取得したJSONデータをコンソールに出力して確認
-    console.dir("response:" + JSON.stringify(response));
     // Itemオブジェクト型として代入
     this.currentItem = new Item(
       response.data.item.id,

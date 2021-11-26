@@ -182,7 +182,6 @@ export default class ItemList extends Vue {
    * 並び替え.
    */
   sortChange(): void {
-    console.log(this.sort);
     //安い順
     if (this.sort === "安い") {
       this.itemList.sort(function (boforeItems, afterItems) {
