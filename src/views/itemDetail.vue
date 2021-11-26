@@ -3,10 +3,6 @@
     <div class="snow">●</div>
     <div class="top-wrapper">
       <div class="container">
-        <div class="xmasCount">
-          <h3>クリスマスまであと</h3>
-          <flip-countdown deadline="2021-12-25 00:00:00"> </flip-countdown>
-        </div>
         <h1 class="page-title">{{ currentItem.name }}</h1>
         <div class="row">
           <div class="row item-detail">
@@ -122,13 +118,8 @@ import { Topping } from "@/types/Topping";
 import { OrderItem } from "@/types/OrderItem";
 import axios from "axios";
 import { OrderTopping } from "@/types/OrderTopping";
-import FlipCountdown from "vue2-flip-countdown";
 
-@Component({
-  components: {
-    FlipCountdown,
-  },
-})
+@Component
 export default class ItemDetail extends Vue {
   // チェックされたトッピングを配列に入れる
   private checked: Array<Topping> = [];
@@ -259,13 +250,6 @@ export default class ItemDetail extends Vue {
 }
 </script>
 <style scoped>
-.xmasCount {
-  text-align: center;
-  color: mediumseagreen;
-}
-h3 {
-  font-weight: bolder;
-}
 .top-wrapper {
   background-color: #dc143c;
 }
