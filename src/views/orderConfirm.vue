@@ -333,9 +333,6 @@
 
 <script lang="ts">
 import { OrderItem } from "@/types/OrderItem";
-import { OrderTopping } from "@/types/OrderTopping";
-import { Topping } from "@/types/Topping";
-import { Item } from "@/types/Item";
 import { Component, Vue } from "vue-property-decorator";
 import axios from "axios";
 import { format, addHours } from "date-fns";
@@ -503,7 +500,7 @@ export default class OrderConfirm extends Vue {
     }
 
     this.cartList = this["$store"].getters.getCartList;
-    console.dir("カートの中身:" + JSON.stringify(this.cartList));
+    console.dir("注文確定カートの中身:" + JSON.stringify(this.cartList[0]));
   }
 
   /**

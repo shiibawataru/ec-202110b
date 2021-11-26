@@ -250,7 +250,7 @@ export default class ItemDetail extends Vue {
   background-color: #dc143c;
 }
 .container {
-  background-color: lightgray;
+  background-color: ghostwhite;
   border-radius: 15px;
   width: 70%;
   padding-top: 1px;
