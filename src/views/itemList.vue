@@ -334,4 +334,18 @@ h3 {
     top: 150%;
   }
 }
+
+.item-icon {
+  overflow: visible;
+  width: 100%;
+  height: 100%;
+}
+.item-icon img {
+  display: block;
+  transition-duration: 0.3s;
+}
+.item-icon img:hover {
+  transform: scale(1.3);
+  transition-duration: 0.3s;
+}
 </style>
