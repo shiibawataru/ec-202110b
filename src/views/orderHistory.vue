@@ -104,16 +104,16 @@ export default class OrderHistory extends Vue {
   // 注文商品を入れる配列
   private orderList: Array<Order> = [];
 
+  /**
+   * ユーザーIDから注文履歴を取得する.
+   */
   async created(): Promise<void> {
     // ログインしていなければログイン画面へ遷移
     if (this.$store.getters.getLoginStatus === false) {
       this.$router.push("/login");
       return;
     }
-    // state内ののユーザーIDをAPIに送り、注文履歴を取得
     const userId: number = this["$store"].getters.getUserId;
-    console.log("userId: " + userId);
-
     const response = await axios.get(
       `http://153.127.48.168:8080/ecsite-api/order/orders/toy/${userId}`
     );
@@ -137,19 +137,20 @@ export default class OrderHistory extends Vue {
       );
       this.orderList.push(newOrder);
     }
-    console.dir("注文商品一覧:" + JSON.stringify(this.orderList));
+
     this.getNonOrderMsg();
     this.startDisplay();
   }
 
   /**
-   * 初期表示用.
+   * 注文履歴を全件表示する.
    */
   startDisplay(): void {
     for (let i = 0; i < this.orderList.length; i++) {
       this.showOrderList.push(this.orderList[i]);
     }
   }
+
   /**
    * 注文履歴が0件だった場合、メッセージを表示する.
    */
@@ -160,6 +161,7 @@ export default class OrderHistory extends Vue {
       return;
     }
   }
+
   /**
    * 購入年で絞り込み検索.
    */
@@ -167,15 +169,15 @@ export default class OrderHistory extends Vue {
     // 初期化
     this.nonOrderMsg = "";
     this.showOrderList.splice(0, this.showOrderList.length);
-
     this.showOrderList = this.orderList.filter(
       (order) =>
         Number(order.orderDate.getFullYear()) === Number(this.filterYear)
     );
     this.showOrderHistory = true;
-    // 該当の注文履歴がない場合はエラーメーセージを表示
+    // 指定なしの場合は全件表示
     if (this.filterYear === "指定なし") {
       this.startDisplay();
+      // 該当の注文履歴がない場合はエラーメーセージを表示
     } else if (this.showOrderList.length === 0) {
       this.nonOrderMsg = "該当する注文履歴がありません";
       this.showOrderHistory = false;

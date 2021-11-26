@@ -92,12 +92,8 @@
 </template>
 
 <script lang="ts">
-import { Item } from "@/types/Item";
 import { OrderItem } from "@/types/OrderItem";
-import { OrderTopping } from "@/types/OrderTopping";
-import { Topping } from "@/types/Topping";
 import { Component, Vue } from "vue-property-decorator";
-import axios from "axios";
 
 @Component
 export default class CartList extends Vue {
@@ -116,66 +112,9 @@ export default class CartList extends Vue {
 
   /**
    * 注文商品一覧を取得する.
-   仮でオブジェクト生成してます.
    */
   created(): void {
     this.cartList = this["$store"].getters.getCartList;
-
-    // this.cartList = [
-    //   //消すこと！！！
-    //   new OrderItem(
-    //     1,
-    //     101,
-    //     1,
-    //     1,
-    //     "M",
-    //     new Item(
-    //       101,
-    //       "toy",
-    //       "ビニールプール",
-    //       "商品説明",
-    //       1490,
-    //       2570,
-    //       "/img_toy/1.jpg",
-    //       false,
-    //       [
-    //         new Topping(1, "a", "aa", 100, 200),
-    //         new Topping(2, "b", "bb", 100, 200),
-    //       ]
-    //     ),
-    //     [
-    //       new OrderTopping(1, 1, 1, new Topping(1, "aa", "aaa", 100, 200)),
-    //       new OrderTopping(2, 2, 2, new Topping(2, "bb", "bbb", 100, 200)),
-    //     ]
-    //   ),
-    //   new OrderItem(
-    //     2,
-    //     101,
-    //     1,
-    //     1,
-    //     "M",
-    //     new Item(
-    //       101,
-    //       "toy",
-    //       "ビニールプール",
-    //       "商品説明",
-    //       1490,
-    //       2570,
-    //       "/img_toy/1.jpg",
-    //       false,
-    //       [
-    //         new Topping(1, "a", "aa", 100, 200),
-    //         new Topping(2, "b", "bb", 100, 200),
-    //       ]
-    //     ),
-    //     [
-    //       new OrderTopping(1, 1, 1, new Topping(1, "aa", "aaa", 100, 200)),
-    //       new OrderTopping(2, 2, 2, new Topping(2, "bb", "bbb", 100, 200)),
-    //     ]
-    //   ),
-    // ];
-
-    console.dir("カートの中身:" + JSON.stringify(this.cartList));
     this.getNonItemMsg();
   }
   /**
@@ -189,7 +128,8 @@ export default class CartList extends Vue {
   }
 
   /**
-   * 税額、税込額を計算する.
+   * 税額を計算する.
+   * @returns 税額
    */
   get tax(): string {
     let price = 0;
@@ -198,6 +138,11 @@ export default class CartList extends Vue {
     }
     return (price * 0.1).toLocaleString();
   }
+
+  /**
+   * 税込額を計算する.
+   * @returns 税額
+   */
   get taxIncludePrice(): number {
     this.cartList = this["$store"].getters.getCartList;
     let price = 0;
@@ -206,14 +151,17 @@ export default class CartList extends Vue {
     }
     return price * 1.1;
   }
+
   /**
-   * 商品一覧へ戻る
+   * 商品一覧へ戻る.
    */
   onclickReturn(): void {
     this["$router"].push("/itemList");
   }
+
   /**
    *カートから商品を削除する.
+   @param 削除する商品の位置
    */
   deleteItem(index: number): void {
     console.log("渡されたindex:" + index);
