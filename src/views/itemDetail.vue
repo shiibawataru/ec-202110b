@@ -168,8 +168,6 @@ export default class ItemDetail extends Vue {
     const response = await axios.get(
       `http://153.127.48.168:8080/ecsite-api/item/${itemId}`
     );
-    // 取得したJSONデータをコンソールに出力して確認
-    console.dir("response:" + JSON.stringify(response));
     // Itemオブジェクト型として代入
     this.currentItem = new Item(
       response.data.item.id,
@@ -217,13 +215,13 @@ export default class ItemDetail extends Vue {
    * カートに追加する
    */
   onclickAddItemToCart(): void {
-    this.orderCart();
-    const namingId = this["$store"].getters.getCartList.length + 1;
+    this.orderTopping();
+    const orderId = this["$store"].getters.getCartList.length + 1;
     this["$store"].commit("addItemToCart", {
       OrderItem: new OrderItem(
-        (this.currentOrderItem.id = namingId),
+        (this.currentOrderItem.id = orderId),
         (this.currentOrderItem.itemId = this.currentItem.id),
-        (this.currentOrderItem.orderId = namingId),
+        (this.currentOrderItem.orderId = orderId),
         (this.currentOrderItem.quantity = Number(this.quantity)),
         (this.currentOrderItem.size = this.selectedSize),
         (this.currentOrderItem.item = this.currentItem),
@@ -236,7 +234,7 @@ export default class ItemDetail extends Vue {
   /**
    * 選択されたトッピングを配列に入れる
    */
-  orderCart(): void {
+  orderTopping(): void {
     for (const check of this.checked) {
       this.currentOrderToppingList.push(
         new OrderTopping(1, check.id, this.currentItem.id, check)
