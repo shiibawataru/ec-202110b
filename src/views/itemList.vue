@@ -1,8 +1,11 @@
 <template>
   <div class="top-wrapper">
     <div class="snow">●</div>
-
     <!-- search form -->
+    <div class="xmasCount">
+      <h3>クリスマスまであと</h3>
+      <flip-countdown deadline="2021-12-25 00:00:00"> </flip-countdown>
+    </div>
     <div class="container">
       <div class="xmas">
         <form method="post" class="search-form">
@@ -98,7 +101,12 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { Item } from "@/types/Item";
-@Component
+import FlipCountdown from "vue2-flip-countdown";
+@Component({
+  components: {
+    FlipCountdown,
+  },
+})
 export default class ItemList extends Vue {
   // 商品一覧
   private itemList = new Array<Item>();
@@ -264,6 +272,13 @@ export default class ItemList extends Vue {
 }
 </script>
 <style scoped>
+.xmasCount {
+  text-align: center;
+  color: mediumseagreen;
+}
+h3 {
+  font-weight: bolder;
+}
 .errorMessage {
   color: red;
 }
