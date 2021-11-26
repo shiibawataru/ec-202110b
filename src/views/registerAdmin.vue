@@ -13,7 +13,7 @@
                 required
                 v-model="lastName"
               />
-              <label for="last_name">姓</label>
+              <label for="last_name" v-show="!hasErrors">姓</label>
             </div>
             <div class="input-field col s6">
               <input
@@ -23,7 +23,7 @@
                 required
                 v-model="firstName"
               />
-              <label for="first_name">名</label>
+              <label for="first_name" v-show="!hasErrors">名</label>
             </div>
           </div>
           <div class="row">
@@ -37,14 +37,16 @@
                 v-model="mailAddress"
               />
 
-              <label for="email">メールアドレス</label>
+              <label for="email" v-show="!hasErrors">メールアドレス</label>
             </div>
           </div>
           <div class="row">
             <div class="input-field col s12">
               <span class="error">{{ errorOfZipCode }}</span>
               <input id="zipcode" type="text" maxlength="8" v-model="zipCode" />
-              <label for="zipcode">郵便番号(ハイフンあり)</label>
+              <label for="zipcode" v-show="!hasErrors"
+                >郵便番号(ハイフンあり)</label
+              >
               <button class="btn" type="button" v-on:click="getAddress">
                 <span>住所検索</span>
               </button>
@@ -54,14 +56,20 @@
             <div class="input-field col s12">
               <span class="error">{{ errorOfAddress }}</span>
               <input id="address" type="text" v-model="address" />
-              <label for="address">住所</label>
+              <label
+                for="address"
+                v-if="hasErrors === false && addressFlug === true"
+                >住所</label
+              >
             </div>
           </div>
           <div class="row">
             <div class="input-field col s12">
               <span class="error">{{ errorOfPhone }}</span>
               <input id="tel" type="tel" v-model="phoneNumber" />
-              <label for="tel">電話番号(ハイフンあり)</label>
+              <label for="tel" v-show="!hasErrors"
+                >電話番号(ハイフンあり)</label
+              >
             </div>
           </div>
           <div class="row">
@@ -75,7 +83,7 @@
                 required
                 v-model="password"
               />
-              <label for="password">パスワード</label>
+              <label for="password" v-show="!hasErrors">パスワード</label>
             </div>
           </div>
           <div class="row">
@@ -89,7 +97,9 @@
                 required
                 v-model="checkPassword"
               />
-              <label for="confirmation_password">確認用パスワード</label>
+              <label for="confirmation_password" v-show="!hasErrors"
+                >確認用パスワード</label
+              >
             </div>
           </div>
           <div class="row register-admin-btn">
@@ -130,6 +140,8 @@ export default class RegisterAdmin extends Vue {
   private address = "";
   //住所のエラーメッセージ
   private errorOfAddress = "";
+  //郵便番号から住所検索
+  private addressFlug = true;
   //電話番号
   private phoneNumber = "";
   //電話番号のエラーメッセージ
@@ -248,6 +260,7 @@ export default class RegisterAdmin extends Vue {
     //初期値リセット(住所、住所エラー)
     this.address = "";
     this.errorOfAddress = "";
+    this.addressFlug = true;
     //郵便番号から住所を取得APIに郵便番号を送る
     try {
       // const axios = require("axios");
@@ -264,12 +277,15 @@ export default class RegisterAdmin extends Vue {
       if (response.data.length === 1) {
         this.address =
           response.data.items[0].state_name + response.data.items[0].address;
+        this.addressFlug = false;
         //失敗したらエラーを出す
       } else {
         this.errorOfAddress = "住所が見つかりません";
+        this.addressFlug = false;
       }
     } catch (e) {
       this.errorOfAddress = "住所が見つかりません";
+      this.addressFlug = false;
     }
   }
 

@@ -150,8 +150,6 @@ export default new Vuex.Store({
       const responseItem = await axios.get(
         "http://153.127.48.168:8080/ecsite-api/item/items/toy"
       );
-      // 取得したJSONデータをコンソールに出力して確認
-      console.dir("response商品情報:" + JSON.stringify(responseItem));
       // 取得したresponseデータの中のdataを取り出してpayload変数に格納する
       const payload = responseItem.data;
       // showEmployeeListという名前のミューテーションを呼び出す

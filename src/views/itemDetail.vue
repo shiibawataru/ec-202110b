@@ -3,6 +3,10 @@
     <div class="snow">●</div>
     <div class="top-wrapper">
       <div class="container">
+        <div class="xmasCount">
+          <h3>クリスマスまであと</h3>
+          <flip-countdown deadline="2021-12-25 00:00:00"> </flip-countdown>
+        </div>
         <h1 class="page-title">{{ currentItem.name }}</h1>
         <div class="row">
           <div class="row item-detail">
@@ -10,7 +14,7 @@
               <img v-bind:src="currentItem.imagePath" />
             </div>
             <div class="item-intro">
-              <pre>{{ currentItem.description }}</pre>
+              {{ currentItem.description }}
             </div>
           </div>
           <form class="form">
@@ -118,8 +122,13 @@ import { Topping } from "@/types/Topping";
 import { OrderItem } from "@/types/OrderItem";
 import axios from "axios";
 import { OrderTopping } from "@/types/OrderTopping";
+import FlipCountdown from "vue2-flip-countdown";
 
-@Component
+@Component({
+  components: {
+    FlipCountdown,
+  },
+})
 export default class ItemDetail extends Vue {
   // チェックされたトッピングを配列に入れる
   private checked: Array<Topping> = [];
@@ -164,22 +173,28 @@ export default class ItemDetail extends Vue {
   async created(): Promise<void> {
     // 送られてきたリクエストパラメータのidをnumberに変換して取得する
     const itemId = parseInt(this.$route.params.id);
-    //
-    const response = await axios.get(
-      `http://153.127.48.168:8080/ecsite-api/item/${itemId}`
-    );
-    // Itemオブジェクト型として代入
-    this.currentItem = new Item(
-      response.data.item.id,
-      response.data.item.type,
-      response.data.item.name,
-      response.data.item.description,
-      response.data.item.priceM,
-      response.data.item.priceL,
-      response.data.item.imagePath,
-      response.data.item.deleted,
-      response.data.item.toppingList
-    );
+    // URLを直書きし、存在しないページだった場合の処理
+    try {
+      const response = await axios.get(
+        `http://153.127.48.168:8080/ecsite-api/item/${itemId}`
+      );
+      // Itemオブジェクト型として代入
+      this.currentItem = new Item(
+        response.data.item.id,
+        response.data.item.type,
+        response.data.item.name,
+        response.data.item.description,
+        response.data.item.priceM,
+        response.data.item.priceL,
+        response.data.item.imagePath,
+        response.data.item.deleted,
+        response.data.item.toppingList
+      );
+      // 存在しないidだった場合はエラー画面に遷移する
+    } catch (e) {
+      this["$router"].push("/notFound");
+      return;
+    }
   }
 
   /**
@@ -244,6 +259,13 @@ export default class ItemDetail extends Vue {
 }
 </script>
 <style scoped>
+.xmasCount {
+  text-align: center;
+  color: mediumseagreen;
+}
+h3 {
+  font-weight: bolder;
+}
 .top-wrapper {
   background-color: #dc143c;
 }
