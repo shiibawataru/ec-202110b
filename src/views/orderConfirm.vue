@@ -334,10 +334,12 @@
 <script lang="ts">
 import { OrderItem } from "@/types/OrderItem";
 import { Component, Vue } from "vue-property-decorator";
-import axios from "axios";
 import { format, addHours } from "date-fns";
-
+import axios from "axios";
 @Component
+/**
+ * 注文確認画面.
+ */
 export default class OrderConfirm extends Vue {
   //注文のエラー
   private orderError = "";
@@ -409,86 +411,6 @@ export default class OrderConfirm extends Vue {
   private creditNameError = "";
   private creditsecurityCodeError = "";
 
-  // private cartList = new Array<OrderItem>(
-  //   new OrderItem(
-  //     1,
-  //     101,
-  //     3,
-  //     2,
-  //     "L",
-  //     new Item(
-  //       101,
-  //       "toy",
-  //       "ビニールプール",
-  //       "説明",
-  //       1490,
-  //       2570,
-  //       "/img_toy/1.jpg",
-  //       true,
-  //       [
-  //         new Topping(106, "toy", "単二電池４本", 200, 300),
-  //         new Topping(105, "toy", "単一電池４本", 200, 300),
-  //         new Topping(104, "toy", "片付け用きんちゃく袋", 200, 300),
-  //       ]
-  //     ),
-  //     [
-  //       new OrderTopping(
-  //         10,
-  //         106,
-  //         101,
-  //         new Topping(106, "toy", "単二電池４本", 200, 300)
-  //       ),
-  //       new OrderTopping(
-  //         20,
-  //         105,
-  //         101,
-  //         new Topping(105, "toy", "単一電池４本", 200, 300)
-  //       ),
-  //       new OrderTopping(
-  //         30,
-  //         104,
-  //         101,
-  //         new Topping(104, "toy", "片付け用きんちゃく袋", 200, 300)
-  //       ),
-  //     ]
-  //   ),
-  //   new OrderItem(
-  //     2,
-  //     101,
-  //     3,
-  //     4,
-  //     "M",
-  //     new Item(
-  //       101,
-  //       "toy",
-  //       "ビニールプール",
-  //       "説明",
-  //       1490,
-  //       2570,
-  //       "/img_toy/1.jpg",
-  //       true,
-  //       [
-  //         new Topping(102, "toy", "女の子用シール", 200, 300),
-  //         new Topping(101, "toy", "男の子用シール", 200, 300),
-  //       ]
-  //     ),
-  //     [
-  //       new OrderTopping(
-  //         10,
-  //         102,
-  //         101,
-  //         new Topping(102, "toy", "女の子用シール", 200, 300)
-  //       ),
-  //       new OrderTopping(
-  //         20,
-  //         101,
-  //         101,
-  //         new Topping(101, "toy", "男の子用シール", 200, 300)
-  //       ),
-  //     ]
-  //   )
-  // );
-
   /**
    * カートの中身をindexから取得.
    */
@@ -500,7 +422,6 @@ export default class OrderConfirm extends Vue {
     }
 
     this.cartList = this["$store"].getters.getCartList;
-    console.dir("注文確定カートの中身:" + JSON.stringify(this.cartList[0]));
   }
 
   /**
@@ -711,6 +632,7 @@ export default class OrderConfirm extends Vue {
     }
     //成功したら注文完了ページに飛ぶ
     if (this.orderError === "") {
+      this["$store"].commit("deleteCartList");
       this.$router.push("/orderFinished");
     }
   }
@@ -720,7 +642,7 @@ export default class OrderConfirm extends Vue {
    */
   async credit(): Promise<void> {
     //クレジットカードAPIに情報を送る
-    const response = await axios.post(
+    await axios.post(
       "http://153.127.48.168:8080/sample-credit-card-web-api/credit-card/payment ",
       {
         user_id: this["$store"].getters.getUserId,
@@ -733,7 +655,6 @@ export default class OrderConfirm extends Vue {
         card_cvv: Number(this.creditSecurityCode), //数字3桁or4桁のセキュリティコード
       }
     );
-    console.dir(JSON.stringify(response));
   }
 
   /**
@@ -781,7 +702,6 @@ export default class OrderConfirm extends Vue {
       let stringNum = String(i);
       array.push("20" + stringNum);
     }
-    console.log(array[0], array[1], array[2]);
     return array;
   }
 
