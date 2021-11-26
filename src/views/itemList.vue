@@ -70,12 +70,26 @@
             </ul>
           </div>
           <span
-            v-for="num of pageNumber"
+            v-for="num of pageButton"
             :key="num"
             class="row order-confirm-btn pageBtn"
           >
-            <button class="btn" type="button" v-on:click="display(num)">
+            <button
+              class="btn"
+              type="button"
+              v-on:click="display(num)"
+              v-show="show"
+            >
               {{ num }}
+            </button></span
+          ><span
+            ><button
+              class="btn"
+              type="button"
+              v-on:click="onclickReturn"
+              v-show="!show"
+            >
+              商品一覧へ戻る
             </button></span
           >
         </div>
@@ -106,6 +120,10 @@ export default class ItemList extends Vue {
   private sort = "安い";
   //サジェスト機能の配列
   private items = [];
+  // ボタン用配列
+  private pageButton: Array<number> = [];
+  // ページ数表示または商品一覧へ戻るボタン用
+  private show = true;
   /**
    * Vuexストアのアクション経由で非同期でWebAPIから商品一覧を取得する.
    *
@@ -122,6 +140,7 @@ export default class ItemList extends Vue {
     this.startDisplay();
     //サジェスト機能の配列に商品情報を代入
     this.items = this["$store"].getters.getItemList;
+    this.pageNumber();
   }
 
   // 曖昧検索
@@ -129,32 +148,61 @@ export default class ItemList extends Vue {
     //初期値リセット
     this.errorOfSearch = "";
     this.displayList.splice(0, this.displayList.length);
-    //検索する
+    //検索する.英字の大文字小文字は区別しない
     this.displayList = this.itemList.filter((item) =>
-      item.name.includes(this.searchWord)
+      item.name.includes(this.searchWord.toUpperCase())
     );
     // 該当商品がない場合はエラーメーセージの表示と全件表示
     if (this.displayList.length === 0 || this.searchWord === "") {
       this.errorOfSearch = "該当する商品がありません";
       this.startDisplay();
+      this.show = true;
+      return;
     }
+    this.show = false;
+  }
+  /**
+   * 商品一覧へ戻る
+   */
+  onclickReturn(): void {
+    this.show = true;
+    this["$store"].dispatch("getItemList");
+    this.itemList = this["$store"].getters.getItemList;
+    this.startDisplay();
+    //サジェスト機能の配列に商品情報を代入
+    this.items = this["$store"].getters.getItemList;
+    this.pageNumber();
   }
 
   /**
-   * ページボタン用配列作成.
+   * 商品一覧取得時の商品数によりページボタンの数を配列に入れる
    */
-  get pageNumber(): Array<number> {
+  pageNumber(): void {
+    this.pageButton.splice(0, this.pageButton.length);
     let btn = 0;
     if (this.itemList.length % 6 === 0) {
       btn = this.itemList.length / 6;
     } else {
       btn = Math.floor(this.itemList.length / 6) + 1;
     }
-    const array = [];
     for (let i = 1; i <= btn; i++) {
-      array.push(i);
+      this.pageButton.push(i);
     }
-    return array;
+  }
+  /**
+   * 検索後の商品数によりページボタンの数を配列に入れる
+   */
+  narrowedPageNumber(): void {
+    this.pageButton.splice(0, this.pageButton.length);
+    let btn = 0;
+    if (this.displayList.length % 6 === 0) {
+      btn = this.displayList.length / 6;
+    } else {
+      btn = Math.floor(this.displayList.length / 6) + 1;
+    }
+    for (let i = 1; i <= btn; i++) {
+      this.pageButton.push(i);
+    }
   }
 
   /**
@@ -165,6 +213,7 @@ export default class ItemList extends Vue {
     for (let i = 0; i <= 5; i++) {
       this.displayList.push(this.itemList[i]);
     }
+    this.pageNumber();
   }
 
   /**
