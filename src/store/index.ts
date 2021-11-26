@@ -5,7 +5,6 @@ import { OrderItem } from "@/types/OrderItem";
 import axios from "axios";
 import createPersistedState from "vuex-persistedstate";
 import { OrderTopping } from "@/types/OrderTopping";
-
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -23,6 +22,14 @@ export default new Vuex.Store({
   },
   mutations: {
     /**
+     * カートの中身を削除する.
+     *
+     * @param state ステート
+     */
+    deleteCartList(state) {
+      state.cartList.splice(0, state.cartList.length);
+    },
+    /**
      * 注文に進むをクリック.
      *
      * @param state ステート
@@ -38,7 +45,6 @@ export default new Vuex.Store({
     noGoOrdered(state) {
       state.goOrder = false;
     },
-
     /**
      * ログインする.
      *
@@ -222,6 +228,7 @@ export default new Vuex.Store({
       // ストレージの種類を指定
       storage: window.sessionStorage,
       // isLoginフラグのみセッションストレージに格納しブラウザ更新しても残るようにしている(ログイン時:true / ログアウト時:false)
+      //カート情報も保持
       paths: ["isLogin", "cartList"],
     }),
   ],
