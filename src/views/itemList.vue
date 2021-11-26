@@ -247,6 +247,9 @@ export default class ItemList extends Vue {
 /* .item-wrapper {
   background-color: #dc143c;
 } */
+.container {
+  width: 100%;
+}
 .xmas {
   background-color: ghostwhite;
   border-radius: 15px 15px 0 0;
