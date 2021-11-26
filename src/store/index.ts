@@ -5,6 +5,7 @@ import { OrderItem } from "@/types/OrderItem";
 import axios from "axios";
 import createPersistedState from "vuex-persistedstate";
 import { OrderTopping } from "@/types/OrderTopping";
+import { User } from "@/types/User";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -19,6 +20,8 @@ export default new Vuex.Store({
     cartList: new Array<OrderItem>(),
     //ログインしているユーザID
     userId: "",
+    // 注文者情報
+    userInfo: new User(0, "", "", "", "", "", ""),
   },
   mutations: {
     /**
@@ -120,6 +123,22 @@ export default new Vuex.Store({
     loginUserId(state, userId) {
       state.userId = userId;
     },
+    /**
+     * ログイン中のユーザー情報を取得する.
+     * @param state ステート
+     * @param userInfo 対象のユーザーの登録情報
+     */
+    loginUserInfo(state, user) {
+      state.userInfo = new User(
+        user.id,
+        user.name,
+        user.email,
+        user.password,
+        user.zipcode,
+        user.address,
+        user.telephone
+      );
+    },
   }, // end mutations
   actions: {
     /**
@@ -218,6 +237,24 @@ export default new Vuex.Store({
     getUserId(state) {
       return state.userId;
     },
+
+    /**
+     *ユーザー情報を返す.
+     * @param state ステート
+     * @returns ユーザー情報
+     */
+    getUserInfo(state) {
+      const user = new User(
+        state.userInfo._id,
+        state.userInfo._name,
+        state.userInfo._email,
+        state.userInfo._password,
+        state.userInfo._zipcode,
+        state.userInfo._address,
+        state.userInfo._telephone
+      );
+      return user;
+    },
   },
   plugins: [
     createPersistedState({
@@ -227,7 +264,7 @@ export default new Vuex.Store({
       storage: window.sessionStorage,
       // isLoginフラグのみセッションストレージに格納しブラウザ更新しても残るようにしている(ログイン時:true / ログアウト時:false)
       //カート情報も保持
-      paths: ["isLogin", "cartList"],
+      paths: ["isLogin", "cartList", "userInfo"],
     }),
   ],
 });

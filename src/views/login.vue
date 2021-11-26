@@ -79,6 +79,7 @@ export default class Login extends Vue {
       }
     );
     this["$store"].commit("loginUserId", response.data.responseMap.user.id);
+    this["$store"].commit("loginUserInfo", response.data.responseMap.user);
 
     if (response.data.status === "success") {
       //stateのisLoginをtrueにし、ログイン状態に変更
