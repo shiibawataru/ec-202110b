@@ -334,8 +334,9 @@
 <script lang="ts">
 import { OrderItem } from "@/types/OrderItem";
 import { Component, Vue } from "vue-property-decorator";
-import { format, addHours } from "date-fns";
+import { format, addHours, addYears } from "date-fns";
 import axios from "axios";
+import lastDayOfYear from "date-fns/esm/lastDayOfYear";
 @Component
 /**
  * 注文確認画面.
@@ -556,6 +557,16 @@ export default class OrderConfirm extends Vue {
           "セキュリティコードは3桁か4桁の数字で入力して下さい";
       }
 
+      //有効期限エラー
+      const nowMonth = now.getMonth();
+      const nowYear = now.getFullYear();
+
+      if (Number(nowYear) >= Number(this.year)) {
+        if (Number(nowMonth + MOON_ADJUSTMENT) > Number(this.month)) {
+          this.creditYearError = "有効期限が切れています";
+        }
+      }
+
       //空白エラー
       if (this.creditNumber === "") {
         this.creditNumberError = "クレジットカード番号を入力して下さい";
@@ -697,9 +708,13 @@ export default class OrderConfirm extends Vue {
    */
   get creditYear(): Array<string> {
     const array = new Array<string>();
-    for (let i = 22; i <= 38; i++) {
+    const now = new Date();
+    const nowYear = now.getFullYear();
+    const nowAdd16Years = addYears(now, 17).getFullYear();
+
+    for (let i = Number(nowYear); i <= Number(nowAdd16Years); i++) {
       let stringNum = String(i);
-      array.push("20" + stringNum);
+      array.push(stringNum);
     }
     return array;
   }
