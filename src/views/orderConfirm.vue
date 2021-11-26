@@ -334,8 +334,9 @@
 <script lang="ts">
 import { OrderItem } from "@/types/OrderItem";
 import { Component, Vue } from "vue-property-decorator";
-import { format, addHours } from "date-fns";
+import { format, addHours, addYears } from "date-fns";
 import axios from "axios";
+import lastDayOfYear from "date-fns/esm/lastDayOfYear";
 @Component
 /**
  * 注文確認画面.
@@ -556,6 +557,16 @@ export default class OrderConfirm extends Vue {
           "セキュリティコードは3桁か4桁の数字で入力して下さい";
       }
 
+      //有効期限エラー
+      const nowMonth = now.getMonth();
+      const nowYear = now.getFullYear();
+
+      if (Number(nowYear) >= Number(this.year)) {
+        if (Number(nowMonth + MOON_ADJUSTMENT) > Number(this.month)) {
+          this.creditYearError = "有効期限が切れています";
+        }
+      }
+
       //空白エラー
       if (this.creditNumber === "") {
         this.creditNumberError = "クレジットカード番号を入力して下さい";
@@ -608,7 +619,26 @@ export default class OrderConfirm extends Vue {
 
     //APIにクレジットカード情報を送る
     if (this.creditFlug) {
-      this.credit();
+      const response = await axios.post(
+        "http://153.127.48.168:8080/sample-credit-card-web-api/credit-card/payment ",
+        {
+          user_id: this["$store"].getters.getUserId,
+          order_number: 12345678901234, //注文番号
+          amount: Number(this.taxIncludePrice), //決済金額
+          card_number: Number(this.creditNumber), //クレジットカード番号
+          card_exp_year: Number(this.year), //有効期限年
+          card_exp_month: Number(this.month), //有効期限月
+          card_name: this.creditName, //名義
+          card_cvv: Number(this.creditSecurityCode), //数字3桁or4桁のセキュリティコード
+        }
+      );
+      if (response.data.status === "error") {
+        this.creditsecurityCodeError =
+          "セキュリティコードエラーが発生しました。";
+      }
+    }
+    if (this.creditsecurityCodeError != "") {
+      return;
     }
 
     //APIに配達情報を送る
@@ -635,26 +665,6 @@ export default class OrderConfirm extends Vue {
       this["$store"].commit("deleteCartList");
       this.$router.push("/orderFinished");
     }
-  }
-
-  /**
-   * クレジットカード情報API.
-   */
-  async credit(): Promise<void> {
-    //クレジットカードAPIに情報を送る
-    await axios.post(
-      "http://153.127.48.168:8080/sample-credit-card-web-api/credit-card/payment ",
-      {
-        user_id: this["$store"].getters.getUserId,
-        order_number: 12345678901234, //注文番号
-        amount: Number(this.taxIncludePrice), //決済金額
-        card_number: Number(this.creditNumber), //クレジットカード番号
-        card_exp_year: Number(this.year), //有効期限年
-        card_exp_month: Number(this.month), //有効期限月
-        card_name: this.creditName, //名義
-        card_cvv: Number(this.creditSecurityCode), //数字3桁or4桁のセキュリティコード
-      }
-    );
   }
 
   /**
@@ -698,9 +708,13 @@ export default class OrderConfirm extends Vue {
    */
   get creditYear(): Array<string> {
     const array = new Array<string>();
-    for (let i = 22; i <= 38; i++) {
+    const now = new Date();
+    const nowYear = now.getFullYear();
+    const nowAdd16Years = addYears(now, 17).getFullYear();
+
+    for (let i = Number(nowYear); i <= Number(nowAdd16Years); i++) {
       let stringNum = String(i);
-      array.push("20" + stringNum);
+      array.push(stringNum);
     }
     return array;
   }
