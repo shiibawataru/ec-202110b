@@ -98,7 +98,11 @@
             <!-- 住所 -->
             <div class="error">{{ errorOfAddress }}</div>
             <input id="address" type="text" v-model="address" />
-            <label for="address" v-show="!errorFlug">住所</label>
+            <label
+              for="address"
+              v-if="errorFlug === false && addressFlug === true"
+              >住所</label
+            >
           </div>
         </div>
         <div class="row">
@@ -336,7 +340,6 @@ import { OrderItem } from "@/types/OrderItem";
 import { Component, Vue } from "vue-property-decorator";
 import { format, addHours, addYears } from "date-fns";
 import axios from "axios";
-import lastDayOfYear from "date-fns/esm/lastDayOfYear";
 @Component
 /**
  * 注文確認画面.
@@ -360,6 +363,8 @@ export default class OrderConfirm extends Vue {
   private address = "";
   //住所エラー
   private errorOfAddress = "";
+  //住所検索したらラベルを消す
+  private addressFlug = true;
   //電話番号
   private telephone = "";
   //電話番号エラー
@@ -432,6 +437,7 @@ export default class OrderConfirm extends Vue {
     //初期値リセット(住所、住所エラー)
     this.address = "";
     this.errorOfAddress = "";
+    this.addressFlug = true;
     //郵便番号から住所を取得APIに郵便番号を送る
     try {
       // const axios = require("axios");
@@ -446,14 +452,17 @@ export default class OrderConfirm extends Vue {
       });
       //成功したら住所に取得したデータを代入
       if (response.data.length === 1) {
+        this.addressFlug = false;
         this.address =
           response.data.items[0].state_name + response.data.items[0].address;
         //失敗したらエラーを出す
       } else {
         this.errorOfAddress = "住所が見つかりません";
+        this.addressFlug = false;
       }
     } catch (e) {
       this.errorOfAddress = "住所が見つかりません";
+      this.addressFlug = false;
     }
   }
 
