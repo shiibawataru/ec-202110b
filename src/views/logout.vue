@@ -6,9 +6,6 @@
 import { Component, Vue } from "vue-property-decorator";
 import axios from "axios";
 
-//curlコマンド
-//curl -X POST -H "Content-Type: application/json" http://153.127.48.168:8080/ecsite-api/user/logout
-
 @Component
 export default class Logout extends Vue {
   /**
@@ -19,18 +16,12 @@ export default class Logout extends Vue {
    * @returns Promiseオブジェクト
    */
   async created(): Promise<void> {
-    console.log("呼ばれた");
-
     // ログインしていなければログイン画面へ遷移
     if (this.$store.getters.getLoginStatus === false) {
       this.$router.push("/login");
       return;
     }
-    console.log("logout!");
-    const response = await axios.post(
-      "http://153.127.48.168:8080/ecsite-api/user/logout"
-    );
-    console.dir("response:" + JSON.stringify(response));
+    await axios.post("http://153.127.48.168:8080/ecsite-api/user/logout");
     // ログアウト状態にする(stateのisLoginをfalseにする)
     this.$store.commit("logouted");
     // ログイン画面に遷移する
