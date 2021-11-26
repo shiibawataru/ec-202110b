@@ -155,8 +155,6 @@ export default class RegisterAdmin extends Vue {
    * 登録したいユーザー情報を外部APIに送る.
    */
   async registerAdmin(): Promise<void> {
-    console.log("registerAdmin実行された");
-
     //エラーメッセージを初期化
     this.errorOfName = "";
     this.errorOfMailAddress = "";
@@ -232,7 +230,6 @@ export default class RegisterAdmin extends Vue {
         telephone: this.phoneNumber,
       }
     );
-    console.dir(JSON.stringify(response));
     if (response.data.status === "success") {
       this["$router"].push("/login");
     } else if (response.data.errorCode === "E-01") {
@@ -295,7 +292,6 @@ export default class RegisterAdmin extends Vue {
     this.errorOfCheckPassword = "";
     this.zipCode = "";
     this.errorOfZipCode = "";
-    console.log("clear実行された");
   }
 }
 </script>
