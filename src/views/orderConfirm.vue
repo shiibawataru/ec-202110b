@@ -66,6 +66,11 @@
 
       <h2 class="page-title">お届け先情報</h2>
       <div class="order-confirm-delivery-info">
+        <div class="input-button">
+          <button class="btn" type="button" @click="inputUserInfo">
+            <span>登録情報を自動入力する</span>
+          </button>
+        </div>
         <div class="row">
           <div class="input-field">
             <!-- 名前 -->
@@ -336,6 +341,7 @@ import { OrderItem } from "@/types/OrderItem";
 import { Component, Vue } from "vue-property-decorator";
 import { format, addHours } from "date-fns";
 import axios from "axios";
+import { User } from "@/types/User";
 @Component
 /**
  * 注文確認画面.
@@ -410,6 +416,8 @@ export default class OrderConfirm extends Vue {
   private creditYearError = "";
   private creditNameError = "";
   private creditsecurityCodeError = "";
+  // 登録しているユーザー情報
+  private userInfo = new User(0, "", "", "", "", "", "");
 
   /**
    * カートの中身をindexから取得.
@@ -422,6 +430,8 @@ export default class OrderConfirm extends Vue {
     }
 
     this.cartList = this["$store"].getters.getCartList;
+
+    this.getUserInfo();
   }
 
   /**
@@ -704,7 +714,23 @@ export default class OrderConfirm extends Vue {
     }
     return array;
   }
-
+  /**
+   * ユーザー情報を取得する.
+   */
+  getUserInfo(): void {
+    this.userInfo = this["$store"].getters.getUserInfo;
+  }
+  /**
+   * ボタンが押されたらユーザー情報を自動入力する.
+   */
+  inputUserInfo(): void {
+    this.name = this.userInfo.name;
+    (this.mailAddress = this.userInfo.email),
+      (this.zipCode = this.userInfo.zipcode),
+      (this.address = this.userInfo.address),
+      (this.telephone = this.userInfo.telephone);
+    this.errorFlug = true;
+  }
   // 終わり
 }
 </script>
