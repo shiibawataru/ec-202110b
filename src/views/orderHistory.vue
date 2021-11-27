@@ -45,13 +45,15 @@
               </td>
               <td v-if="orderItem.size === 'M'">
                 <span class="price">&nbsp;{{ orderItem.size }}</span
-                >&nbsp;&nbsp;{{ orderItem.item.priceM.toLocaleString() }}円
-                &nbsp;&nbsp;{{ orderItem.quantity }}個
+                >&nbsp;&nbsp;{{ orderItem.item.priceM }}円 &nbsp;&nbsp;{{
+                  orderItem.quantity
+                }}個
               </td>
               <td v-if="orderItem.size === 'L'">
                 <span class="price">&nbsp;{{ orderItem.size }}</span
-                >&nbsp;&nbsp;{{ orderItem.item.priceM.toLocaleString() }}円
-                &nbsp;&nbsp;{{ orderItem.quantity }}個
+                >&nbsp;&nbsp;{{ orderItem.item.priceM }}円 &nbsp;&nbsp;{{
+                  orderItem.quantity
+                }}個
               </td>
               <div>
                 <td>
@@ -76,9 +78,7 @@
                 </td>
               </div>
               <td>
-                <div class="text-center">
-                  {{ orderItem.subTotal.toLocaleString() }}円
-                </div>
+                <div class="text-center">{{ orderItem.subTotal }}円</div>
               </td>
             </tr>
           </tbody>
@@ -92,7 +92,10 @@
 import { Order } from "@/types/Order";
 import { Component, Vue } from "vue-property-decorator";
 import axios from "axios";
-
+import { OrderItem } from "@/types/OrderItem";
+import { OrderTopping } from "@/types/OrderTopping";
+import { Item } from "@/types/Item";
+import { Topping } from "@/types/Topping";
 @Component
 export default class OrderHistory extends Vue {
   // 注文履歴が0件の場合のエラーメッセージ
@@ -105,7 +108,6 @@ export default class OrderHistory extends Vue {
   private showOrderList: Array<Order> = [];
   // 注文商品を入れる配列
   private orderList: Array<Order> = [];
-
   /**
    * ユーザーIDから注文履歴を取得する.
    */
@@ -120,39 +122,106 @@ export default class OrderHistory extends Vue {
       `http://153.127.48.168:8080/ecsite-api/order/orders/toy/${userId}`
     );
 
-    for (let order of response.data.orders) {
-      let newOrder = new Order(
-        order.id,
-        order.userId,
-        order.status,
-        order.totalPrice,
-        new Date(order.orderDate),
-        order.distinationName,
-        order.distinationEmail,
-        order.distinationZipcode,
-        order.distinationAddress,
-        order.distinationTel,
-        new Date(order.deliveryTime),
-        order.paymentMethod,
-        order.user,
-        order.orderItemList
+    console.dir("response:" + JSON.stringify(response.data.orders));
+    let array: Array<Order> = [];
+    let orderArray: Array<OrderItem> = [];
+    let toppingArray: Array<OrderTopping> = [];
+    for (const order of response.data.orders) {
+      for (const orderItem of order.orderItemList) {
+        for (const orderTopping of orderItem.orderToppingList) {
+          toppingArray.push(
+            new OrderTopping(
+              orderTopping.id,
+              orderTopping.toppingId,
+              orderTopping.orderItemId,
+              new Topping(
+                orderTopping.topping.id,
+                orderTopping.topping.type,
+                orderTopping.topping.name,
+                orderTopping.topping.priceM,
+                orderTopping.topping.priceL
+              )
+            )
+          );
+          console.dir("toppingArray" + JSON.stringify(toppingArray));
+        }
+        orderArray.push(
+          new OrderItem(
+            orderItem.id,
+            orderItem.itemId,
+            orderItem.orderId,
+            orderItem.quantity,
+            orderItem.size,
+            new Item(
+              orderItem.item.id,
+              orderItem.item.type,
+              orderItem.item.name,
+              orderItem.item.description,
+              orderItem.item.priceM,
+              orderItem.item.priceL,
+              orderItem.item.imagePath,
+              orderItem.item.deleted,
+              orderItem.item.toppingList
+            ),
+            toppingArray
+          )
+        );
+      }
+      array.push(
+        new Order(
+          order.id,
+          order.userId,
+          order.status,
+          order.totalPrice,
+          new Date(order.orderDate),
+          order.distinationName,
+          order.distinationEmail,
+          order.distinationZipcode,
+          order.distinationAddress,
+          order.distinationTel,
+          new Date(order.deliveryTime),
+          order.paymentMethod,
+          order.user,
+          orderArray
+        )
       );
-      this.orderList.push(newOrder);
     }
 
+    console.log("入れた配列：" + JSON.stringify(array));
+    this.orderList = array;
+
+    // for (let order of response.data.orders) {
+    //   let newOrder = new Order(
+    //     order.id,
+    //     order.userId,
+    //     order.status,
+    //     order.totalPrice,
+    //     new Date(order.orderDate),
+    //     order.distinationName,
+    //     order.distinationEmail,
+    //     order.distinationZipcode,
+    //     order.distinationAddress,
+    //     order.distinationTel,
+    //     new Date(order.deliveryTime),
+    //     order.paymentMethod,
+    //     order.user,
+    //     order.orderItemList
+    //   );
+    //   this.orderList.push(newOrder);
+    //   console.dir(JSON.stringify(newOrder));
+    // }
     this.getNonOrderMsg();
     this.startDisplay();
   }
-
   /**
    * 注文履歴を全件表示する.
    */
   startDisplay(): void {
+    this.showOrderList.splice(0, this.showOrderList.length);
     for (let i = 0; i < this.orderList.length; i++) {
       this.showOrderList.push(this.orderList[i]);
     }
   }
-
   /**
    * 注文履歴が0件だった場合、メッセージを表示する.
    */
@@ -163,7 +232,6 @@ export default class OrderHistory extends Vue {
       return;
     }
   }
-
   /**
    * 購入年で絞り込み検索.
    */
@@ -192,7 +260,6 @@ export default class OrderHistory extends Vue {
   text-align: center;
   color: red;
 }
-
 .form {
   width: 30%;
   text-align: center;
