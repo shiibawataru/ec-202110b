@@ -3,23 +3,17 @@
     <div class="snow">●</div>
     <div class="top-wrapper">
       <div class="container">
-        <div class="xmasCount">
-          <h3>クリスマスまであと</h3>
-          <flip-countdown deadline="2021-12-25 00:00:00"> </flip-countdown>
-        </div>
-        <div class="title">
-          <h1 class="page-title">
-            {{ currentItem.name }}
-            <span v-on:click="onClickFavo(currentItem)">
-              <span v-show="!goodFlug"
-                ><i class="fas fa-heart nonegood"></i
-              ></span>
-            </span>
-            <span v-on:click="onClickFavo()">
-              <span v-show="goodFlug"><i class="fas fa-heart good"></i></span>
-            </span>
-          </h1>
-        </div>
+        <h1 class="page-title">
+          {{ currentItem.name }}
+          <span v-on:click="onClickFavo(currentItem)">
+            <span v-show="!goodFlug"
+              ><i class="fas fa-heart nonegood"></i
+            ></span>
+          </span>
+          <span v-on:click="onClickFavo()">
+            <span v-show="goodFlug"><i class="fas fa-heart good"></i></span>
+          </span>
+        </h1>
         <div class="row">
           <div class="row item-detail">
             <div class="item-icon">
