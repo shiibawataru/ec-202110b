@@ -82,7 +82,9 @@
             >
               {{ num }}
             </button></span
-          ><span
+          >
+          <p>{{ this.currentPage }}/{{ this.pageButton.length }}</p>
+          <span
             ><button
               class="btn"
               type="button"
@@ -124,7 +126,12 @@ export default class ItemList extends Vue {
   private pageButton: Array<number> = [];
   // ページ数表示または商品一覧へ戻るボタン用
   private show = true;
+<<<<<<< HEAD
 
+=======
+  // 現在のページ数
+  private currentPage = 1;
+>>>>>>> develop
   /**
    * Vuexストアのアクション経由で非同期でWebAPIから商品一覧を取得する.
    *
@@ -234,6 +241,7 @@ export default class ItemList extends Vue {
     for (let i = start; i <= end; i++) {
       this.displayList.push(this.itemList[i]);
     }
+    this.currentPage = pageNum;
   }
 
   /**

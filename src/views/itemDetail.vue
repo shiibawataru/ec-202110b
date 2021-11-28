@@ -18,9 +18,7 @@
             <span v-on:click="onClickFavo()">
               <span v-show="goodFlug"><i class="fas fa-heart good"></i></span>
             </span>
-            <!-- いいねコーナー おわり-->
           </h1>
-          <!-- いいねコーナー -->
         </div>
         <div class="row">
           <div class="row item-detail">
@@ -136,13 +134,8 @@ import { Topping } from "@/types/Topping";
 import { OrderItem } from "@/types/OrderItem";
 import axios from "axios";
 import { OrderTopping } from "@/types/OrderTopping";
-import FlipCountdown from "vue2-flip-countdown";
 
-@Component({
-  components: {
-    FlipCountdown,
-  },
-})
+@Component
 export default class ItemDetail extends Vue {
   // チェックされたトッピングを配列に入れる
   private checked: Array<Topping> = [];
