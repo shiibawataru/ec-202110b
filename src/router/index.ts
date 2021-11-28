@@ -49,6 +49,10 @@ const routes: Array<RouteConfig> = [
     path: "/orderHistory",
     component: () => import("../views/orderHistory.vue"),
   },
+  {
+    path: "/favoList",
+    component: () => import("../views/favo.vue"),
+  },
 ];
 
 const router = new VueRouter({

@@ -14,6 +14,7 @@
           <router-link to="/cartList">
             <i class="fas fa-shopping-cart"></i>カート</router-link
           >
+          <router-link to="/favoList">お気に入り</router-link>
 
           <router-link to="/login" v-if="isLogin === false">
             <i class="fas fa-sign-in-alt"></i>ログイン

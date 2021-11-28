@@ -22,6 +22,8 @@ export default new Vuex.Store({
     userId: "",
     // 注文者情報
     userInfo: new User(0, "", "", "", "", "", ""),
+    //お気に入りリスト
+    favoList: new Array<Item>(),
   },
   mutations: {
     /**
@@ -118,6 +120,15 @@ export default new Vuex.Store({
     },
 
     /**
+     * お気に入りリスト(state.favoList)の商品を1件削除.
+     * @param state ステート
+     * @param index 対象の商品のindex番号
+     */
+    deleteFavoItem(state, indexNumber) {
+      state.favoList.splice(indexNumber, 1);
+    },
+
+    /**
      * ログイン中のユーザIDを取得する.
      */
     loginUserId(state, userId) {
@@ -137,6 +148,26 @@ export default new Vuex.Store({
         user.zipcode,
         user.address,
         user.telephone
+      );
+    },
+    /**
+     * お気に入りリストに商品を追加.
+     * @param state - ステート
+     * @param favoItem - お気に入り商品
+     */
+    addFavoList(state, favoItem) {
+      state.favoList.push(
+        new Item(
+          favoItem.id,
+          favoItem.type,
+          favoItem.name,
+          favoItem.description,
+          favoItem.priceM,
+          favoItem.priceL,
+          favoItem.imagePath,
+          favoItem.deleted,
+          []
+        )
       );
     },
   }, // end mutations
@@ -255,6 +286,40 @@ export default new Vuex.Store({
       );
       return user;
     },
+    /**
+     * お気に入りリストを返す.
+     * @remarks 重複は避ける
+     * @param state - ステート
+     * @returns - お気に入りリスト
+     */
+    getFavoList(state) {
+      let favoList = new Array<Item>();
+      for (const favoItem of state.favoList) {
+        favoList.push(
+          new Item(
+            favoItem._id,
+            favoItem._type,
+            favoItem._name,
+            favoItem._description,
+            favoItem._priceM,
+            favoItem._priceL,
+            favoItem._imagePath,
+            favoItem._deleted,
+            []
+          )
+        );
+      }
+
+      favoList = favoList.filter(function (v1, i1, a1) {
+        return (
+          a1.findIndex(function (v2) {
+            return v1.id === v2.id;
+          }) === i1
+        );
+      });
+
+      return favoList;
+    },
   },
   plugins: [
     createPersistedState({
@@ -264,7 +329,9 @@ export default new Vuex.Store({
       storage: window.sessionStorage,
       // isLoginフラグのみセッションストレージに格納しブラウザ更新しても残るようにしている(ログイン時:true / ログアウト時:false)
       //カート情報も保持
-      paths: ["isLogin", "cartList", "userInfo"],
+      //ログインしているユーザの情報も保持
+      //お気に入りリストも保持
+      paths: ["isLogin", "cartList", "userInfo", "favoList"],
     }),
   ],
 });

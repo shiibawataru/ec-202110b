@@ -124,6 +124,7 @@ export default class ItemList extends Vue {
   private pageButton: Array<number> = [];
   // ページ数表示または商品一覧へ戻るボタン用
   private show = true;
+
   /**
    * Vuexストアのアクション経由で非同期でWebAPIから商品一覧を取得する.
    *
