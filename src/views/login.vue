@@ -1,6 +1,8 @@
 <template>
   <div>
+    <div class="bg_pattern Boxes"></div>
     <div class="top-wrapper">
+      <div class="signIn">Sign in</div>
       <div class="container">
         <div class="row login-page">
           <div class="col s12 z-depth-6 card-panel">
@@ -109,4 +111,31 @@ export default class Login extends Vue {
   }
 }
 </script>
-<style></style>
+<style scoped>
+.signIn {
+  text-align: center;
+  padding-bottom: 10px;
+  color: navy;
+  font-weight: bolder;
+  font-size: 45px;
+}
+.top-wrapper {
+  padding-top: 10px;
+}
+
+.bg_pattern {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #ffe9a7;
+  opacity: 0.4;
+  z-index: -1;
+}
+.Boxes {
+  background-image: linear-gradient(#ffc107 2px, transparent 2px),
+    linear-gradient(to right, #ffc107 2px, #ffe9a7 2px);
+  background-size: 40px 40px;
+}
+</style>
