@@ -3,7 +3,17 @@
     <div class="snow">●</div>
     <div class="top-wrapper">
       <div class="container">
-        <h1 class="page-title">{{ currentItem.name }}</h1>
+        <h1 class="page-title">
+          {{ currentItem.name }}
+          <span v-on:click="onClickFavo(currentItem)">
+            <span v-show="!goodFlug"
+              ><i class="fas fa-heart nonegood"></i
+            ></span>
+          </span>
+          <span v-on:click="onClickFavo()">
+            <span v-show="goodFlug"><i class="fas fa-heart good"></i></span>
+          </span>
+        </h1>
         <div class="row">
           <div class="row item-detail">
             <div class="item-icon">
@@ -153,6 +163,9 @@ export default class ItemDetail extends Vue {
   // 選択された数量
   private quantity = 1;
 
+  //goodフラグ
+  private goodFlug = false;
+
   /**
    * VuexストアのGetter経由で受け取ったリクエストパラメータのIDから１件の商品情報を取得する.
    *
@@ -247,9 +260,33 @@ export default class ItemDetail extends Vue {
       );
     }
   }
+
+  onClickFavo(itemInfo: Item): void {
+    if (this.goodFlug === false) {
+      this.goodFlug = true;
+      this["$store"].commit("addFavoList", itemInfo);
+    }
+  }
 }
 </script>
 <style scoped>
+.nonegood {
+  font-size: 30px;
+  color: rgb(151, 151, 151);
+}
+
+.good {
+  font-size: 30px;
+  color: rgb(255, 83, 83);
+}
+
+.xmasCount {
+  text-align: center;
+  color: mediumseagreen;
+}
+h3 {
+  font-weight: bolder;
+}
 .top-wrapper {
   background-color: #dc143c;
 }
