@@ -555,7 +555,8 @@ export default class OrderConfirm extends Vue {
     if (this.creditFlug) {
       //名義エラー
       if (this.creditName.match(/[^A-Z]+/)) {
-        this.creditNameError = "半角英字(大文字)で入力して下さい";
+        this.creditNameError =
+          "クレジットカード名義は半角英字(大文字)で入力して下さい";
       }
 
       //クレジット番号エラー
