@@ -58,6 +58,9 @@
           <h2>遊びの楽しさを学ぼう！</h2>
         </div>
       </div>
+      <div class="loop_wrap">
+        <img src="img_toy/slideimg.jpg" /><img src="img_toy/slideimg.jpg" />
+      </div>
     </div>
   </div>
 </template>
@@ -217,5 +220,46 @@ h3 {
   top: 5px; /* ボタンを本来の位置よりも5px分下にずらす(上を5px空ける) */
   left: 1px; /* ボタンを本来の位置よりも1px分右にずらす(左を1px空ける) */
   box-shadow: none; /* 影をなくす(これがないと影ごと右下に動く) */
+}
+
+/* ========================================
+    無限スライドショーの設定
+   ======================================== */
+
+.loop_wrap {
+  display: flex;
+  width: 100vw;
+  height: 300px;
+  overflow: hidden;
+}
+
+.loop_wrap img {
+  width: auto;
+  height: 100%;
+}
+
+@keyframes loop {
+  0% {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes loop2 {
+  0% {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-200%);
+  }
+}
+.loop_wrap img:first-child {
+  animation: loop 80s -40s linear infinite;
+}
+
+.loop_wrap img:last-child {
+  animation: loop2 40s linear infinite;
 }
 </style>
