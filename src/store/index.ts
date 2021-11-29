@@ -226,13 +226,45 @@ export default new Vuex.Store({
       for (const orderItem of state.cartList) {
         const toppingArray = new Array<OrderTopping>();
         for (const topping of orderItem._orderToppingList) {
-          toppingArray.push(
-            new OrderTopping(
-              topping._id,
-              topping._toppingId,
-              topping._orderItemId,
-              topping._topping
-            )
+          let newTopping = new OrderTopping(
+            topping._id,
+            topping._toppingId,
+            topping._orderItemId,
+            topping._topping
+          );
+          if (!newTopping.id) {
+            newTopping = new OrderTopping(
+              topping.id,
+              topping.toppingId,
+              topping.orderItemId,
+              topping.topping
+            );
+          }
+          toppingArray.push(newTopping);
+        }
+        let item = new Item(
+          orderItem._item.id,
+          orderItem._item.type,
+          orderItem._item.name,
+          orderItem._item.description,
+          orderItem._item.priceM,
+          orderItem._item.priceL,
+          orderItem._item.imagePath,
+          orderItem._item.deleted,
+          orderItem._item.toppingList
+        );
+
+        if (!item.id) {
+          item = new Item(
+            orderItem._item._id,
+            orderItem._item._type,
+            orderItem._item._name,
+            orderItem._item._description,
+            orderItem._item._priceM,
+            orderItem._item._priceL,
+            orderItem._item._imagePath,
+            orderItem._item._deleted,
+            orderItem._item._toppingList
           );
         }
         array.push(
@@ -242,17 +274,7 @@ export default new Vuex.Store({
             orderItem._orderId,
             orderItem._quantity,
             orderItem._size,
-            new Item(
-              orderItem._item._id,
-              orderItem._item._type,
-              orderItem._item._name,
-              orderItem._item._description,
-              orderItem._item._priceM,
-              orderItem._item._priceL,
-              orderItem._item._imagePath,
-              orderItem._item._deleted,
-              orderItem._item._toppingList
-            ),
+            item,
             toppingArray
           )
         );
@@ -331,7 +353,7 @@ export default new Vuex.Store({
       //カート情報も保持
       //ログインしているユーザの情報も保持
       //お気に入りリストも保持
-      paths: ["isLogin", "cartList", "userInfo", "favoList"],
+      paths: ["isLogin", "cartList", "userId", "userInfo", "favoList"],
     }),
   ],
 });
