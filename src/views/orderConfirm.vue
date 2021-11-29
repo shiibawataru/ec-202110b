@@ -384,7 +384,7 @@ export default class OrderConfirm extends Vue {
   //配達時間エラー
   private errorOfDelivarytime = "";
   //支払い方法
-  private paymentMethod = "";
+  private paymentMethod = "1";
   //カートの中身
   private cartList = new Array<OrderItem>();
   //エラーの際、ラベルを非表示に
@@ -518,6 +518,7 @@ export default class OrderConfirm extends Vue {
     if (this.deliveryDate === "") {
       this.errorOfDeliveryDate = "配達日を入力して下さい";
     }
+
     const now = new Date();
     const nowAdd3Hours = addHours(now, 3);
 
