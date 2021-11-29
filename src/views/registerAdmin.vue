@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div class="bg_pattern Boxes"></div>
     <div class="top-wrapper">
       <div class="container">
         <div class="row register-page">
@@ -314,5 +315,25 @@ export default class RegisterAdmin extends Vue {
 <style scoped>
 .clearBtn {
   margin-left: 10px;
+}
+.bg_pattern {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #ffe9a7;
+  opacity: 0.4;
+  z-index: -1;
+}
+.Boxes {
+  background-image: linear-gradient(#ffc107 2px, transparent 2px),
+    linear-gradient(to right, #ffc107 2px, #ffe9a7 2px);
+  background-size: 40px 40px;
+}
+.register-page {
+  background-color: white;
+  box-shadow: 0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 12%),
+    0 1px 5px 0 rgb(0 0 0 / 20%);
 }
 </style>

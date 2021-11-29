@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div class="bg_pattern Boxes"></div>
     <div class="top-wrapper">
       <div class="container">
         <div class="row login-page">
@@ -109,4 +110,20 @@ export default class Login extends Vue {
   }
 }
 </script>
-<style></style>
+<style scoped>
+.bg_pattern {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #ffe9a7;
+  opacity: 0.4;
+  z-index: -1;
+}
+.Boxes {
+  background-image: linear-gradient(#ffc107 2px, transparent 2px),
+    linear-gradient(to right, #ffc107 2px, #ffe9a7 2px);
+  background-size: 40px 40px;
+}
+</style>
