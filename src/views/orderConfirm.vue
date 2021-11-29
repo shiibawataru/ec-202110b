@@ -627,14 +627,15 @@ export default class OrderConfirm extends Vue {
     const orderItems = [];
     const toppings = [];
     for (const cartListItem of this.cartList) {
+      for (const topping of cartListItem.orderToppingList) {
+        toppings.push({ toppingId: String(topping.toppingId) });
+      }
       orderItems.push({
         itemId: cartListItem.itemId,
         quantity: cartListItem.quantity,
         size: cartListItem.size,
+        orderToppingFormList: toppings,
       });
-      for (const topping of cartListItem.orderToppingList) {
-        toppings.push({ toppingId: String(topping.toppingId) });
-      }
     }
 
     //APIにクレジットカード情報を送る
@@ -675,7 +676,6 @@ export default class OrderConfirm extends Vue {
         deliveryTime: delivery,
         paymentMethod: String(this.paymentMethod),
         orderItemFormList: orderItems,
-        orderToppingFormList: toppings,
       });
     } catch (e) {
       this.orderError = "エラーが発生しました";
