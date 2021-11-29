@@ -32,8 +32,11 @@
               <th>小計</th>
             </tr>
           </thead>
-          <tbody v-for="order of showOrderList" :key="order.id">
-            <tr v-for="orderItem of order.orderItemList" :key="orderItem.id">
+          <tbody v-for="(order, i) of showOrderList" :key="order.id">
+            <tr
+              v-for="(orderItem, j) of order.orderItemList"
+              :key="orderItem.id"
+            >
               <td class="order-history-item-name">{{ order.formatDate }}</td>
               <td class="order-history-item-name">
                 <router-link v-bind:to="'/itemDetail/' + orderItem.item.id">
@@ -78,6 +81,15 @@
               <td>
                 <div class="text-center">
                   {{ orderItem.subTotal.toLocaleString() }}円
+                  <div>
+                    <button
+                      class="btn"
+                      type="button"
+                      v-on:click="onclickAddItemToCart(i, j)"
+                    >
+                      <span>カートに入れる</span>
+                    </button>
+                  </div>
                 </div>
               </td>
             </tr>
@@ -92,6 +104,7 @@
 import { Order } from "@/types/Order";
 import { Component, Vue } from "vue-property-decorator";
 import axios from "axios";
+import { OrderItem } from "@/types/OrderItem";
 
 @Component
 export default class OrderHistory extends Vue {
@@ -188,6 +201,26 @@ export default class OrderHistory extends Vue {
       this.showOrderHistory = false;
     }
   }
+  /**
+   * 選択した商品をカートに入れる.
+   * @param i 商品配列の位置
+   * @param j 商品配列の位置
+   */
+  onclickAddItemToCart(i: number, j: number): void {
+    const orderId = this["$store"].getters.getCartList.length + 1;
+    this["$store"].commit("addItemToCart", {
+      OrderItem: new OrderItem(
+        orderId,
+        this.showOrderList[i].orderItemList[j].itemId,
+        orderId,
+        this.showOrderList[i].orderItemList[j].quantity,
+        this.showOrderList[i].orderItemList[j].size,
+        this.showOrderList[i].orderItemList[j].item,
+        this.showOrderList[i].orderItemList[j].orderToppingList
+      ),
+    });
+    this["$router"].push("/cartList");
+  }
 }
 </script>
 <style scoped>
@@ -204,5 +237,8 @@ select {
   width: 200px;
   margin-right: 10px;
   text-align: center;
+}
+.btn {
+  margin-top: 20px;
 }
 </style>
