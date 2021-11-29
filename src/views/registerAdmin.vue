@@ -211,6 +211,18 @@ export default class RegisterAdmin extends Vue {
         "パスワードは８文字以上１６文字以内で設定してください";
       this.hasErrors = true;
     }
+    if (
+      !(
+        /[A-Z]+/.test(this.password) &&
+        /[a-z]+/.test(this.password) &&
+        /[0-9]+/.test(this.password)
+      )
+    ) {
+      this.errorOfPassword =
+        "パスワードは大文字/小文字/数字を組み合わせて下さい。";
+      this.hasErrors = true;
+    }
+
     if (this.password !== this.checkPassword) {
       // パスワード一致チェック
       this.errorOfCheckPassword = "パスワードが不一致です";
@@ -227,6 +239,7 @@ export default class RegisterAdmin extends Vue {
       this.errorOfZipCode = "郵便番号はハイフンを入れて入力してください";
       this.hasErrors = true;
     }
+
     if (this.hasErrors === true) {
       return;
     }
