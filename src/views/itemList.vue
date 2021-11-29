@@ -39,6 +39,7 @@
               v-model="sort"
               class="browser-default"
               v-on:change="sortChange"
+              v-show="show"
             >
               <option value="安い" selected>価格順(安い順)</option>
               <option value="高い">価格順(高い順)</option>
@@ -83,7 +84,9 @@
               {{ num }}
             </button></span
           >
-          <p>{{ this.currentPage }}/{{ this.pageButton.length }}</p>
+          <p v-show="show">
+            {{ this.currentPage }}/{{ this.pageButton.length }}
+          </p>
           <span
             ><button
               class="btn"
@@ -154,7 +157,7 @@ export default class ItemList extends Vue {
     this.displayList.splice(0, this.displayList.length);
     //検索する.英字の大文字小文字は区別しない
     this.displayList = this.itemList.filter((item) =>
-      item.name.includes(this.searchWord.toUpperCase())
+      item.name.toUpperCase().includes(this.searchWord.toUpperCase())
     );
     // 該当商品がない場合はエラーメーセージの表示と全件表示
     if (this.displayList.length === 0 || this.searchWord === "") {
