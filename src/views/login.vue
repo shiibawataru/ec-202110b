@@ -78,6 +78,16 @@ export default class Login extends Vue {
         password: this.password,
       }
     );
+    //入力値エラーチェックし、エラーがあればメッセージを表示させreturn
+    if (this.mailAddress === "" || this.password === "") {
+      this.errorMsg = "メールまたはパスワードが入力されていません";
+      return;
+    }
+    if (response.data.status === "error") {
+      this.errorMsg = "メールまたはパスワードが間違っています";
+      return;
+    }
+
     this["$store"].commit("loginUserId", response.data.responseMap.user.id);
     this["$store"].commit("loginUserInfo", response.data.responseMap.user);
 
