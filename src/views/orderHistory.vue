@@ -83,7 +83,8 @@
                   {{ orderItem.subTotal.toLocaleString() }}円
                   <div>
                     <button
-                      class="btn"
+                      id="btn"
+                      class="waves-effect waves-light btn"
                       type="button"
                       v-on:click="onclickAddItemToCart(i, j)"
                     >
@@ -238,7 +239,7 @@ select {
   margin-right: 10px;
   text-align: center;
 }
-.btn {
-  margin-top: 20px;
+#btn {
+  margin-top: 10px;
 }
 </style>
