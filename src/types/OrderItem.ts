@@ -86,13 +86,13 @@ export class OrderItem {
       const toppingPriceL = Number(this.orderToppingList[0].topping.priceL);
       if (this.size === "M") {
         price = Number(
-          this.item.priceM * this.quantity +
-            toppingPriceM * this.orderToppingList.length
+          (this.item.priceM + toppingPriceM * this.orderToppingList.length) *
+            this.quantity
         );
       } else if (this.size === "L") {
         price = Number(
-          this.item.priceL * this.quantity +
-            toppingPriceL * this.orderToppingList.length
+          (this.item.priceL + toppingPriceL * this.orderToppingList.length) *
+            this.quantity
         );
       }
 
