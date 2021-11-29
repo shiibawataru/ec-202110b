@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="container">
-      <h1 class="page-title">商品が完了しました！</h1>
+      <h1 class="page-title">注文が完了しました！</h1>
       <div class="order-finished-thanks-message">
         <p>この度はご注文ありがとうございます。</p>
         <p>
