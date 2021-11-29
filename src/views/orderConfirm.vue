@@ -661,10 +661,6 @@ export default class OrderConfirm extends Vue {
       return;
     }
 
-    for (const topping of toppings) {
-      console.dir("トッピング" + JSON.stringify(topping));
-    }
-
     //APIに配達情報を送る
     try {
       await axios.post("http://153.127.48.168:8080/ecsite-api/order", {
