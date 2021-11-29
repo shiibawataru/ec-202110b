@@ -59,7 +59,7 @@ export default class OrderFinished extends Vue {
 .box {
   width: 100px;
   height: 100px;
-  animation: anim 3s forwards;
+  animation: anim 5s forwards;
 }
 
 .color {
@@ -98,8 +98,8 @@ export default class OrderFinished extends Vue {
     transform: translateX(0px);
   }
 
-  80% {
-    transform: translateX(2000px);
+  90% {
+    transform: translateX(1300px);
   }
 
   100% {
