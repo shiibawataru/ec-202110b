@@ -633,7 +633,7 @@ export default class OrderConfirm extends Vue {
         size: cartListItem.size,
       });
       for (const topping of cartListItem.orderToppingList) {
-        toppings.push(topping.toppingId);
+        toppings.push({ toppings: String(topping.toppingId) });
       }
     }
 
@@ -659,6 +659,10 @@ export default class OrderConfirm extends Vue {
     }
     if (this.creditsecurityCodeError != "") {
       return;
+    }
+
+    for (const topping of toppings) {
+      console.dir("トッピング" + JSON.stringify(topping));
     }
 
     //APIに配達情報を送る
