@@ -2,6 +2,7 @@
   <div>
     <div class="bg_pattern Boxes"></div>
     <div class="top-wrapper">
+      <div class="signIn">Sign in</div>
       <div class="container">
         <div class="row login-page">
           <div class="col s12 z-depth-6 card-panel">
@@ -111,6 +112,17 @@ export default class Login extends Vue {
 }
 </script>
 <style scoped>
+.signIn {
+  text-align: center;
+  padding-bottom: 10px;
+  color: navy;
+  font-weight: bolder;
+  font-size: 45px;
+}
+.top-wrapper {
+  padding-top: 10px;
+}
+
 .bg_pattern {
   position: fixed;
   top: 0;

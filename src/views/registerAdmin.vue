@@ -2,6 +2,7 @@
   <div>
     <div class="bg_pattern Boxes"></div>
     <div class="top-wrapper">
+      <div class="register">Sign up</div>
       <div class="container">
         <div class="row register-page">
           <span class="error">{{ errorOfName }}</span>
@@ -313,6 +314,16 @@ export default class RegisterAdmin extends Vue {
 }
 </script>
 <style scoped>
+.top-wrapper {
+  padding-top: 10px;
+}
+.register {
+  text-align: center;
+  padding-bottom: 10px;
+  color: navy;
+  font-weight: bolder;
+  font-size: 45px;
+}
 .clearBtn {
   margin-left: 10px;
 }
