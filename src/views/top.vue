@@ -260,6 +260,6 @@ h3 {
 }
 
 .loop_wrap img:last-child {
-  animation: loop2 40s linear infinite;
+  animation: loop2 80s linear infinite;
 }
 </style>
