@@ -119,8 +119,6 @@ export default class OrderHistory extends Vue {
       `http://153.127.48.168:8080/ecsite-api/order/orders/toy/${userId}`
     );
 
-    console.dir("response:" + JSON.stringify(response.data.orders));
-
     for (let order of response.data.orders) {
       let newOrder = new Order(
         order.id,
@@ -147,8 +145,6 @@ export default class OrderHistory extends Vue {
           return -1;
         }
       });
-
-      console.dir("入れた配列" + JSON.stringify(newOrder));
     }
     this.getNonOrderMsg();
     this.startDisplay();
