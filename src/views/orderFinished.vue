@@ -2,24 +2,24 @@
   <div class="all">
     <div class="container">
       <div class="message">
-        <h1 class="page-title">注文が完了しました！</h1>
-        <div class="order-finished-thanks-message">
-          <p>この度はご注文ありがとうございます。</p>
-          <p>
-            お支払い先は、お送りしたメールに記載してありますのでご確認ください。
-          </p>
-          <p>メールが届かない場合は「注文履歴」からご確認ください。</p>
+        <!-- アニメーション -->
+        <div class="box"><img src="/img_toy/santa.png" class="santa" /></div>
+        <p>
+          <a class="link" target="_blank" rel="noopener"></a>
+        </p>
+        <!-- アニメーション -->
+        <div class="color">
+          <h1 class="page-title">注文が完了しました！</h1>
+          <div class="order-finished-thanks-message">
+            <p>この度はご注文ありがとうございます。</p>
+            <p>
+              お支払い先は、お送りしたメールに記載してありますのでご確認ください。
+            </p>
+            <p>メールが届かない場合は「注文履歴」からご確認ください。</p>
+          </div>
         </div>
       </div>
 
-      <!-- アニメーション -->
-
-      <div class="box"><img src="/img_toy/santa.png" class="santa" /></div>
-      <p>
-        <a class="link" target="_blank" rel="noopener"></a>
-      </p>
-      <!-- アニメーション -->
-      <i class="fas fa-home"></i>
       <div class="row order-finished-btn">
         <button class="btn" type="button" v-on:click="goTopPage()">
           <span>商品一覧に戻る</span>
@@ -62,11 +62,17 @@ export default class OrderFinished extends Vue {
   animation: anim 1s forwards;
 }
 
+.color {
+  background-color: rgba(255, 255, 255, 0.445);
+  padding: 30px;
+  border-radius: 30px;
+}
+
 .santa {
   width: 200px;
 }
 
-.fa-home {
+.home {
   margin-left: 1000px;
   font-size: 100px;
   color: rgb(255, 108, 108);
@@ -74,12 +80,16 @@ export default class OrderFinished extends Vue {
 
 .all {
   width: 100%;
-  min-height: 100vh;
-  background: black url("/img_toy/snow.png") center top/cover no-repeat;
+  height: 800px;
+  background: black url("/img_toy/snow.jpg") center top/cover no-repeat;
 }
 
 .message {
-  margin-top: 100px;
+  padding-top: 200px;
+}
+
+.btn {
+  margin-top: 20px;
 }
 
 @keyframes anim {
