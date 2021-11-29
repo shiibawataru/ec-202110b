@@ -169,6 +169,13 @@ export default new Vuex.Store({
           []
         )
       );
+      state.favoList = state.favoList.filter(function (v1, i1, a1) {
+        return (
+          a1.findIndex(function (v2) {
+            return v1.id === v2.id;
+          }) === i1
+        );
+      });
     },
   }, // end mutations
   actions: {
@@ -315,7 +322,7 @@ export default new Vuex.Store({
      * @returns - お気に入りリスト
      */
     getFavoList(state) {
-      let favoList = new Array<Item>();
+      const favoList = new Array<Item>();
       for (const favoItem of state.favoList) {
         favoList.push(
           new Item(
@@ -331,14 +338,6 @@ export default new Vuex.Store({
           )
         );
       }
-
-      favoList = favoList.filter(function (v1, i1, a1) {
-        return (
-          a1.findIndex(function (v2) {
-            return v1.id === v2.id;
-          }) === i1
-        );
-      });
 
       return favoList;
     },
