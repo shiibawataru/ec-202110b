@@ -59,7 +59,7 @@ export default class OrderFinished extends Vue {
 .box {
   width: 100px;
   height: 100px;
-  animation: anim 1s forwards;
+  animation: anim 3s forwards;
 }
 
 .color {
@@ -82,6 +82,7 @@ export default class OrderFinished extends Vue {
   width: 100%;
   height: 800px;
   background: black url("/img_toy/snow.jpg") center top/cover no-repeat;
+  margin-top: -200px;
 }
 
 .message {
@@ -95,6 +96,10 @@ export default class OrderFinished extends Vue {
 @keyframes anim {
   0% {
     transform: translateX(0px);
+  }
+
+  80% {
+    transform: translateX(2000px);
   }
 
   100% {
