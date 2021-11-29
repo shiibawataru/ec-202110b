@@ -633,7 +633,7 @@ export default class OrderConfirm extends Vue {
         size: cartListItem.size,
       });
       for (const topping of cartListItem.orderToppingList) {
-        toppings.push({ toppings: String(topping.toppingId) });
+        toppings.push({ toppingId: String(topping.toppingId) });
       }
     }
 
