@@ -15,13 +15,22 @@
               {{ currentItem.description }}
             </div>
           </div>
-          <div id="favoBtn">
+          <div class="favoBtn" v-show="!favoFlug">
             <button
               type="button"
               class="btn"
               v-on:click="onClickFavo(currentItem)"
             >
               ♡お気に入りに追加
+            </button>
+          </div>
+          <div class="favoBtn" v-show="favoFlug">
+            <button
+              type="button"
+              class="btn"
+              v-on:click="onClickFavo(currentItem)"
+            >
+              ♡登録しました！
             </button>
           </div>
           <form class="form">
@@ -164,6 +173,9 @@ export default class ItemDetail extends Vue {
   // 選択された数量
   private quantity = 1;
 
+  //お気に入りに登録
+  private favoFlug = false;
+
   /**
    * VuexストアのGetter経由で受け取ったリクエストパラメータのIDから１件の商品情報を取得する.
    *
@@ -259,20 +271,23 @@ export default class ItemDetail extends Vue {
     }
   }
 
+  /**
+   * お気に入りに追加.
+   */
   onClickFavo(itemInfo: Item): void {
     this["$store"].commit("addFavoList", itemInfo);
+    this.favoFlug = true;
   }
 }
 </script>
 <style scoped>
-#favoBtn {
+.favoBtn {
   width: 200px;
   padding: 0;
-  margin-left: 150px;
-  margin-top: -40px;
+  margin-left: 140px;
+  margin-top: -50px;
   margin-bottom: 30px;
 }
-
 .xmasCount {
   text-align: center;
   color: mediumseagreen;
