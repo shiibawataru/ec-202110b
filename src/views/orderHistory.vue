@@ -105,7 +105,6 @@ export default class OrderHistory extends Vue {
   private showOrderList: Array<Order> = [];
   // 注文商品を入れる配列
   private orderList: Array<Order> = [];
-
   /**
    * ユーザーIDから注文履歴を取得する.
    */
@@ -138,12 +137,18 @@ export default class OrderHistory extends Vue {
         order.orderItemList
       );
       this.orderList.push(newOrder);
+      // 購入日が近い順に並び替え
+      this.orderList.sort(function (beforeOrder, afterOrder) {
+        if (afterOrder.orderDate > beforeOrder.orderDate) {
+          return 1;
+        } else {
+          return -1;
+        }
+      });
     }
-
     this.getNonOrderMsg();
     this.startDisplay();
   }
-
   /**
    * 注文履歴を全件表示する.
    */
@@ -152,7 +157,6 @@ export default class OrderHistory extends Vue {
       this.showOrderList.push(this.orderList[i]);
     }
   }
-
   /**
    * 注文履歴が0件だった場合、メッセージを表示する.
    */
@@ -163,7 +167,6 @@ export default class OrderHistory extends Vue {
       return;
     }
   }
-
   /**
    * 購入年で絞り込み検索.
    */
@@ -192,7 +195,6 @@ export default class OrderHistory extends Vue {
   text-align: center;
   color: red;
 }
-
 .form {
   width: 30%;
   text-align: center;
