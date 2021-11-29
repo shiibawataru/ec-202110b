@@ -1,6 +1,8 @@
 <template>
   <div>
+    <div class="bg_pattern Boxes"></div>
     <div class="top-wrapper">
+      <div class="register">Sign up</div>
       <div class="container">
         <div class="row register-page">
           <span class="error">{{ errorOfName }}</span>
@@ -209,6 +211,18 @@ export default class RegisterAdmin extends Vue {
         "パスワードは８文字以上１６文字以内で設定してください";
       this.hasErrors = true;
     }
+    if (
+      !(
+        /[A-Z]+/.test(this.password) &&
+        /[a-z]+/.test(this.password) &&
+        /[0-9]+/.test(this.password)
+      )
+    ) {
+      this.errorOfPassword =
+        "パスワードは大文字/小文字/数字を組み合わせて下さい。";
+      this.hasErrors = true;
+    }
+
     if (this.password !== this.checkPassword) {
       // パスワード一致チェック
       this.errorOfCheckPassword = "パスワードが不一致です";
@@ -225,6 +239,7 @@ export default class RegisterAdmin extends Vue {
       this.errorOfZipCode = "郵便番号はハイフンを入れて入力してください";
       this.hasErrors = true;
     }
+
     if (this.hasErrors === true) {
       return;
     }
@@ -312,7 +327,37 @@ export default class RegisterAdmin extends Vue {
 }
 </script>
 <style scoped>
+.top-wrapper {
+  padding-top: 10px;
+}
+.register {
+  text-align: center;
+  padding-bottom: 10px;
+  color: navy;
+  font-weight: bolder;
+  font-size: 45px;
+}
 .clearBtn {
   margin-left: 10px;
+}
+.bg_pattern {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #ffe9a7;
+  opacity: 0.4;
+  z-index: -1;
+}
+.Boxes {
+  background-image: linear-gradient(#ffc107 2px, transparent 2px),
+    linear-gradient(to right, #ffc107 2px, #ffe9a7 2px);
+  background-size: 40px 40px;
+}
+.register-page {
+  background-color: white;
+  box-shadow: 0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 12%),
+    0 1px 5px 0 rgb(0 0 0 / 20%);
 }
 </style>
