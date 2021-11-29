@@ -39,6 +39,7 @@
               v-model="sort"
               class="browser-default"
               v-on:change="sortChange"
+              v-show="show"
             >
               <option value="安い" selected>価格順(安い順)</option>
               <option value="高い">価格順(高い順)</option>
@@ -83,7 +84,9 @@
               {{ num }}
             </button></span
           >
-          <p>{{ this.currentPage }}/{{ this.pageButton.length }}</p>
+          <p v-show="show">
+            {{ this.currentPage }}/{{ this.pageButton.length }}
+          </p>
           <span
             ><button
               class="btn"
