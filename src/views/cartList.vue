@@ -24,9 +24,8 @@
               </td>
               <td v-if="cartItem.size === 'M'">
                 <span class="price">&nbsp;{{ cartItem.size }}</span
-                >&nbsp;&nbsp;{{ cartItem.item.priceM }}円 &nbsp;&nbsp;{{
-                  cartItem.quantity
-                }}個
+                >&nbsp;&nbsp;{{ cartItem.item.priceM.toLocaleString() }}円
+                &nbsp;&nbsp;{{ cartItem.quantity }}個
               </td>
               <td v-if="cartItem.size === 'L'">
                 <span class="price">&nbsp;{{ cartItem.size }}</span
