@@ -46,24 +46,25 @@ export default class Favo extends Vue {
    * @returns お気に入りリスト
    */
   get favoList(): Array<Item> {
-    const array = this["$store"].getters.getFavoList;
-    const favoList = new Array<Item>();
-    for (const favoItem of array) {
-      favoList.push(
-        new Item(
-          favoItem.id,
-          favoItem.type,
-          favoItem.name,
-          favoItem.description,
-          favoItem.pliceM,
-          favoItem.priceL,
-          favoItem.imagePath,
-          favoItem.deleted,
-          []
-        )
-      );
-    }
-    return favoList;
+    // const array = this["$store"].getters.getFavoList;
+    // const favoList = new Array<Item>();
+    // for (const favoItem of array) {
+    //   favoList.push(
+    //     new Item(
+    //       favoItem.id,
+    //       favoItem.type,
+    //       favoItem.name,
+    //       favoItem.description,
+    //       favoItem.pliceM,
+    //       favoItem.priceL,
+    //       favoItem.imagePath,
+    //       favoItem.deleted,
+    //       []
+    //     )
+    //   );
+    // }
+    // return favoList;
+    return this["$store"].getters.getFavoList;
   }
 
   /**
